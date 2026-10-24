@@ -1,0 +1,27 @@
+# Host-only builds and caches
+build/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Proprietary device dumps, vendor APKs, private measurements and secrets
+*.apk
+*.bin
+*.hex
+*.elf
+*.map
+*.ota
+*.dfu
+*.dump
+*.key
+*.pem
+.env
+.env.*
+!*.example
+
+# Local research workspace
+work/
+local/
+scratch/
