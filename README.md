@@ -1,23 +1,57 @@
 # T60 Custom OS
 
-Research and development workspace for replacing the factory firmware on **Paul's T60 smartwatch** with a custom watch operating system.
+**A complete, private source repository for developing a replacement operating system for Paul's T60 smartwatch.** This contains real firmware-core source code, tests, research, technical documentation, and a searchable evidence/dependency knowledge graph—not just AI messages.
 
-**Status:** Research only. No custom firmware has been installed. The exact processor, a verified backup of the factory firmware, and a dependable recovery method remain unknown.
+> **Device status:** Exploration only. Nothing has been flashed. The exact SoC, target toolchain, genuine factory-firmware backup and safe recovery method are still unknown. No code in this repo is currently installable on the watch.
 
-## Start here
+## Repository map
 
-1. Read [AGENTS.md](AGENTS.md) for working rules and safety boundaries.
-2. Read [HANDOFF.md](HANDOFF.md) for established evidence, open questions, and the **single current assignment**.
-3. Perform only that assignment, and update `HANDOFF.md` with findings, supporting evidence, and the next proposed action.
+| Path | Purpose |
+|---|---|
+| [firmware/](firmware/) | Actual portable C firmware-core source and host-only unit tests; board-specific hardware support will follow once the target is proven |
+| [docs/PRODUCT.md](docs/PRODUCT.md) | Product direction, design goals and acceptance gates |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Planned firmware layers and boundaries between core logic and hardware |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | From processor identification to safe bring-up and usable watch OS |
+| [docs/HARDWARE.md](docs/HARDWARE.md) | Verified device evidence and unresolved hardware details |
+| [docs/RECOVERY.md](docs/RECOVERY.md) | Mandatory backup, recovery, signing and safety requirements |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Technical/project decisions and pending choices |
+| [knowledge/graph.json](knowledge/graph.json) | **Searchable project knowledge graph:** evidence, decisions, unknowns, dependencies, code components |
+| [tools/kg.py](tools/kg.py) | Search, trace relationships, inspect nodes, validate graph integrity |
+| [tests/](tests/) | Knowledge graph/search tests; more project-level tests go here |
+| [AGENTS.md](AGENTS.md) | One-owner project rules for ChatGPT, Qwen and other authorized agents |
+| [HANDOFF.md](HANDOFF.md) | Current assignment and recent verified findings—not the entire project's source of truth |
 
-## Working arrangement
+## Working with the project
 
-- **Human owner:** Paul (`pauldavid1974`); this is his personal, private repository.
-- **ChatGPT:** research coordinator, technical planning, evidence review, and handoff authoring.
-- **Qwen:** technical investigation/code generation, reached through Engine Room (RunPod or Colab) and a local agent harness.
-- **Agent access:** through the owner's existing authorized GitHub setup; no invitation of outside reviewers or collaborators is needed.
-- **Review workflow:** single-owner, no required external review, no mandated PR reviewer; the owner approves device-impacting operations. Documentation may be committed directly to `main`.
+From a local checkout, use Python 3 (standard library) for graph search:
 
-**Never experiment on the physical watch by flashing firmware, modifying BLE values, resetting, or accessing hardware debug pads without Paul's explicit approval of a specific, documented procedure.** Research, source analysis, and read-only diagnostics are the default.
+```sh
+python tools/kg.py search BB2
+python tools/kg.py related fact-bb2
+python tools/kg.py list --kind question
+python tools/kg.py validate
+python3 -m unittest discover -s tests -v
+```
 
-The goal is **replacement firmware running on the watch**, not merely a different watch face or replacement Android companion app.
+For the **portable host-only firmware component**, install CMake and a C compiler:
+
+```sh
+cmake -S firmware -B build/host
+cmake --build build/host
+ctest --test-dir build/host --output-on-failure
+```
+
+**These commands never connect to the watch.** The repository deliberately contains no flash/OTA command or usable device firmware image.
+
+## Collaboration and safety
+
+- **Owner:** Paul (`pauldavid1974`), personal account and private repository; no outside collaborators or mandatory outside reviews.
+- **ChatGPT:** research coordination, architecture, evidence and code review, task planning.
+- **Qwen through Engine Room (RunPod/Colab):** code generation and research using a user-approved local harness.
+- **Single source of truth:** actual source in `firmware/`, documented decisions/evidence in `docs/` and `knowledge/`, next agent work in `HANDOFF.md`. Agents commit source code, tests and documentation to this repo.
+
+**Owner approval is mandatory** before any new live watch operation. Read-only research is the default, and no firmware writes until the exact chip, original backup, recovery path and image verification are established. Full rules: [AGENTS.md](AGENTS.md).
+
+## Current technical lead
+
+Work read BLE `D0FF/FFF1`: `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`. GloryFit's bundled Realtek SDK reportedly maps `0B` to `BB2`. This is a chipset-family clue, **not** an exact chip model. Research task and sources: [HANDOFF.md](HANDOFF.md).
