@@ -13,6 +13,9 @@
 | UART/SWD pad access | Unknown |
 | Firmware signing/encryption requirements | Unknown |
 | True factory firmware backup | Not acquired or verified |
+| Dedicated phone (ADB) | Observed 2026-10-24: Samsung SM_G781U (serial RFCNC10FA3K), connected over USB, ADB authorized |
+| Phone pairing with T60 | Observed 2026-10-24 via read-only `dumpsys bluetooth_manager`: bonded **and connected** as "T60(ID-AE67)", address `60:1A:B7:00:AE:67` (DUAL BR/EDR+LE). Advertised services include standard 1101, HSP, Handsfree, AVRCP and a custom UUID `6a24eeab-4b65-4693-986b-3c26c352264f`. The address may be a random/resolvable LE identifier, not a factory MAC |
+| Companion apps on phone | Observed 2026-10-24: GloryFit `com.yc.gloryfit` v4.0.12 (versionCode 279) installed; nRF Connect **not** installed (no `no.nrfconnect`/Nordic package found) |
 
 Do not identify the exact SoC based on other products also sold under the name "T60."
 

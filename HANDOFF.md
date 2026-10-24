@@ -18,12 +18,14 @@ Lead-engineer (Qwen) session started in the local checkout.
 
 ## Status — Claude Code continuation session (2026-10-24)
 
-- **Resume verified:** the only staged change was this handoff (Qwen lane block above); all prior work preserved. `docs/QWEN38_AGENT_GUIDE.md`, named in the continuation prompt, **does not exist** in this repo (`docs/` holds ARCHITECTURE, DECISIONS, HARDWARE, PRODUCT, RECOVERY, ROADMAP). Flagged as a discrepancy; not blocking.
+- **Resume verified:** the only staged change was this handoff (Qwen lane block above); all prior work preserved. `docs/QWEN38_AGENT_GUIDE.md` was missing from the local checkout when first requested; it arrived on origin (commit `7525966`) and was read after the fast-forward below — resolved.
 - **Local tests green (2026-10-24):** `python tools/kg.py validate` → `OK: 21 nodes, 26 edges`; `python -m unittest discover -s tests -v` → 5/5 passed. Host C build **not run locally** (no CMake/C compiler on this laptop) — the CI `verify` workflow remains the C check (last green run `40125521186`).
 - **Hook audit:** all four active hooks are **user-level** (`~/.claude/settings.json`), so they fire in every project: `context_watch.py` (context-cost gate, fail-open), `herdr-agent-state.ps1` (no-op unless a herdr environment is active), plus two **Astrocade/Qwen-Colab leftovers**: `coop_bootstrap.py` (SessionStart — injected unrelated Astrocade co-op text into this T60 session) and `coop_playtest_gate.py` (Stop — Astrocade playtest checklist). Both leftovers ran fail-open, produced **no errors and blocked nothing**; left enabled, nothing disabled or bypassed. There are **no T60-specific safety hooks** — watch safety rests on the AGENTS.md rules and repo content, both unchanged.
-- **Environment:** the dedicated Android phone is connected to the laptop over USB and paired with the T60 — available for future BLE/ADB diagnostics, **none initiated**.
-- **No live-device actions taken; no writes, no flashing, no diagnostics.**
-- **Next assignment (unchanged):** the offline `BB2` / IC ID `0B` mapping, `D0FF/FFF1` layout, and recovery-comparison research below.
+- **Remote reconcile (2026-10-24):** origin had advanced to `6dee449` (Qwen3.8 operating guide, graph additions, agent rules); local HEAD was its ancestor, so a clean fast-forward with no conflicts. Tests re-run green on the merged tree (graph 32 nodes / 41 edges, 5/5 unit tests). The prior handoff notes were committed locally as `0de656e`.
+- **Phone/ADB baseline (2026-10-24, read-only):** dedicated phone is a Samsung SM_G781U (serial `RFCNC10FA3K`), ADB-authorized over USB. GloryFit `com.yc.gloryfit` v4.0.12 (versionCode 279) installed; **nRF Connect is NOT installed** on this phone. The T60 is **bonded and connected** on the phone as "T60(ID-AE67)", address `60:1A:B7:00:AE:67` (DUAL BR/EDR+LE; may be a random/resolvable LE address). New GATT lead: custom service UUID `6a24eeab-4b65-4693-986b-3c26c352264f`. Recorded in `docs/HARDWARE.md` and graph node `fact-phone-bond`. Nothing on the phone was changed.
+- **Project decision D-004 (owner, 2026-10-24):** investigate existing compatible watch operating systems first; customize one if suitable; develop our own only if the alternatives are inadequate. Recorded in `docs/DECISIONS.md`, new Stage 2 of `docs/ROADMAP.md`, and graph nodes `decision-os-path` / `question-os-base`.
+- **No live-device actions taken; no BLE reads/writes, no flashing, no pairing changes.**
+- **Next assignment:** the offline `BB2` / IC ID `0B` mapping, `D0FF/FFF1` layout, and recovery-comparison research below, now with the added D-004 deliverable (survey of existing OS options).
 
 ## Full project repository (established 2026-10-24)
 
@@ -90,6 +92,7 @@ Deliver:
 3. Compare any public Realtek SDK flashing/recovery procedure to the T60's observed interfaces; explain limitations and what would be required to prove recovery safely.
 4. Recommend **one smallest next diagnostic**, with exact proposed read-only action, expected benefit, risks, and a clear request for Paul's permission if it touches the live watch.
 5. Update **this file**, `docs/HARDWARE.md`, and the relevant nodes/edges in `knowledge/graph.json` with concise findings and sources. Do not remove prior confirmed evidence.
+6. **(D-004)** Once the chip family is established, compile a shortlist of existing watch OS/firmware options that could plausibly run on the identified hardware (vendor SDK applications, open-source watch firmware for the same Realtek family), noting licensing, access and customization effort per candidate. Offline research only; no new BLE operations.
 
 **Stop condition:** Once the mapping/recovery research and report are recorded, STOP. Do not initiate any live watch interaction or firmware update.
 

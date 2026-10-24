@@ -549,6 +549,62 @@
       ]
     },
     {
+      "id": "decision-os-path",
+      "kind": "decision",
+      "certainty": "documented",
+      "title": "Evaluate existing watch OS before building our own",
+      "summary": "Owner decision D-004 (2026-10-24): investigate existing compatible watch operating systems first; customize one if suitable; develop our own only if the alternatives are inadequate. Safety gates (D-002) unchanged.",
+      "tags": [
+        "decision",
+        "os",
+        "strategy",
+        "alternatives",
+        "customization"
+      ],
+      "refs": [
+        "docs/DECISIONS.md",
+        "docs/ROADMAP.md"
+      ]
+    },
+    {
+      "id": "question-os-base",
+      "kind": "question",
+      "certainty": "unknown",
+      "title": "Which existing watch OS/firmware could run on this T60",
+      "summary": "Per D-004, survey existing bases (vendor SDK applications, open-source watch firmware for the same Realtek family) once the exact SoC is identified; record compatibility, licensing and access per candidate.",
+      "tags": [
+        "os",
+        "alternatives",
+        "realtek",
+        "zephyr",
+        "licensing",
+        "open"
+      ],
+      "refs": [
+        "docs/ROADMAP.md",
+        "docs/DECISIONS.md"
+      ]
+    },
+    {
+      "id": "fact-phone-bond",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "Dedicated phone bonded and connected to T60",
+      "summary": "Observed 2026-10-24 via read-only ADB `dumpsys bluetooth_manager` on Samsung SM_G781U (RFCNC10FA3K): T60 bonded and connected as \"T60(ID-AE67)\", address 60:1A:B7:00:AE:67 (DUAL BR/EDR+LE), services include HSP, Handsfree, AVRCP, standard 1101 and custom UUID 6a24eeab-4b65-4693-986b-3c26c352264f. Phone runs GloryFit com.yc.gloryfit v4.0.12; nRF Connect not installed.",
+      "tags": [
+        "phone",
+        "bluetooth",
+        "bonded",
+        "adb",
+        "gloryfit",
+        "uuid"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
       "id": "source-opencode-provider",
       "kind": "source",
       "certainty": "documented",
@@ -772,6 +828,26 @@
       "from": "decision-kg",
       "to": "decision-qwen-assignments",
       "relation": "indexes"
+    },
+    {
+      "from": "fact-phone-bond",
+      "to": "device-t60",
+      "relation": "observed-on"
+    },
+    {
+      "from": "question-os-base",
+      "to": "question-soc",
+      "relation": "blocked-by"
+    },
+    {
+      "from": "decision-os-path",
+      "to": "question-os-base",
+      "relation": "requires-resolution"
+    },
+    {
+      "from": "component-bsp",
+      "to": "decision-os-path",
+      "relation": "contingent-on"
     }
   ]
 }
