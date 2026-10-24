@@ -35,6 +35,14 @@ Never assume a GATT UUID or chipset family proves binary compatibility. If unsur
 - For changes to portable code, run host tests; for graph changes, run `python tools/kg.py validate` and `python -m unittest discover -s tests -v`. Record tests honestly: not run, passed, or failed.
 - Do not commit proprietary APKs, original watch firmware images, personal device dumps, credentials or commercial SDK binaries; document secure local evidence locations where appropriate.
 
+## Qwen3.8-27B delegation (required reading when assigning Qwen)
+
+- **Before writing a Qwen assignment**, read [docs/QWEN38_AGENT_GUIDE.md](docs/QWEN38_AGENT_GUIDE.md) and search `python tools/kg.py search qwen`. For serving-specific tasks, `python tools/kg.py related model-qwen38-27b`.
+- Qwen's official model identifier is `Qwen/Qwen3.8-27B`, which is **post-trained**, not a raw pretraining-only base model. Verify the exact checkpoint/quantization served by Engine Room rather than assuming.
+- Each assignment must specify a bounded objective, files, verified evidence, permitted tools, tests, reporting contract and hard stop. Use only supported runtime knobs; do not force speculative Qwen defaults on the user's working GPU engine.
+- Treat Qwen as the technical agent, not a second owner or safety approver. Broken local PreToolUse hooks block commits; preserve work and repair the hook, do not bypass it.
+- All existing live-watch safety gates in this document **take precedence** over prompting/performance recommendations.
+
 ## One-owner Git workflow
 
 - Repo: `pauldavid1974/T60-Custom-OS` (private; personal account; no outside collaborators/reviews requested).
