@@ -6,6 +6,25 @@
 **Owner:** Paul; private personal repo `pauldavid1974/T60-Custom-OS`
 **Hard stop:** NO writing to the watch, flashing, factory resets, unpairing, disassembly, or opening debug interfaces without explicit, action-specific approval from Paul.
 
+## Status — Qwen lane (2026-10-24)
+
+Lead-engineer (Qwen) session started in the local checkout.
+
+- **Workspace initialized:** repo cloned from `pauldavid1974/T60-Custom-OS`; README, AGENTS, HANDOFF, all `docs/`, and the knowledge graph read.
+- **Baseline verified green:** HEAD `8de3f02` passes the `verify` CI workflow (graph validate, knowledge-graph tests, host CMake build, ctest) — CI run `40125521186`, 2026-10-24.
+- **Local toolchain note:** the working laptop has Python 3.13 but **no CMake and no C compiler**, so the host C build/test runs in GitHub Actions only, not on the machine. Graph checks run locally via `python tools/kg.py validate` and `python -m unittest discover -s tests -v`.
+- **Active assignment confirmed** (below): identify Realtek IC id `0x0B` / `BB2`, document only the verified `FFF1` 13-byte layout, and compare public Realtek OTA/recovery procedures to this T60. Offline and read-only; no watch interaction.
+- **Next:** run the research and record sourced findings here and in `docs/HARDWARE.md` and `knowledge/graph.json`, then commit.
+
+## Status — Claude Code continuation session (2026-10-24)
+
+- **Resume verified:** the only staged change was this handoff (Qwen lane block above); all prior work preserved. `docs/QWEN38_AGENT_GUIDE.md`, named in the continuation prompt, **does not exist** in this repo (`docs/` holds ARCHITECTURE, DECISIONS, HARDWARE, PRODUCT, RECOVERY, ROADMAP). Flagged as a discrepancy; not blocking.
+- **Local tests green (2026-10-24):** `python tools/kg.py validate` → `OK: 21 nodes, 26 edges`; `python -m unittest discover -s tests -v` → 5/5 passed. Host C build **not run locally** (no CMake/C compiler on this laptop) — the CI `verify` workflow remains the C check (last green run `40125521186`).
+- **Hook audit:** all four active hooks are **user-level** (`~/.claude/settings.json`), so they fire in every project: `context_watch.py` (context-cost gate, fail-open), `herdr-agent-state.ps1` (no-op unless a herdr environment is active), plus two **Astrocade/Qwen-Colab leftovers**: `coop_bootstrap.py` (SessionStart — injected unrelated Astrocade co-op text into this T60 session) and `coop_playtest_gate.py` (Stop — Astrocade playtest checklist). Both leftovers ran fail-open, produced **no errors and blocked nothing**; left enabled, nothing disabled or bypassed. There are **no T60-specific safety hooks** — watch safety rests on the AGENTS.md rules and repo content, both unchanged.
+- **Environment:** the dedicated Android phone is connected to the laptop over USB and paired with the T60 — available for future BLE/ADB diagnostics, **none initiated**.
+- **No live-device actions taken; no writes, no flashing, no diagnostics.**
+- **Next assignment (unchanged):** the offline `BB2` / IC ID `0B` mapping, `D0FF/FFF1` layout, and recovery-comparison research below.
+
 ## Full project repository (established 2026-10-24)
 
 This GitHub repo is now the **entire OS project's source of truth**, not just an AI handoff channel:
