@@ -18,6 +18,7 @@
 | [knowledge/graph.json](knowledge/graph.json) | **Searchable project knowledge graph:** evidence, decisions, unknowns, dependencies, code components |
 | [tools/kg.py](tools/kg.py) | Search, trace relationships, inspect nodes, validate graph integrity |
 | [tests/](tests/) | Knowledge graph/search tests; more project-level tests go here |
+| [docs/QWEN38_AGENT_GUIDE.md](docs/QWEN38_AGENT_GUIDE.md) | Research-backed Qwen3.8-27B prompting, reasoning/tool-calling settings, cost controls and handoff protocol |
 | [AGENTS.md](AGENTS.md) | One-owner project rules for ChatGPT, Qwen and other authorized agents |
 | [HANDOFF.md](HANDOFF.md) | Current assignment and recent verified findings—not the entire project's source of truth |
 
