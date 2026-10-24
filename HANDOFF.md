@@ -6,6 +6,18 @@
 **Owner:** Paul; private personal repo `pauldavid1974/T60-Custom-OS`
 **Hard stop:** NO writing to the watch, flashing, factory resets, unpairing, disassembly, or opening debug interfaces without explicit, action-specific approval from Paul.
 
+## Full project repository (established 2026-10-24)
+
+This GitHub repo is now the **entire OS project's source of truth**, not just an AI handoff channel:
+
+- `firmware/`: portable C code and host-only tests, with actual future BSP/OS integration gated on hardware identification.
+- `docs/`: requirements, architecture, roadmap, hardware evidence, recovery rules and decisions.
+- `knowledge/graph.json`: machine-readable graph connecting facts, sources, blockers, decisions and code.
+- `tools/kg.py`: searchable graph CLI. Examples: `python tools/kg.py search BB2`, `python tools/kg.py related fact-bb2`.
+- `tests/` and `.github/workflows/verify.yml`: graph and host-only firmware checks.
+
+**Qwen must also read `knowledge/README.md` and use the graph when researching.** When reporting a durable finding, update the relevant docs/graph as well as this handoff. Record both tested and untested results accurately. Do not treat preliminary UI code as flashable firmware.
+
 ## Project objective
 
 Build and eventually install **our own watch firmware/interface** on Paul's physical T60 smartwatch, rather than merely replacing the Android companion application or changing a watch face. Feasibility is not yet proven.
@@ -58,13 +70,13 @@ Deliver:
 2. Document the `D0FF/FFF1` 13-byte response field layout *only where verified*, clearly identifying unknown bytes.
 3. Compare any public Realtek SDK flashing/recovery procedure to the T60's observed interfaces; explain limitations and what would be required to prove recovery safely.
 4. Recommend **one smallest next diagnostic**, with exact proposed read-only action, expected benefit, risks, and a clear request for Paul's permission if it touches the live watch.
-5. Update **this file** with concise findings, sources, blockers, and the next assignment. Do not remove prior confirmed evidence.
+5. Update **this file**, `docs/HARDWARE.md`, and the relevant nodes/edges in `knowledge/graph.json` with concise findings and sources. Do not remove prior confirmed evidence.
 
 **Stop condition:** Once the mapping/recovery research and report are recorded, STOP. Do not initiate any live watch interaction or firmware update.
 
 ## Transfer protocol
 
-- At session start: read `README.md`, `AGENTS.md`, `HANDOFF.md`.
-- At session end: write verified results into this file and commit them to `main`. Label **Observed / Documented / Inferred / Unknown**.
+- At session start: read `README.md`, `AGENTS.md`, `HANDOFF.md`, and `knowledge/README.md`; search the graph for relevant nodes before duplicating research.
+- At session end: commit appropriate **source, tests, docs, knowledge graph and this handoff** to `main`. Label **Observed / Documented / Inferred / Unknown**.
 - In your final reply to Paul: 3–5 short bullets, commit hash, and an exact next action requiring owner approval (if any).
 - ChatGPT and Qwen coordinate by reading and updating the same repository; **no outside reviewers, mandatory independent approval, or added collaborators**.
