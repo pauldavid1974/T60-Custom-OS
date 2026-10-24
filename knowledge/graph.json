@@ -1,0 +1,495 @@
+{
+  "schema_version": 1,
+  "description": "T60 OS project evidence and dependency knowledge graph; source of truth is versioned with repository.",
+  "nodes": [
+    {
+      "id": "device-t60",
+      "kind": "device",
+      "certainty": "observed",
+      "title": "Physical T60 smartwatch",
+      "summary": "Paul's T60 watch; FCC ID 2BEQO-T60; factory firmware V007108. Exact SoC and board unknown.",
+      "tags": [
+        "t60",
+        "watch",
+        "hardware",
+        "fcc"
+      ],
+      "refs": [
+        "docs/HARDWARE.md"
+      ]
+    },
+    {
+      "id": "fact-fcc",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "FCC ID 2BEQO-T60",
+      "summary": "Regulatory ID photographed on the physical watch; FCC internal photos are public.",
+      "tags": [
+        "fcc",
+        "identification",
+        "teardown"
+      ],
+      "refs": [
+        "docs/HARDWARE.md"
+      ]
+    },
+    {
+      "id": "fact-fw",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "Original firmware V007108",
+      "summary": "Factory version shown on the watch; not yet backed up.",
+      "tags": [
+        "firmware",
+        "version",
+        "backup"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "docs/RECOVERY.md"
+      ]
+    },
+    {
+      "id": "iface-gatt",
+      "kind": "interface",
+      "certainty": "observed",
+      "title": "BLE GATT service enumeration",
+      "summary": "Observed 55FF, 56FF, 60FF, 61FF, 180F and D0FF service UUID groups through nRF Connect.",
+      "tags": [
+        "ble",
+        "bluetooth",
+        "gatt",
+        "uuid"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "iface-ota",
+      "kind": "interface",
+      "certainty": "inferred",
+      "title": "Realtek-family OTA/DFU interface",
+      "summary": "D0FF/FFF1 device-information read and UUIDs resemble Realtek OTA services; protocol interoperability on this device still requires verification.",
+      "tags": [
+        "ota",
+        "dfu",
+        "realtek",
+        "fff1",
+        "d0ff"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-fff1",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "FFF1 device information response",
+      "summary": "Thirteen bytes: 0B 01 1D 00 51 01 00 F7 00 00 00 00 00. Unverified fields must not be decoded speculatively.",
+      "tags": [
+        "ble",
+        "read",
+        "fff1",
+        "bytes",
+        "0b"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-bb2",
+      "kind": "fact",
+      "certainty": "documented",
+      "title": "Realtek SDK 0B -> BB2 mapping",
+      "summary": "Work reported finding 0B maps to BB2 in the Realtek SDK bundled with GloryFit; BB2 is not an exact chip model.",
+      "tags": [
+        "bb2",
+        "realtek",
+        "chip",
+        "sdk",
+        "gloryfit",
+        "0b"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "question-soc",
+      "kind": "question",
+      "certainty": "unknown",
+      "title": "Exact SoC and memory map",
+      "summary": "Determine exact RTL part number, ROM/RAM, flash layout, board revision and SDK compatibility.",
+      "tags": [
+        "soc",
+        "rtl",
+        "bb2",
+        "memory",
+        "chipset",
+        "open"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "question-peripherals",
+      "kind": "question",
+      "certainty": "unknown",
+      "title": "Actual display and peripheral hardware",
+      "summary": "Identify display, input, power, RTC, sensor controllers and wire protocols before driver development.",
+      "tags": [
+        "display",
+        "sensors",
+        "touch",
+        "drivers",
+        "open"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "docs/ARCHITECTURE.md"
+      ]
+    },
+    {
+      "id": "question-recovery",
+      "kind": "question",
+      "certainty": "unknown",
+      "title": "Factory firmware backup and safe recovery",
+      "summary": "No validated factory image, programmer, hardware debug route or restoration test. Blocking watch writes.",
+      "tags": [
+        "backup",
+        "rollback",
+        "restore",
+        "flash",
+        "recovery",
+        "open"
+      ],
+      "refs": [
+        "docs/RECOVERY.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "question-signing",
+      "kind": "question",
+      "certainty": "unknown",
+      "title": "Bootloader and firmware signing",
+      "summary": "Boot image constraints, signature/encryption policy, flash/write protections remain unverified.",
+      "tags": [
+        "bootloader",
+        "signed",
+        "encryption",
+        "dfu",
+        "open"
+      ],
+      "refs": [
+        "docs/RECOVERY.md",
+        "docs/ARCHITECTURE.md"
+      ]
+    },
+    {
+      "id": "component-ui",
+      "kind": "component",
+      "certainty": "planned",
+      "title": "Portable watch UI state machine",
+      "summary": "C implementation of clock/settings/about state transitions; host executable tests only; not flashable firmware.",
+      "tags": [
+        "source",
+        "ui",
+        "c",
+        "states",
+        "core"
+      ],
+      "refs": [
+        "firmware/include/t60/ui.h",
+        "firmware/src/ui.c",
+        "firmware/tests/ui_test.c"
+      ]
+    },
+    {
+      "id": "component-bsp",
+      "kind": "component",
+      "certainty": "planned",
+      "title": "Future T60 board support package",
+      "summary": "Requires verified SoC, display/controller, power/sensors and vendor toolchain; not implemented.",
+      "tags": [
+        "bsp",
+        "drivers",
+        "platform",
+        "firmware"
+      ],
+      "refs": [
+        "docs/ARCHITECTURE.md",
+        "firmware/README.md"
+      ]
+    },
+    {
+      "id": "source-work",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "ChatGPT Work read-only investigation transcript",
+      "summary": "User supplied exported Work conversation on 2026-10-24, reporting ADB and FFF1 read plus GloryFit SDK inspection. Its original commands/logs are not stored in this repository.",
+      "tags": [
+        "work",
+        "transcript",
+        "adb",
+        "evidence"
+      ],
+      "refs": [
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "source-fcc",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "FCC T60 internal photos",
+      "summary": "Public device filing and internal images; potential hardware identification lead.",
+      "tags": [
+        "fcc",
+        "source",
+        "internal-photos"
+      ],
+      "refs": [
+        "https://fccid.io/2BEQO-T60/Internal-Photos/Internal-photo-7108448"
+      ]
+    },
+    {
+      "id": "source-realtek",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "Realtek protocol documentation",
+      "summary": "Vendor firmware-update protocol reference; exact watch support is not proven.",
+      "tags": [
+        "realtek",
+        "protocol",
+        "dfu",
+        "source"
+      ],
+      "refs": [
+        "https://www.realmcu.com/img/ipd/zh_638247794120444333.pdf"
+      ]
+    },
+    {
+      "id": "source-devguide",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "Realtek SDK development tools reference",
+      "summary": "Example SDK development and programming guidance; not a verified T60 board-specific procedure.",
+      "tags": [
+        "realtek",
+        "sdk",
+        "toolchain",
+        "source"
+      ],
+      "refs": [
+        "https://docs.realmcu.com/sdk/rtl87x3e/common/en/latest/text/User_Manual/quick_start.html"
+      ]
+    },
+    {
+      "id": "decision-owner",
+      "kind": "decision",
+      "certainty": "documented",
+      "title": "Personal repository and one-owner governance",
+      "summary": "This private repository contains entire product; Paul makes approvals, no required outside reviewers.",
+      "tags": [
+        "github",
+        "governance",
+        "ownership"
+      ],
+      "refs": [
+        "docs/DECISIONS.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "decision-safe",
+      "kind": "decision",
+      "certainty": "documented",
+      "title": "No live watch writes without proof and approval",
+      "summary": "Protect physical device until compatible image, backup, recovery and informed consent are established.",
+      "tags": [
+        "safety",
+        "approval",
+        "flash"
+      ],
+      "refs": [
+        "docs/DECISIONS.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "decision-kg",
+      "kind": "decision",
+      "certainty": "documented",
+      "title": "Maintain searchable evidence graph",
+      "summary": "Graph links facts, source evidence, decisions, unknowns and implementation to support retrieval and prevent unsupported assumptions.",
+      "tags": [
+        "knowledge",
+        "graph",
+        "search",
+        "traceability"
+      ],
+      "refs": [
+        "docs/DECISIONS.md",
+        "knowledge/README.md"
+      ]
+    },
+    {
+      "id": "milestone-feasibility",
+      "kind": "milestone",
+      "certainty": "planned",
+      "title": "Feasibility before flashing",
+      "summary": "Identify exact chip and compatible development toolchain; validate factory backup/recovery and signing constraints.",
+      "tags": [
+        "milestone",
+        "recovery",
+        "target"
+      ],
+      "refs": [
+        "docs/ROADMAP.md",
+        "docs/RECOVERY.md"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "device-t60",
+      "to": "fact-fcc",
+      "relation": "has-identifier"
+    },
+    {
+      "from": "device-t60",
+      "to": "fact-fw",
+      "relation": "runs-factory-version"
+    },
+    {
+      "from": "device-t60",
+      "to": "iface-gatt",
+      "relation": "exposes"
+    },
+    {
+      "from": "iface-gatt",
+      "to": "iface-ota",
+      "relation": "contains-candidate"
+    },
+    {
+      "from": "iface-ota",
+      "to": "fact-fff1",
+      "relation": "reports"
+    },
+    {
+      "from": "fact-fff1",
+      "to": "fact-bb2",
+      "relation": "interpreted-by-sdk-as"
+    },
+    {
+      "from": "fact-bb2",
+      "to": "question-soc",
+      "relation": "does-not-resolve"
+    },
+    {
+      "from": "device-t60",
+      "to": "question-peripherals",
+      "relation": "requires-identification"
+    },
+    {
+      "from": "device-t60",
+      "to": "question-recovery",
+      "relation": "requires"
+    },
+    {
+      "from": "iface-ota",
+      "to": "question-signing",
+      "relation": "does-not-prove-unlocked"
+    },
+    {
+      "from": "fact-fcc",
+      "to": "source-fcc",
+      "relation": "related-evidence"
+    },
+    {
+      "from": "fact-fff1",
+      "to": "source-work",
+      "relation": "observed-in"
+    },
+    {
+      "from": "fact-bb2",
+      "to": "source-work",
+      "relation": "reported-in"
+    },
+    {
+      "from": "iface-ota",
+      "to": "source-realtek",
+      "relation": "protocol-lead"
+    },
+    {
+      "from": "question-soc",
+      "to": "source-devguide",
+      "relation": "research-lead"
+    },
+    {
+      "from": "component-bsp",
+      "to": "question-soc",
+      "relation": "blocked-by"
+    },
+    {
+      "from": "component-bsp",
+      "to": "question-peripherals",
+      "relation": "blocked-by"
+    },
+    {
+      "from": "component-ui",
+      "to": "component-bsp",
+      "relation": "will-integrate-with"
+    },
+    {
+      "from": "decision-safe",
+      "to": "question-recovery",
+      "relation": "requires-resolution"
+    },
+    {
+      "from": "decision-safe",
+      "to": "question-signing",
+      "relation": "requires-resolution"
+    },
+    {
+      "from": "milestone-feasibility",
+      "to": "question-soc",
+      "relation": "requires"
+    },
+    {
+      "from": "milestone-feasibility",
+      "to": "question-recovery",
+      "relation": "requires"
+    },
+    {
+      "from": "milestone-feasibility",
+      "to": "question-signing",
+      "relation": "requires"
+    },
+    {
+      "from": "decision-owner",
+      "to": "device-t60",
+      "relation": "governs"
+    },
+    {
+      "from": "decision-kg",
+      "to": "device-t60",
+      "relation": "indexes"
+    },
+    {
+      "from": "decision-kg",
+      "to": "component-ui",
+      "relation": "indexes"
+    }
+  ]
+}
