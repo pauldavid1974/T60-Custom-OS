@@ -1,0 +1,21 @@
+name: Verify documentation graph and portable core
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate knowledge graph
+        run: python3 tools/kg.py validate
+      - name: Test knowledge search
+        run: python3 -m unittest discover -s tests -v
+      - name: Build portable firmware logic (HOST ONLY)
+        run: cmake -S firmware -B build/host && cmake --build build/host
+      - name: Unit test portable firmware logic
+        run: ctest --test-dir build/host --output-on-failure
