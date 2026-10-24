@@ -358,6 +358,213 @@
         "docs/ROADMAP.md",
         "docs/RECOVERY.md"
       ]
+    },
+    {
+      "id": "model-qwen38-27b",
+      "kind": "component",
+      "certainty": "documented",
+      "title": "Qwen3.8-27B post-trained agent model",
+      "summary": "Official Qwen/Qwen3.8-27B is a post-trained 27B multimodal model with native 262,144-token context; usable for coding and tool-based agent work with appropriate harness.",
+      "tags": [
+        "qwen",
+        "qwen3.8",
+        "27b",
+        "model",
+        "post-trained",
+        "agent"
+      ],
+      "refs": [
+        "docs/QWEN38_AGENT_GUIDE.md",
+        "https://huggingface.co/Qwen/Qwen3.8-27B"
+      ]
+    },
+    {
+      "id": "runtime-engine-room",
+      "kind": "component",
+      "certainty": "inferred",
+      "title": "Engine Room with RunPod or Colab",
+      "summary": "Paul's model-serving bridge supplies Qwen to a local agent harness. Current inference engine, quantization, model ID, tool parser, and context settings have not been independently audited in this repository.",
+      "tags": [
+        "engine room",
+        "runpod",
+        "colab",
+        "gpu",
+        "harness",
+        "endpoint"
+      ],
+      "refs": [
+        "docs/QWEN38_AGENT_GUIDE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "fact-qwen-thinking",
+      "kind": "fact",
+      "certainty": "documented",
+      "title": "Qwen3.8 thinking, effort and sampling",
+      "summary": "Qwen3.8 defaults to thinking; official reasoning_effort offers low/medium/xhigh; vendor sampling recommendations differ between thinking and non-thinking. Test actual runtime support.",
+      "tags": [
+        "qwen",
+        "reasoning",
+        "thinking",
+        "xhigh",
+        "medium",
+        "low",
+        "sampling"
+      ],
+      "refs": [
+        "docs/QWEN38_AGENT_GUIDE.md",
+        "https://huggingface.co/Qwen/Qwen3.8-27B"
+      ]
+    },
+    {
+      "id": "iface-qwen-tools",
+      "kind": "interface",
+      "certainty": "documented",
+      "title": "Qwen tool-calling serving interface",
+      "summary": "For vLLM, documented Qwen3.8 options use qwen3 reasoning parser, qwen3_coder tool parser and auto tool choice; harness must support OpenAI-compatible tools and pass results back.",
+      "tags": [
+        "qwen",
+        "tool",
+        "vllm",
+        "parser",
+        "engine room",
+        "opencode"
+      ],
+      "refs": [
+        "docs/QWEN38_AGENT_GUIDE.md",
+        "https://recipes.vllm.ai/Qwen/Qwen3.8-27B",
+        "https://opencode.ai/v2/docs/models"
+      ]
+    },
+    {
+      "id": "decision-qwen-assignments",
+      "kind": "decision",
+      "certainty": "documented",
+      "title": "Bounded evidence-driven Qwen assignments",
+      "summary": "Project workflow: one goal, exact files, known/unknown evidence, safe scope, tests, reporting and stop conditions; no open-ended self-approval of live-watch actions.",
+      "tags": [
+        "qwen",
+        "prompt",
+        "delegation",
+        "checklist",
+        "agent",
+        "instructions"
+      ],
+      "refs": [
+        "docs/QWEN38_AGENT_GUIDE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "decision-qwen-cost",
+      "kind": "decision",
+      "certainty": "documented",
+      "title": "Measure Qwen cost and context budgets",
+      "summary": "Project recommendation: search graph for relevant material, keep prompt bounded, measure VRAM/output/throughput and retries before changing quantization or reasoning effort.",
+      "tags": [
+        "gpu",
+        "cost",
+        "runpod",
+        "colab",
+        "context",
+        "tokens",
+        "qwen"
+      ],
+      "refs": [
+        "docs/QWEN38_AGENT_GUIDE.md"
+      ]
+    },
+    {
+      "id": "question-qwen-serving",
+      "kind": "question",
+      "certainty": "unknown",
+      "title": "Current Engine Room Qwen serving settings",
+      "summary": "Check exact checkpoint alias, precision, max_model_len, exposed tool calls and reasoning parser by harmless local smoke tests before reconfiguring the endpoint.",
+      "tags": [
+        "engine room",
+        "qwen",
+        "endpoint",
+        "tool calling",
+        "runtime",
+        "open"
+      ],
+      "refs": [
+        "docs/QWEN38_AGENT_GUIDE.md"
+      ]
+    },
+    {
+      "id": "issue-agent-hook",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "Local agent commit hook failure",
+      "summary": "User shared git commit failure involving PreToolUse and a missing .claude PowerShell .ps1 hook; staged work may remain local. Do not bypass security hooks or claim successful push.",
+      "tags": [
+        "hook",
+        "git",
+        "qwen",
+        "pretooluse",
+        "powershell",
+        "failure",
+        "safety"
+      ],
+      "refs": [
+        "docs/QWEN38_AGENT_GUIDE.md"
+      ]
+    },
+    {
+      "id": "source-qwen-card",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "Official Qwen3.8-27B model card",
+      "summary": "Post-training status, thinking and reasoning-effort parameters, context limit and recommended sampling.",
+      "tags": [
+        "qwen",
+        "model card",
+        "vendor",
+        "source",
+        "research"
+      ],
+      "refs": [
+        "https://huggingface.co/Qwen/Qwen3.8-27B",
+        "docs/QWEN38_AGENT_GUIDE.md"
+      ]
+    },
+    {
+      "id": "source-vllm-qwen",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "vLLM Qwen3.8 recipe",
+      "summary": "Serving parser settings, tool calling and deployment/precision examples; specific Engine Room applicability unverified.",
+      "tags": [
+        "vllm",
+        "qwen",
+        "serve",
+        "source",
+        "tool calling"
+      ],
+      "refs": [
+        "https://recipes.vllm.ai/Qwen/Qwen3.8-27B",
+        "docs/QWEN38_AGENT_GUIDE.md"
+      ]
+    },
+    {
+      "id": "source-opencode-provider",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "OpenCode custom server integration",
+      "summary": "OpenAI-compatible provider configuration and warnings that runtime discovery may not detect tool support.",
+      "tags": [
+        "opencode",
+        "harness",
+        "tools",
+        "provider",
+        "source"
+      ],
+      "refs": [
+        "https://opencode.ai/v2/docs/models",
+        "docs/QWEN38_AGENT_GUIDE.md"
+      ]
     }
   ],
   "edges": [
@@ -489,6 +696,81 @@
     {
       "from": "decision-kg",
       "to": "component-ui",
+      "relation": "indexes"
+    },
+    {
+      "from": "model-qwen38-27b",
+      "to": "source-qwen-card",
+      "relation": "documented-by"
+    },
+    {
+      "from": "model-qwen38-27b",
+      "to": "fact-qwen-thinking",
+      "relation": "supports"
+    },
+    {
+      "from": "model-qwen38-27b",
+      "to": "iface-qwen-tools",
+      "relation": "uses"
+    },
+    {
+      "from": "model-qwen38-27b",
+      "to": "runtime-engine-room",
+      "relation": "served-by"
+    },
+    {
+      "from": "runtime-engine-room",
+      "to": "question-qwen-serving",
+      "relation": "requires-verification"
+    },
+    {
+      "from": "iface-qwen-tools",
+      "to": "source-vllm-qwen",
+      "relation": "documented-by"
+    },
+    {
+      "from": "iface-qwen-tools",
+      "to": "source-opencode-provider",
+      "relation": "integration-reference"
+    },
+    {
+      "from": "fact-qwen-thinking",
+      "to": "source-qwen-card",
+      "relation": "documented-by"
+    },
+    {
+      "from": "decision-qwen-assignments",
+      "to": "model-qwen38-27b",
+      "relation": "guides"
+    },
+    {
+      "from": "decision-qwen-assignments",
+      "to": "decision-safe",
+      "relation": "must-obey"
+    },
+    {
+      "from": "decision-qwen-assignments",
+      "to": "decision-owner",
+      "relation": "must-obey"
+    },
+    {
+      "from": "decision-qwen-cost",
+      "to": "runtime-engine-room",
+      "relation": "optimizes"
+    },
+    {
+      "from": "decision-qwen-assignments",
+      "to": "issue-agent-hook",
+      "relation": "must-account-for"
+    },
+    {
+      "from": "model-qwen38-27b",
+      "to": "milestone-feasibility",
+      "relation": "supports-research"
+    },
+    {
+      "from": "decision-kg",
+      "to": "decision-qwen-assignments",
       "relation": "indexes"
     }
   ]
