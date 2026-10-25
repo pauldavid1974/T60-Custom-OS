@@ -54,7 +54,7 @@
       "kind": "interface",
       "certainty": "observed",
       "title": "BLE GATT service enumeration",
-      "summary": "Observed full GATT tree via nRF Connect CLIENT view 2026-10-25 (T60 60:1A:B7:00:AE:67, connected/bonded), list order: 0x1801 Generic Attribute; 0x1800 Generic Access; 0x55FF; 0x56FF; 0x60FF; 0x61FF; 0x180F Battery Service (Battery Level 0x2A19 READ+NOTIFY, CCCD 0x2902); service 0000d0ff-3c17-d293-8e48-14fe2e4da212 with characteristics 0xFFD1 (WRITE NO RESPONSE), 0xFFD2/FFD3/FFD4/FFF1/FFE0/FFE1/FFF3/FFF4/FFF5 (all READ, no NOTIFY/INDICATE); 00006287-3c17-d293-8e48-14fe2e4da212 and 000002fd-3c17-d293-8e48-14fe2e4da212 (collapsed, not enumerated). 128-bit service 6a24eeab-4b65-4693-986b-3c26c352264f is not a GATT service (SPP only).",
+      "summary": "Observed full GATT tree via nRF Connect CLIENT view 2026-10-25 (T60 60:1A:B7:00:AE:67, connected/bonded), list order: 0x1801 Generic Attribute (no characteristics); 0x1800 Generic Access (no characteristics); 0x55FF (0x33F1 READ+WRITE; 0x33F2 NOTIFY+CCCD); 0x56FF (0x34F1 READ+WRITE NO RESPONSE; 0x34F2 NOTIFY+CCCD); 0x60FF and 0x61FF (expanded, characteristics not yet read from captured view); 0x180F Battery Service (Battery Level 0x2A19 READ+NOTIFY = 100%, CCCD 0x2902); service 0000d0ff-3c17-d293-8e48-14fe2e4da212 with 16-bit-base characteristics 0xFFD1 (WRITE NO RESPONSE), 0xFFD2/FFD3/FFD4/FFF1/FFE0/FFE1/FFF3/FFF4/FFF5 (all READ, no NOTIFY/INDICATE); 00006287-3c17-d293-8e48-14fe2e4da212 (0x6387 WRITE NO RESPONSE; 0x6487 NOTIFY+WRITE + CCCD); 000002fd-3c17-d293-8e48-14fe2e4da212 (0xFD03 WRITE+WRITE NO RESPONSE; 0xFD04 NOTIFY + CCCD; no READ characteristics). 128-bit service 6a24eeab-4b65-4693-986b-3c26c352264f is not a GATT service (SPP only).",
       "tags": [
         "ble",
         "bluetooth",
@@ -89,7 +89,7 @@
       "kind": "fact",
       "certainty": "observed",
       "title": "FFF1 device information response",
-      "summary": "Observed 13-byte payload: 0B 01 1D 00 51 01 00 F7 00 00 00 00 00, first via the Work session and independently re-confirmed 2026-10-25 by a live READ of characteristic 0xFFF1 in service 0000d0ff-3c17-d293-8e48-14fe2e4da212 using the explicit Read control of nRF Connect (screenshots + uiautomator dumps, stored outside Git). The SDK independently documents IC_BB2 = 0x0B, but no explicit 13-byte FFF1 parser links this response to the SDK icId field; byte 0 field role stays inferred, bytes 1-12 unknown.",
+      "summary": "Observed 13-byte payload: 0B 01 1D 00 51 01 00 F7 00 00 00 00 00, first via the Work session and independently re-confirmed 2026-10-25 by a live READ of characteristic 0xFFF1 in service 0000d0ff-3c17-d293-8e48-14fe2e4da212 using the explicit Read control of nRF Connect (screenshots + uiautomator dumps, stored outside Git). Corrected 2026-10-25: the SDK contains an explicit parser (DeviceInfo.parseX0000, see fact-fff1-parser) whose byte 0 is the IC type; byte 0 = 0x0B = IC_BB2 is documented by that parser, and the full payload decodes under its specVersion=1 layout (secureVersion 0x1D, mode 0, maxBufferCheckSize 0x0151, otaTempBufferSize 0, imageVersionIndicator 0; byte 7 unused) as inferred-strong given the exact GATT layout match.",
       "tags": [
         "ble",
         "read",
@@ -108,7 +108,7 @@
       "kind": "fact",
       "certainty": "inferred",
       "title": "FFF1 byte 0 may be the Realtek IC ID",
-      "summary": "FFF1 byte 0 is observed as 0x0B, and the GloryFit SDK maps IC_BB2 to 0x0B and separately has an OTA icId field. No parser links FFF1 to that field, so this is a plausible but unverified interpretation; bytes 1-12 remain unknown.",
+      "summary": "FFF1 byte 0 is observed as 0x0B and the GloryFit SDK maps IC_BB2 to 0x0B. Corrected 2026-10-25: the earlier 'no parser' gap is closed — DeviceInfo.parseX0000 (see fact-fff1-parser) explicitly reads byte 0 as the IC type, and the T60's live GATT layout exactly matches the SDK default profile, so this interpretation is now strong; the exact end-to-end invocation path for this characteristic (GATT FFF1 read vs X0000 command response) is not yet traced, so the label stays inferred.",
       "tags": [
         "fff1",
         "icid",
@@ -270,11 +270,12 @@
       "kind": "source",
       "certainty": "documented",
       "title": "FCC T60 internal photos",
-      "summary": "Public device filing and internal images; potential hardware identification lead.",
+      "summary": "Public filing for FCC ID 2BEQO-T60 (retrieved 2026-10-25): applicant SHENZHEN HAOCHENG TECHNOLOGY CO.,LTD (grantee 2BEQO), product T60 SmartWatch, filed 2024-02-06, tested by SHENZHEN TONGCE TESTING LAB, 2402-2480 MHz; exhibits include internal photos (Internal-photo-7108448), external photos, label and user manual. Direct PDF download from fccid.io is Cloudflare-blocked; page-listed mirrors (fcc.id, gov.fccid.io, fccid.ai) not yet tried. Primary lead for chip markings.",
       "tags": [
         "fcc",
         "source",
-        "internal-photos"
+        "internal-photos",
+        "manufacturer"
       ],
       "refs": [
         "https://fccid.io/2BEQO-T60/Internal-Photos/Internal-photo-7108448"
@@ -751,7 +752,7 @@
       "kind": "fact",
       "certainty": "documented",
       "title": "RealSil SDK GATT map matches observed T60 UUIDs",
-      "summary": "The RealSil SDK in GloryFit v4.0.12 defaults its DFU GATT to service 0000d0ff-3c17-d293-8e48-14fe2e4da212 (exactly the observed T60 service) with characteristics 00006287/6387/6487 (same 128-bit base), MTU 256. Per-profile classes define 16-bit characteristics fff1/fff2 (and m.o pairs d0ff with fff3); ExtendedBluetoothDevice scans on fff6; classes6.dex defines services 55ff/56ff/57ff and characteristics fff0, ffd0-ffd5, ffd8. The observed 128-bit service 6a24eeab-4b65-4693-986b-3c26c352264f is the SDK's WELL_KNOWN_SPP_UUID (SPP transport). Observed 60FF/61FF services are absent from SDK string constants; their origin is unknown.",
+      "summary": "The RealSil SDK in GloryFit v4.0.12 defaults its DFU GATT to exactly the observed T60 layout (m.o clinit): OTA service 0000d0ff-3c17-d293-8e48-14fe2e4da212 with OTA characteristic 0000fff3-0000-1000-8000-00805f9b34fb (16-bit base) plus FFD0; DFU service 00006287-3c17-... with 00006387-3c17-... (write) and 00006487-3c17-... (notify); CCCD 0x2902; MTU 256. Default profile r (r.g) declares the 6287-3c17 service set {6287,6387,6487,6587} and (r.h) the D0FF-family 16-bit characteristics {FFD1-FFD5, FFD8, FFF1, FFF2}; the observed T60 GATT is an exact subset of this layout, with 3c17-d293-8e48-14fe2e4da212 as Realtek's vendor 128-bit base. ExtendedBluetoothDevice scans on fff6; classes6.dex defines services 55ff/56ff/57ff and characteristics fff0, ffd0-ffd5, ffd8. The observed 128-bit service 6a24eeab-4b65-4693-986b-3c26c352264f is the SDK's WELL_KNOWN_SPP_UUID (SPP transport). Observed 60FF/61FF services are absent from SDK string constants; their origin is unknown.",
       "tags": [
         "gatt",
         "uuid",
@@ -817,6 +818,98 @@
         "read",
         "d0ff",
         "bytes"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-fff1-parser",
+      "kind": "fact",
+      "certainty": "documented",
+      "title": "SDK device-info parser DeviceInfo.parseX0000",
+      "summary": "Documented in GloryFit v4.0.12 classes5.dex (mission 2ae9057 trace): com.realsil.sdk.dfu.model.DeviceInfo.parseX0000:([BI)V (dex addr 3dd98c) parses a LITTLE_ENDIAN buffer: byte 0 = icType, byte 1 & 0x0F = specVersion; specVersion==1 path (the T60's): byte 2 = secureVersion, byte 3 = mode, bytes 4-5 = maxBufferCheckSize (LE16), byte 6 = otaTempBufferSize, bytes 8-11 = imageVersionIndicator (LE32), byte 7 unread; specVersion==0 and >=2 paths handle bank/appData and two extra 16-bit fields. Called from profile handlers (r/a, y/a) on X0000 data. Applying it to the observed T60 FFF1 payload yields icType 0x0B (BB2), specVersion 1, secureVersion 0x1D, mode 0, maxBufferCheckSize 0x0151, otaTempBufferSize 0, imageVersionIndicator 0 (inferred-strong: exact GATT layout match, invocation path not fully traced).",
+      "tags": [
+        "fff1",
+        "parser",
+        "deviceinfo",
+        "realtek",
+        "sdk",
+        "gloryfit"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-ic-name-map",
+      "kind": "fact",
+      "certainty": "documented",
+      "title": "SDK IC-type to product-line name map",
+      "summary": "Documented in GloryFit v4.0.12 classes5.dex: DfuConstants defines IC_BEE1=0x03, IC_BBPRO=0x04, IC_BEE2=0x05, IC_BBLITE_ANC=0x06, IC_BBPRO2=0x07, IC_BBLITE=0x08, IC_SBEE2=0x09, IC_BBPRO3=0x0A, IC_BB2=0x0B, IC_BEE3=0x0C and MANUFACTURER_ID_REALTEK=0x5D (Realtek Bluetooth SIG company ID). The name mapper com.realsil.sdk.dfu.l.a.a(I) extends the line: 13=BBLITE_2, 14=BEE3_PRO, 15=BEE4, 16=BEE3_PLUS, 17=BB2_PLUS, 18=BEE5, 19=BB2_ULTRA, 20=BB3. BB2 is a multi-generation Realtek product line, not an RTL part number.",
+      "tags": [
+        "bb2",
+        "realtek",
+        "ic-type",
+        "product-line",
+        "sdk"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-protocol-default",
+      "kind": "fact",
+      "certainty": "documented",
+      "title": "App uses the SDK default (r) DFU profile for this device",
+      "summary": "Documented in GloryFit v4.0.12 classes5.dex: the sub-adapter factory com.realsil.sdk.dfu.utils.a.c(I) selects the DFU profile by 16-bit protocolType (0x10=s, 0x12=n, 0x13=o, 0x14=p, 0x15=q, default=r, with a local-name BeeTgt02 flag), and DeviceInfo.setProtocolType is never invoked in any of the 8 dex files (string and reference scan), so protocolType stays 0 and the default r profile runs — its UUID set (6287-3c17 service 6387/6487/6587; D0FF-family FFD1-5/FFD8/FFF1/FFF2 16-bit) is exactly the observed T60 layout. The image loader FirmwareLoaderX.loadImageBinInfo dispatches per-chip parsers (n/c, p/c, q/c, v/c, s/e|s/f, x/h|i|j) by the same keys with default k/f; no firmware blobs ship in the APK (runtime image loading keyed by protocolType/specVersion/icType/imageId).",
+      "tags": [
+        "dfu",
+        "profile",
+        "protocol-type",
+        "realtek",
+        "sdk",
+        "image-loader"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-fcc-manufacturer",
+      "kind": "fact",
+      "certainty": "documented",
+      "title": "FCC filing applicant: Shenzhen Haocheng Technology",
+      "summary": "Documented (fccid.io, retrieved 2026-10-25): FCC ID 2BEQO-T60 was filed 2024-02-06 by SHENZHEN HAOCHENG TECHNOLOGY CO.,LTD (grantee 2BEQO) for the T60 SmartWatch, tested by SHENZHEN TONGCE TESTING LAB, 2402-2480 MHz. Exhibits include internal photos (Internal-photo-7108448), external photos, label and user manual. Direct PDF download is Cloudflare-blocked; mirrors (fcc.id, gov.fccid.io, fccid.ai) untried. Does not by itself identify the SoC.",
+      "tags": [
+        "fcc",
+        "manufacturer",
+        "haocheng",
+        "identification"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-live-reads-2",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "Second live read batch (2026-10-25)",
+      "summary": "Observed 2026-10-25 via the same verified nRF Connect method (screenshots 11-37, ui8.xml-ui29.xml stored outside Git): FFD2 = 60 1A B7 00 AE 67 60 1A B7 00 AE 67 (connected-device address repeated twice; role inferred); FFD3, FFD4, FFE1, FFF5 = empty (visible Value rows, 0 bytes; FFD3/FFD4 read twice); FFE0 = 74-byte code-like blob; FFF4 = 55-byte code-like blob (pattern resembles ARM Thumb words; no SDK payload definition, meaning unknown); Battery 0x2A19 = 100% (0x64). 00006287-3c17 enumerated: 0x6387 WRITE NO RESPONSE, 0x6487 NOTIFY+WRITE + CCCD (no 6587). 000002fd-3c17 enumerated: 0xFD03 WRITE+WRITE NO RESPONSE, 0xFD04 NOTIFY + CCCD, no READ characteristics. 0x1801/0x1800 have no characteristics; 0x55FF = 0x33F1 READ+WRITE, 0x33F2 NOTIFY+CCCD; 0x56FF = 0x34F1 READ+WRITE NO RESPONSE, 0x34F2 NOTIFY+CCCD; 0x60FF/0x61FF expanded, characteristics not yet read. No writes or subscriptions.",
+      "tags": [
+        "gatt",
+        "read",
+        "nrf-connect",
+        "inventory",
+        "d0ff",
+        "battery"
       ],
       "refs": [
         "docs/HARDWARE.md",
@@ -1148,6 +1241,86 @@
     {
       "from": "source-nrf-capture",
       "to": "fact-nrf-phone-gatt",
+      "relation": "related-evidence"
+    },
+    {
+      "from": "fact-fff1",
+      "to": "fact-fff1-parser",
+      "relation": "decoded-by"
+    },
+    {
+      "from": "fact-fff1-parser",
+      "to": "fact-bb2",
+      "relation": "byte0-maps-to"
+    },
+    {
+      "from": "fact-fff1-parser",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "inference-fff1-byte0-icid",
+      "to": "fact-fff1-parser",
+      "relation": "strengthened-by"
+    },
+    {
+      "from": "fact-ic-name-map",
+      "to": "fact-bb2",
+      "relation": "context-for"
+    },
+    {
+      "from": "fact-ic-name-map",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-ic-name-map",
+      "to": "question-soc",
+      "relation": "does-not-resolve"
+    },
+    {
+      "from": "fact-protocol-default",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-protocol-default",
+      "to": "fact-sdk-gatt-map",
+      "relation": "selects-profile"
+    },
+    {
+      "from": "fact-protocol-default",
+      "to": "iface-ota",
+      "relation": "governs"
+    },
+    {
+      "from": "fact-fcc-manufacturer",
+      "to": "source-fcc",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-fcc-manufacturer",
+      "to": "device-t60",
+      "relation": "filing-of"
+    },
+    {
+      "from": "fact-fcc-manufacturer",
+      "to": "question-soc",
+      "relation": "does-not-resolve"
+    },
+    {
+      "from": "fact-live-reads-2",
+      "to": "source-nrf-capture",
+      "relation": "observed-in"
+    },
+    {
+      "from": "fact-live-reads-2",
+      "to": "iface-gatt",
+      "relation": "extends"
+    },
+    {
+      "from": "fact-live-reads-2",
+      "to": "question-app-protocol",
       "relation": "related-evidence"
     }
   ]
