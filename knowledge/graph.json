@@ -7,7 +7,7 @@
       "kind": "device",
       "certainty": "observed",
       "title": "Physical T60 smartwatch",
-      "summary": "Paul's T60 watch; FCC ID 2BEQO-T60; factory firmware V007108. Exact SoC and board unknown.",
+      "summary": "Paul's T60 watch; FCC ID 2BEQO-T60; factory firmware V007108; observed main SoC Realtek RTL8763EWE + Puya PY25Q128HA (16 MB SPI NOR Flash) on PCB RH235_V02 / PH235_V02.",
       "tags": [
         "t60",
         "watch",
@@ -108,7 +108,7 @@
       "kind": "fact",
       "certainty": "inferred",
       "title": "FFF1 byte 0 may be the Realtek IC ID",
-      "summary": "FFF1 byte 0 is observed as 0x0B and the GloryFit SDK maps IC_BB2 to 0x0B. Corrected 2026-10-25: the earlier 'no parser' gap is closed — DeviceInfo.parseX0000 (see fact-fff1-parser) explicitly reads byte 0 as the IC type, and the T60's live GATT layout exactly matches the SDK default profile, so this interpretation is now strong; the exact end-to-end invocation path for this characteristic (GATT FFF1 read vs X0000 command response) is not yet traced, so the label stays inferred.",
+      "summary": "FFF1 byte 0 is observed as 0x0B and the GloryFit SDK maps IC_BB2 to 0x0B. Corrected 2026-10-25: the earlier 'no parser' gap is closed \u2014 DeviceInfo.parseX0000 (see fact-fff1-parser) explicitly reads byte 0 as the IC type, and the T60's live GATT layout exactly matches the SDK default profile, so this interpretation is now strong; the exact end-to-end invocation path for this characteristic (GATT FFF1 read vs X0000 command response) is not yet traced, so the label stays inferred.",
       "tags": [
         "fff1",
         "icid",
@@ -162,8 +162,8 @@
       "id": "fact-rtl8773ewe-capability",
       "kind": "fact",
       "certainty": "documented",
-      "title": "T60 RTL8773EWE app capability bit is clear",
-      "summary": "GloryFit v4.0.12 classes6.dex defines IS_PLATFORM_RK_RTL8773EWE = 0x00020000; DevicePlatform.isRKPlatform8773 tests it in function list 13. BluetoothLeService$7.onCharacteristicRead directly matches 34F1 and, for 20 bytes, parses bytes 2-4 as big-endian function list 13. Observed T60 bytes 2-4 are 00 00 00, so the value is 0 and isRKPlatform8773 evaluates false for the captured state. This device-specific app-capability negative does not identify the actual SoC or prove a broader physical exclusion.",
+      "title": "T60 capability decode: IS_PLATFORM_RTL8762Cx + BT3_0_AGREEMENT (63E) set; RTL8773EWE clear",
+      "summary": "GloryFit v4.0.12 classes6.dex BluetoothLeService$7 parses 33F1 into FunctionList 1..7 and 34F1 into maxCommunicationLength (0x00F4 = 244) plus FunctionList 8..13. On Paul's T60, FunctionList 7 = 0x0808 sets IS_PLATFORM_RTL8762Cx (0x0800) and IS_SUPPORT_SLEEP_REM (0x0008); FunctionList 5 = 0x243943 sets IS_SUPPORT_BT3_0_AGREEMENT (0x040000, invoking WriteCommandToBLE.sendBt3AgreementCommand which tracks RTL8763E / 63E audio pairing via SPUtil.getNeedToRegenerateRandom63E); FunctionList 13 = 0x000000 leaves IS_PLATFORM_RK_RTL8773EWE clear. In classes5.dex (UTF-16LE), 000002FD-3C17-D293-8E48-14FE2E4DA212 is documented as com.realsil.sdk.bbpro.core.gatt.GattTransportConnParams.",
       "tags": [
         "rtl8773ewe",
         "34f1",
@@ -173,7 +173,8 @@
       ],
       "refs": [
         "docs/HARDWARE.md",
-        "HANDOFF.md"
+        "HANDOFF.md",
+        "docs/PROTOCOL.md"
       ]
     },
     {
@@ -181,7 +182,7 @@
       "kind": "source",
       "certainty": "documented",
       "title": "Public Realtek RTL87x3E Common SDK",
-      "summary": "Realtek's public SDK README identifies only the RTL87x3E series and links RTL8763E-series documentation. Its GCC sample uses Cortex-M3/Thumb flags and Realtek post-build/header tools. No evidence ties this SDK or its memory constants to Paul's T60; the watch's GloryFit RTL8773EWE app capability is clear. Comparison lead only, not documented compatibility.",
+      "summary": "Realtek's public RTL87x3E-Common-SDK targets the RTL87x3E / RTL8763E series, which matches the physical REALTEK RTL8763EWE SoC observed on the T60 mainboard in FCC exhibit Internal-photo-7108448 Page 3.",
       "tags": [
         "realtek",
         "rtl87x3e",
@@ -197,9 +198,9 @@
     {
       "id": "question-soc",
       "kind": "question",
-      "certainty": "unknown",
-      "title": "Exact SoC and memory map",
-      "summary": "Exact RTL part, RAM/flash, board revision and matching build SDK remain Unknown after FCC/mirror retrieval failures, offline GloryFit analysis and all authorized reads. BB2 remains only a product-line clue; the RTL8773EWE app capability is clear. Next smallest diagnostic is a readable exact-FCC internal-photo PDF supplied for offline inspection; physical inspection requires separate approval.",
+      "certainty": "observed",
+      "title": "Exact SoC and external flash identified: Realtek RTL8763EWE + Puya PY25Q128HA (16 MB)",
+      "summary": "Observed on FCC Internal-photo-7108448 Page 3 (fcc/chip-pic.png, 2026-10-25): Main SoC is REALTEK RTL8763EWE (N8AT8H1 / GN33 TAIWAN, 40.0 MHz crystal) and external flash is PUYA PY25Q128HA (3H1PP2D, 128 Mbit = 16 MB SPI NOR Flash) on PCB revision RH235_V02 / PH235_V02. Matches FFF1 icType 0x0B (IC_BB2), GloryFit 63E BT3 pairing path, and public Realtek RTL87x3E-Common-SDK.",
       "tags": [
         "soc",
         "rtl",
@@ -323,9 +324,9 @@
     {
       "id": "source-fcc",
       "kind": "source",
-      "certainty": "documented",
+      "certainty": "observed",
       "title": "FCC T60 internal photos",
-      "summary": "Public filing for FCC ID 2BEQO-T60 identifies the four-page Internal-photo-7108448 exhibit, but no photo or chip marking was obtained in the 2026-10-25 Kimi Work pass. Paul reported an unworkable CAPTCHA and instructed against .gov access. Candidate device.report document 316f5b0cc706625ffa3e3bc2fec40a5de7648d54faf0d04f670d7b5e336b8b5b and corresponding manuals.plus URL returned HTTP 403; fccinsights.com returned HTTP 429 and was not retried. Candidate contents remain unverified. A readable exact-exhibit PDF supplied manually is the smallest next diagnostic.",
+      "summary": "Page 3 of 4 of FCC ID 2BEQO-T60 Internal-photo-7108448 retrieved by Paul (2026-10-25, fcc/chip-pic.png and fcc/fcc-details.png). Legibly shows REALTEK RTL8763EWE (N8AT8H1, GN33 TAIWAN), PUYA PY25Q128HA (16 MB SPI NOR Flash), 40.0 MHz crystal, 3V3 pad, and PCB silkscreen RH235_V02 / PH235_V02.",
       "tags": [
         "fcc",
         "source",
@@ -717,9 +718,9 @@
     {
       "id": "question-app-protocol",
       "kind": "question",
-      "certainty": "unknown",
-      "title": "GloryFit to T60 protocol and companion replacement requirements",
-      "summary": "Trace the installed GloryFit app's protocol code against observed T60 GATT services and readable values; identify required app/watch behaviors without changing device state.",
+      "certainty": "documented",
+      "title": "GloryFit to T60 BLE & BT3 audio protocol decoded",
+      "summary": "Decoded in docs/PROTOCOL.md and implemented in tools/t60_control.py: T60 requires zero pairing password or account binding (IS_SUPPORT_PASS_WORD_PAIR=0, IS_SUPPORT_ACCOUNT_ID_BIND=0, IS_SUPPORT_ACCOUNT_ID_BIND_NEW=0). Commands on 33F1/34F1 cover time sync (0xA3), version (0xA1), battery (0xA2), find watch (0xAB), notification text chunks (0xC5), steps (0xB2 FA), sleep (0x31 01), live HR (0xE5), custom watchface background (0x26 0A/0B), and Classic BT 3.0 speaker/mic control (0x38 02).",
       "tags": [
         "gloryfit",
         "companion-app",
@@ -730,7 +731,10 @@
       "refs": [
         "docs/HARDWARE.md",
         "docs/PRODUCT.md",
-        "HANDOFF.md"
+        "HANDOFF.md",
+        "docs/PROTOCOL.md",
+        "tools/t60_control.py",
+        "tests/test_t60_control.py"
       ]
     },
     {
@@ -928,7 +932,7 @@
       "kind": "fact",
       "certainty": "documented",
       "title": "App uses the SDK default (r) DFU profile for this device",
-      "summary": "Documented in GloryFit v4.0.12 classes5.dex: the sub-adapter factory com.realsil.sdk.dfu.utils.a.c(I) selects the DFU profile by 16-bit protocolType (0x10=s, 0x12=n, 0x13=o, 0x14=p, 0x15=q, default=r, with a local-name BeeTgt02 flag), and DeviceInfo.setProtocolType is never invoked in any of the 8 dex files (string and reference scan), so protocolType stays 0 and the default r profile runs — its UUID set (6287-3c17 service 6387/6487/6587; D0FF-family FFD1-5/FFD8/FFF1/FFF2 16-bit) is exactly the observed T60 layout. The image loader FirmwareLoaderX.loadImageBinInfo dispatches per-chip parsers (n/c, p/c, q/c, v/c, s/e|s/f, x/h|i|j) by the same keys with default k/f; no firmware blobs ship in the APK (runtime image loading keyed by protocolType/specVersion/icType/imageId).",
+      "summary": "Documented in GloryFit v4.0.12 classes5.dex: the sub-adapter factory com.realsil.sdk.dfu.utils.a.c(I) selects the DFU profile by 16-bit protocolType (0x10=s, 0x12=n, 0x13=o, 0x14=p, 0x15=q, default=r, with a local-name BeeTgt02 flag), and DeviceInfo.setProtocolType is never invoked in any of the 8 dex files (string and reference scan), so protocolType stays 0 and the default r profile runs \u2014 its UUID set (6287-3c17 service 6387/6487/6587; D0FF-family FFD1-5/FFD8/FFF1/FFF2 16-bit) is exactly the observed T60 layout. The image loader FirmwareLoaderX.loadImageBinInfo dispatches per-chip parsers (n/c, p/c, q/c, v/c, s/e|s/f, x/h|i|j) by the same keys with default k/f; no firmware blobs ship in the APK (runtime image loading keyed by protocolType/specVersion/icType/imageId).",
       "tags": [
         "dfu",
         "profile",

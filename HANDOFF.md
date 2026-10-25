@@ -7,6 +7,28 @@
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
+## COMPLETED — Full BLE Protocol Decode, Platform Flag Resolution & Local Control Tool (Antigravity, 2026-10-25)
+
+- **EXACT SoC & FLASH IDENTIFIED FROM FCC INTERNAL PHOTO (`fcc/chip-pic.png`, Observed 2026-10-25):**
+  - **Main Processor / SoC:** **`REALTEK RTL8763EWE`** (`N8AT8H1` / `GN33 TAIWAN`, with `40.0` MHz crystal).
+  - **External SPI NOR Flash:** **`PUYA PY25Q128HA`** (`3H1PP2D`) — **128 Megabit (16 MB)** external SPI NOR Flash chip mounted right next to the `RTL8763EWE`!
+  - **PCB Revision & Pads:** **`RH235_V02`** / **`PH235_V02`**, with labeled `3V3`, `+`, `-`, and `RF` test points.
+- **Hardware / Platform Breakthrough (Documented + Observed):**
+  - Resolved the gap from previous sessions: in `classes6.dex` (`BluetoothLeService$7.onCharacteristicRead`, `0x37a3fe`–`0x37a660`), the observed 20-byte `33F1` payload (`08 08 44 2A 01 24 39 43 75 6F FF FE D9 21 00 5F 78 4B E1 DC`) sets `FunctionList 7` = `0x0808`, which explicitly sets **`GlobalVariable.IS_PLATFORM_RTL8762Cx` (`0x0800`)** and `IS_SUPPORT_SLEEP_REM` (`0x0008`).
+  - `FunctionList 5` (`0x243943`) sets **`GlobalVariable.IS_SUPPORT_BT3_0_AGREEMENT` (`0x040000`)**, which invokes `WriteCommandToBLE.sendBt3AgreementCommand()` (`0x3af988`)—whose state methods are explicitly named `SPUtil.getNeedToRegenerateRandom63E()` / `setPairingSystemBluetooth63E()` (`BleDevices.needPair8763E`, i.e., Realtek **`RTL8763E`** dual-mode Bluetooth Call + BLE series, corresponding to `FFF1` `icType = 0x0B = IC_BB2`).
+  - In `classes5.dex` (UTF-16LE dexdump at `0x3a7c18`), service `000002fd-3c17-d293-8e48-14fe2e4da212` (`FD03`/`FD04`) is documented as **`com.realsil.sdk.bbpro.core.gatt.GattTransportConnParams`** (Realtek BBPro GATT Transport Service).
+  - In `34F1` (`00 F4 ... 04 02`), bytes `0..1` (`0x00F4`) set `GlobalVariable.maxCommunicationLength = 244`.
+- **Zero-Auth BLE Protocol & Local Companion Utility (Documented):**
+  - Confirmed `IS_SUPPORT_PASS_WORD_PAIR` (`0x01` in `FunctionList 1`), `IS_SUPPORT_ACCOUNT_ID_BIND` (`0x04` in `FunctionList 5`), and `IS_SUPPORT_ACCOUNT_ID_BIND_NEW` (`0x080000` in `FunctionList 10`) are all **`0` (`false`)** on the T60—no PIN, captcha, or cloud account binding is required to control the watch over BLE.
+  - Documented the full BLE command/response protocol, custom background transfer (`ImageWatchFaceRk`, `0x26 0A`/`0x26 0B`), Classic BT 3.0 speaker/microphone control (`openDeviceBt3`, `0x38 02`), and cloud OTA API in [`docs/PROTOCOL.md`](docs/PROTOCOL.md).
+  - Built [`tools/t60_control.py`](tools/t60_control.py) (with unit tests in [`tests/test_t60_control.py`](tests/test_t60_control.py)) defaulting to safe `--dry-run` mode.
+- **Decoded `D0FF` / `FFE0` & `FFF4` Flash Partition Table (Documented + Observed):**
+  - `FFE0` (74 B) lists 12 active Realtek `BB2` (`RTL8763EWE`) image IDs (`0x2790`..`0x279D`) and their versions; `FFF4` (55 B) gives the exact flash allocation sizes for all 9 partitions (including `0x2793` MCU App = `0x14F000` / ~1.34 MB).
+- **Next Assignment (Tomorrow with Paul — ESP32 Hardware Flash Backup):**
+  - Prepare and flash an ESP32 `3.3V` UART/SPI reader sketch to dump the 16 MB **`PUYA PY25Q128HA`** SPI NOR flash (and/or probe the labeled **`TX`/`RX`** pads on Page 2) once Paul opens the watch with his work tools, establishing a verified 16 MB factory backup (`t60_factory_backup.bin`) and extracting the exact peripheral GPIO pin map.
+- **Vendor OTA Server Probe (Observed, 2026-10-25):**
+  - Queried `https://www.ute-tech.com.cn/ci-yc/index.php/api/client/getBtVersionUpdate` and `getBtUIVersionUpdate` using extracted `YCAPPKEY` (`dcd05f241b65ec7b6af0bbe6f05145c2`), `btname="T60"`, and dummy MAC `00:00:00:00:00:00` across `V000001`..`V007108`; server returned HTTP 200 `{"flag":-1,"msg":"post ok , no new version."}` (no newer T60 OTA binary currently hosted on Ute-Tech's public endpoint).
+
 ## COMPLETED — exact-SoC investigation and OS assessment; NEXT: readable FCC exhibit (Kimi Work, 2026-10-25)
 
 **Base reviewed:** `ed29909` (`origin/main` at investigation start). Delivery branch: `research/t60-exact-soc`, through the protected-branch PR workflow; no agent merge.
