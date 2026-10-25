@@ -2,7 +2,7 @@
 
 ## Scope
 
-T60 Custom OS is a private research and development repository. There is currently no released or installable watch firmware. Security coverage applies to the `main` branch, repository tooling, host-only code, handling of device/app evidence, and future release artifacts.
+T60 Custom OS is a public research and development repository. There is currently no released or installable watch firmware. Security coverage applies to the `main` branch, repository tooling, host-only code, handling of device/app evidence, and future release artifacts.
 
 ## Report a sensitive issue
 

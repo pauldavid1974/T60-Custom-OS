@@ -1,6 +1,6 @@
 # Contributing to T60 Custom OS
 
-This is Paul's private, one-owner project. Contributions are accepted only from Paul and assistants he authorizes; no outside review or collaboration is required.
+This is Paul's public, one-owner project. Write access and task assignments come only from Paul and assistants he authorizes; no outside review or collaboration is required. Public visibility is not permission to commit secrets, private evidence, or proprietary artifacts.
 
 Read `GOVERNANCE.md` for decision authority and `AGENTS.md` for binding agent and device-safety rules. This guide covers the normal repository workflow.
 
@@ -20,8 +20,8 @@ Read `GOVERNANCE.md` for decision authority and `AGENTS.md` for binding agent an
 
 ## Choose a workflow
 
-- **Routine, reversible change:** commit directly to `main` under an existing authorization.
-- **Large, experimental, or review-heavy change:** use a feature branch and pull request if useful or requested.
+- **Routine, reversible change:** use a short-lived branch and pull request so the protected `main` branch's required `check` CI job passes before integration.
+- **Large, experimental, or review-heavy change:** use the same branch/pull-request path with additional review requested by Paul if useful.
 - **New product or technical direction:** obtain Paul's decision and record it in `docs/DECISIONS.md` and the knowledge graph.
 - **Live-device operation:** follow the exact-action approval rules in `GOVERNANCE.md`; repository work never implies device permission.
 
