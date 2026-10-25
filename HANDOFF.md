@@ -7,7 +7,25 @@
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
-## Status — offline BB2 research (2026-10-24)
+## Shared work desk — Qwen ↔ Codex
+
+| Item | Current state |
+|---|---|
+| Project goal | Reverse engineer the T60 and GloryFit, then eventually replace both. First evaluate a compatible existing watch OS; build one only if needed. |
+| Phase | Read-only physical-watch and companion-app reconnaissance. No replacement has been implemented or installed. |
+| Latest Qwen report | Commit `62a4ac5`: pulled and analyzed GloryFit v4.0.12; verified SDK mapping `IC_BB2 = 0x0B`; exact RTL SoC remains unknown. |
+| Current Qwen action | Capture the live GATT tree in the already-connected nRF Connect app, then read `FFF1` and `FFF3` only if they advertise READ. See the detailed step and safety checks below. |
+| Current review | Codex review `d175f6e` corrected the claim that FFF1 byte 0 is proven to be an IC-ID field. The SDK mapping is documented; the FFF1 field role remains inferred because no parser links the response to the SDK `icId` model. |
+| Verification | Latest review run: graph validation passed at 44 nodes / 59 edges; 5/5 unit tests passed. |
+| Shared channel | This file on GitHub `main` is the work desk. Qwen reports by committing findings here and in source docs/graph. Codex reviews each new report and posts guidance here. A Qwen commit is a report, not a completed review. |
+
+### Turn-taking
+
+- Qwen: sync `main` and reread the active assignment plus latest Codex review before resuming, before each new live read, and after every report commit. When waiting, check `main` for review notes every 15 minutes; stay quiet if unchanged.
+- Codex: monitor `main` every 15 minutes, review new Qwen commits, and push focused corrections or next-step guidance here when needed. Notify Paul about meaningful findings or blockers.
+- Both: preserve the other agent's work; never bypass hooks; keep device actions within Paul's recorded read-only authorization.
+
+## Prior status — offline BB2 research before APK extraction (2026-10-24)
 
 - **Documented, transcript-reported:** GloryFit's embedded Realtek SDK reportedly maps FFF1 byte `0x0B` to the label `BB2`. The APK/class dump and exact mapping path were not available in this checkout, and public source lookup did not establish a unique RTL SoC for `BB2`. Keep the chip model unknown.
 - **Observed:** preserve the FFF1 response exactly as `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`. Only byte 0 has the reported SDK label; fields 1–12 are unknown.
@@ -30,7 +48,7 @@ Read `README.md`, `AGENTS.md`, `HANDOFF.md`, `knowledge/README.md`, `docs/HARDWA
 
 ### Qwen ↔ reviewer communication loop
 
-`HANDOFF.md` on GitHub `main` is the shared message channel. Do not continue from a stale local copy. Before resuming work, before each new live-device read, and after every report commit, sync `main` and reread this active assignment plus any newer **Codex review/guidance** notes. Address new review guidance before taking the next step. If waiting after a report, check GitHub `main` for reviewer notes every 15 minutes; stay quiet when unchanged. Do not assume a commit was reviewed just because it is pushed.
+Follow the shared work desk's turn-taking rules above. This assignment's current reviewer note and next action are summarized in the work-desk table; details and the full Qwen report remain below.
 
 Known evidence: the observed FFF1 bytes are `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`; an exported Work-session report says the GloryFit Realtek SDK labels leading byte `0B` as `BB2`. The installed app is GloryFit `com.yc.gloryfit` v4.0.12 (versionCode 279) on the dedicated Samsung SM_G781U phone. The watch was observed bonded and connected as `T60(ID-AE67)`, address `60:1A:B7:00:AE:67`; this may be a random/resolvable address. No APK or class dump is committed.
 
