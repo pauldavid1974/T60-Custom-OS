@@ -17,6 +17,42 @@
 
 **Next action for Paul:** if he wants another live diagnostic, explicitly approve a read-only read of characteristic `FFF3` on the existing `D0FF` service. This may expose additional protocol/device information but cannot be assumed to identify the exact SoC or prove recovery. Do not perform it until that exact read is approved.
 
+## ACTIVE ASSIGNMENT — Qwen via OpenCode (offline, read-only)
+
+### Goal
+
+Use the local GloryFit APK or already-extracted SDK evidence, if available, to independently verify the reported `0x0B -> BB2` mapping and determine whether the vendor code or documentation connects `BB2` to an exact RTL SoC. Inspect related decoder code or protocol definitions for the observed `D0FF/FFF1` 13-byte response, but document only fields whose meaning is explicitly supported by source. The aim is to resolve the missing primary-source trail; do not repeat the general OS survey unless new chip evidence changes it.
+
+### Read first and evidence to start from
+
+Read `README.md`, `AGENTS.md`, `HANDOFF.md`, `knowledge/README.md`, `docs/HARDWARE.md`, `docs/RECOVERY.md`, and `docs/QWEN38_AGENT_GUIDE.md`. Search the graph with `python tools/kg.py search BB2` and `python tools/kg.py search FFF1` before researching.
+
+Known evidence: the observed FFF1 bytes are `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`; an exported Work-session report says the GloryFit Realtek SDK labels leading byte `0B` as `BB2`. The APK, class dump, and vendor guide are not committed. Treat that mapping as transcript-reported until the local SDK evidence is found and its code path/version recorded.
+
+### Scope and files
+
+- Check the repository and any clearly project-scoped local evidence locations for the existing APK/class dump. Do not scan unrelated personal folders. Do not download, copy into Git, or publish the APK, proprietary SDK, private device dumps, or copyrighted extracts.
+- Use offline APK/class analysis and primary manufacturer documentation. Record the exact class/file/member path, SDK/APK version when available, and a short description of the symbol/data flow (no large copyrighted excerpts).
+- Check whether the code maps only `0x0B` to an SDK family label or whether it maps `BB2` further to a named SoC. Trace FFF1 response parsing only as far as source explicitly supports.
+- If the necessary local artifact is absent or unreadable, stop after recording what was checked; do not substitute guesses or expand into unrelated research.
+- If evidence changes durable conclusions, update only `HANDOFF.md`, `docs/HARDWARE.md`, and relevant stable nodes/edges in `knowledge/graph.json`.
+
+### Allowed and prohibited actions
+
+Allowed: repository reads/edits, local offline APK/class inspection, public Realtek manufacturer documentation, graph and unit checks.
+
+Prohibited: any live watch or phone action, BLE read/write (including pending `FFF3`), pairing changes, DFU/OTA, flashing, reset, unlock, debug-port access, or disassembly. This assignment grants no device permission. Do not commit APKs, SDK binaries, firmware images, secrets, or personal dumps.
+
+### Acceptance and report
+
+- `python tools/kg.py validate` and `python -m unittest discover -s tests -v` must pass if project files are changed. Do not claim host C checks unless actually run.
+- Review `git diff`; commit to `main` only if the existing safety hooks permit it. Never bypass a failing hook.
+- Report exact evidence paths/version, whether `BB2` resolves to a part number, fields decoded versus unknown, files changed, tests run, commit SHA if committed, and one next action. Label each claim Observed, Documented, Inferred, or Unknown.
+
+### Hard stop
+
+Stop once the mapping and field-decoding evidence is recorded, or immediately if required artifacts are unavailable. Do not interact with the watch or attempt firmware installation.
+
 ## Status — Qwen lane (2026-10-24)
 
 Lead-engineer (Qwen) session started in the local checkout.
@@ -95,7 +131,7 @@ Until these are resolved, **custom OS installation is an unproven possibility, n
 
 ## COMPLETED ASSIGNMENT — BB2 / recovery / OS research (offline, 2026-10-24)
 
-The original assignment below has been completed to the limits of available evidence. Its central outcome is that the BB2 mapping is not sufficient to identify an exact RTL part. Continue only with Paul's next instruction; do not automatically run the proposed FFF3 read.
+The general research pass was completed to the limits of available evidence. Its central outcome is that the transcript-reported BB2 mapping is not sufficient to identify an exact RTL part. The active Qwen assignment above is a narrow follow-up to inspect the primary local SDK evidence; it does not authorize a device read. Do not automatically run the proposed FFF3 read.
 
 ## Original assignment — Qwen (offline, read-only, no approval required)
 
