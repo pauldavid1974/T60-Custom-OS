@@ -107,7 +107,7 @@
       "kind": "fact",
       "certainty": "documented",
       "title": "Realtek SDK 0B -> BB2 mapping",
-      "summary": "Work reported finding 0B maps to BB2 in the Realtek SDK bundled with GloryFit; BB2 is not an exact chip model.",
+      "summary": "A supplied Work transcript reports that the GloryFit Realtek SDK maps 0B to BB2. The APK/class dump and exact mapping path are absent from this repo; public research did not establish a unique RTL part. BB2 remains an SDK label, not an exact chip model.",
       "tags": [
         "bb2",
         "realtek",
@@ -292,6 +292,54 @@
       ],
       "refs": [
         "https://docs.realmcu.com/sdk/rtl87x3e/common/en/latest/text/User_Manual/quick_start.html"
+      ]
+    },
+    {
+      "id": "source-zephyr-realtek",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "Zephyr supported Realtek boards",
+      "summary": "Current Zephyr documentation lists RTL8752H and RTL87x2G Model A Realtek evaluation boards; it does not establish support for BB2 or the T60.",
+      "tags": [
+        "zephyr",
+        "realtek",
+        "boards",
+        "source"
+      ],
+      "refs": [
+        "https://docs.zephyrproject.org/latest/boards/realtek/index.html"
+      ]
+    },
+    {
+      "id": "source-zswatch",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "ZSWatch open-source smartwatch",
+      "summary": "Public GPL-3.0 smartwatch firmware project targeting Nordic nRF5340 hardware; not a demonstrated Realtek or T60 port.",
+      "tags": [
+        "zswatch",
+        "nrf5340",
+        "gpl-3.0",
+        "source"
+      ],
+      "refs": [
+        "https://github.com/ZSWatch/ZSWatch"
+      ]
+    },
+    {
+      "id": "source-rtl87x2g-sdk",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "Public Realtek RTL87x2G SDK repository",
+      "summary": "Realtek-maintained public repository identifies its contents as the RTL87x2G SDK; it does not establish that BB2 or the T60 belongs to that family.",
+      "tags": [
+        "realtek",
+        "rtl87x2g",
+        "sdk",
+        "source"
+      ],
+      "refs": [
+        "https://github.com/rtkconnectivity/rtl87x2g_sdk"
       ]
     },
     {
@@ -838,6 +886,21 @@
       "from": "question-os-base",
       "to": "question-soc",
       "relation": "blocked-by"
+    },
+    {
+      "from": "question-os-base",
+      "to": "source-zephyr-realtek",
+      "relation": "comparison-lead-only"
+    },
+    {
+      "from": "question-os-base",
+      "to": "source-zswatch",
+      "relation": "incompatible-reference"
+    },
+    {
+      "from": "question-os-base",
+      "to": "source-rtl87x2g-sdk",
+      "relation": "conditional-sdk-lead"
     },
     {
       "from": "decision-os-path",

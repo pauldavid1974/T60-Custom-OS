@@ -6,6 +6,17 @@
 **Owner:** Paul; private personal repo `pauldavid1974/T60-Custom-OS`
 **Hard stop:** NO writing to the watch, flashing, factory resets, unpairing, disassembly, or opening debug interfaces without explicit, action-specific approval from Paul.
 
+## Status — offline BB2 research (2026-10-24)
+
+- **Documented, transcript-reported:** GloryFit's embedded Realtek SDK reportedly maps FFF1 byte `0x0B` to the label `BB2`. The APK/class dump and exact mapping path were not available in this checkout, and public source lookup did not establish a unique RTL SoC for `BB2`. Keep the chip model unknown.
+- **Observed:** preserve the FFF1 response exactly as `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`. Only byte 0 has the reported SDK label; fields 1–12 are unknown.
+- **Documented:** Realtek materials describe target-specific SDK/tooling and image programming/OTA; public Zephyr documentation currently lists Realtek RTL8752H and RTL87x2G Model A evaluation targets. These are not evidence of T60 compatibility. A public Realtek SDK repository exists for RTL87x2G; the exact T60 SDK access/license remains unknown.
+- **Inferred:** an exact-part vendor SDK is the strongest conditional customization route. Zephyr is a conditional option only if the exact SoC is supported and required vendor images are obtainable. ZSWatch is GPL-3.0 but targets Nordic nRF5340 hardware and is not a compatible base.
+- **Unknown:** FFF1 byte layout, exact RTL part, genuine factory backup, signature/protection behavior, and safe recovery. The OTA-looking GATT interface does not establish restoration capability.
+- Research details and candidate table: `docs/HARDWARE.md`. Relevant knowledge graph nodes were updated/added. No device interaction occurred.
+
+**Next action for Paul:** if he wants another live diagnostic, explicitly approve a read-only read of characteristic `FFF3` on the existing `D0FF` service. This may expose additional protocol/device information but cannot be assumed to identify the exact SoC or prove recovery. Do not perform it until that exact read is approved.
+
 ## Status — Qwen lane (2026-10-24)
 
 Lead-engineer (Qwen) session started in the local checkout.
@@ -82,7 +93,11 @@ Until these are resolved, **custom OS installation is an unproven possibility, n
 - Not completed: proposed read of **`FFF3`** to gather protocol information. Work's automated action was blocked because approval for this specific operation was missing; nothing was written.
 - Paul has **not yet approved** the `FFF3` read in this repo conversation. Do not treat a prior request to investigate as blanket permission to execute it.
 
-## NEXT ASSIGNMENT — Qwen (offline, read-only, no approval required)
+## COMPLETED ASSIGNMENT — BB2 / recovery / OS research (offline, 2026-10-24)
+
+The original assignment below has been completed to the limits of available evidence. Its central outcome is that the BB2 mapping is not sufficient to identify an exact RTL part. Continue only with Paul's next instruction; do not automatically run the proposed FFF3 read.
+
+## Original assignment — Qwen (offline, read-only, no approval required)
 
 Investigate **what Realtek SDK `BB2` / IC ID `0B` actually identifies**, using reliable Realtek source code, the installed GloryFit SDK (if available locally), and manufacturer documentation.
 
