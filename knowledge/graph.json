@@ -107,7 +107,7 @@
       "kind": "fact",
       "certainty": "documented",
       "title": "Realtek SDK 0B -> BB2 mapping",
-      "summary": "A supplied Work transcript reports that the GloryFit Realtek SDK maps 0B to BB2. The APK/class dump and exact mapping path are absent from this repo; public research did not establish a unique RTL part. BB2 remains an SDK label, not an exact chip model.",
+      "summary": "A supplied Work transcript reports that the GloryFit Realtek SDK maps 0B to BB2. The APK/class dump and exact mapping path are absent from this repo; a 2026-10-24 OpenCode session verified the APK, class dump and Work transcript export are also absent from all project-scoped locations on the owner's laptop, so the mapping cannot be locally verified until the artifact is made available. Public research did not establish a unique RTL part. BB2 remains an SDK label, not an exact chip model.",
       "tags": [
         "bb2",
         "realtek",

@@ -53,6 +53,20 @@ Prohibited: any live watch or phone action, BLE read/write (including pending `F
 
 Stop once the mapping and field-decoding evidence is recorded, or immediately if required artifacts are unavailable. Do not interact with the watch or attempt firmware installation.
 
+## Status — Qwen via OpenCode session (2026-10-24)
+
+Carried out the active assignment (offline verification of `0x0B -> BB2` from local SDK evidence). Result: **required primary-source artifact absent from every project-scoped location; mapping remains transcript-reported.**
+
+- **Checked (Observed, this session):** full repository tree incl. hidden files and git history on all branches (no APK, smali/dex, class dump, device dump or Work transcript export ever committed); `My Projects` sibling folders (none T60-scoped — `Qwen-Colab` is Engine Room serving infrastructure, unrelated); `Documents`/`Desktop` top levels matching T60/glory/watch/firmware (none); name-filtered `Downloads` (only unrelated `watch_face_designer.html`).
+- **Outcome:** no local GloryFit APK or extracted SDK exists to verify the `0B -> BB2` class path or FFF1 field decoding. Per the assignment's stop condition, no guessing and no expansion into unrelated research.
+- **BB2 identification:** unchanged — **Unknown** as to exact RTL part. `BB2` remains a Documented-in-transcript SDK label only; no vendor documentation or code examined this session maps it to a named SoC.
+- **FFF1 fields:** no change. Byte 0 `0B` has the reported SDK label; bytes 1–12 remain **Unknown** (no local source available to decode them).
+- **Files changed:** `knowledge/graph.json` (fact-bb2 summary), `docs/HARDWARE.md` (absence check bullet), this handoff.
+- **Tests run:** `python tools/kg.py validate` and `python -m unittest discover -s tests -v` — see below for actual output. Host C build **not run** (no CMake/C compiler on this laptop; no portable C code changed).
+- **No device interaction:** no watch or phone action of any kind was performed.
+
+**Next action for Paul (requires his explicit approval):** make the primary-source artifact available — either approve a one-off read-only ADB pull of the installed GloryFit APK (`com.yc.gloryfit` v4.0.12) from the dedicated phone (an action on the phone, so not done without that approval), or point to the local path of the Work session's working files (class dump / firmware-documentation copy) if they exist elsewhere on the machine. The pending `FFF3` read request above stands separately and is not implied by this.
+
 ## Status — Qwen lane (2026-10-24)
 
 Lead-engineer (Qwen) session started in the local checkout.
