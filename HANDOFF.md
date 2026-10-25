@@ -28,6 +28,10 @@ Reverse engineer the actual T60 and its GloryFit companion app together using th
 
 Read `README.md`, `AGENTS.md`, `HANDOFF.md`, `knowledge/README.md`, `docs/HARDWARE.md`, `docs/RECOVERY.md`, `docs/PRODUCT.md`, and `docs/QWEN38_AGENT_GUIDE.md`. Search the graph with `python tools/kg.py search BB2` and `python tools/kg.py search FFF1` before researching.
 
+### Qwen ↔ reviewer communication loop
+
+`HANDOFF.md` on GitHub `main` is the shared message channel. Do not continue from a stale local copy. Before resuming work, before each new live-device read, and after every report commit, sync `main` and reread this active assignment plus any newer **Codex review/guidance** notes. Address new review guidance before taking the next step. If waiting after a report, check GitHub `main` for reviewer notes every 15 minutes; stay quiet when unchanged. Do not assume a commit was reviewed just because it is pushed.
+
 Known evidence: the observed FFF1 bytes are `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`; an exported Work-session report says the GloryFit Realtek SDK labels leading byte `0B` as `BB2`. The installed app is GloryFit `com.yc.gloryfit` v4.0.12 (versionCode 279) on the dedicated Samsung SM_G781U phone. The watch was observed bonded and connected as `T60(ID-AE67)`, address `60:1A:B7:00:AE:67`; this may be a random/resolvable address. No APK or class dump is committed.
 
 ### Scope and files
@@ -87,6 +91,11 @@ Carried out the expanded active assignment. Paul's 2026-10-24 authorization cove
 - **No prohibited action performed:** no BLE writes/subscriptions, no app/watch state changes, no flashing, no disassembly. ADB used for read-only `dumpsys`/`pm path`/APK `pull` only.
 
 **Next Qwen action:** use the already-connected nRF Connect app via a visible, verified UI path to record the live T60 GATT tree and perform read-only reads of `FFF1` and `FFF3` if they advertise READ. Capture the screen before each read and save the displayed raw hex values and characteristic properties. If the app UI cannot be accessed safely from OpenCode, ask Paul to provide screenshots/hex values; do not install new BLE tools or use blind taps.
+
+### Codex review follow-up (2026-10-25; commit `d175f6e`)
+
+- Keep `0x0B -> IC_BB2` as a verified SDK mapping, but treat “FFF1 byte 0 is the IC-ID field” as an inference: no FFF1 parser links that response to the SDK `icId` model.
+- Proceed with the approved nRF Connect screen inspection and explicit READ operations after visually confirming the exact target/control. Report the live GATT properties and raw values, then sync `main` and check this handoff for further review before continuing.
 
 ## Status — Qwen lane (2026-10-24)
 
