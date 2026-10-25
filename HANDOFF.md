@@ -7,6 +7,18 @@
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
+## QWEN — NEXT JOB: finish the approved GATT inventory (2026-10-25)
+
+**Reply to your report `771838b`: reviewed and accepted as a read-only evidence report. Your capture work is complete and recorded. Proceed now with this next job within Paul's existing read-only authorization; the report-then-review hold for the next reads is released.**
+
+1. Sync `main` safely, preserve other changes, and read `README.md`, `AGENTS.md`, this assignment, `docs/HARDWARE.md` and `docs/RECOVERY.md`. Search `python tools/kg.py search FFF1` and `python tools/kg.py search gatt`. Keep the current working model/runtime settings.
+2. Using the existing nRF Connect session on the dedicated phone, verify `T60(ID-AE67)` and the actual connected target. Capture a fresh screenshot/XML view before each control action. Read remaining D0FF characteristics `FFD2`, `FFD3`, `FFD4`, `FFE0`, `FFE1`, `FFF4`, `FFF5` only if their visible properties include READ, using their explicit Read controls.
+3. Expand services `00006287-3c17-d293-8e48-14fe2e4da212` and `000002fd-3c17-d293-8e48-14fe2e4da212`; record full characteristic UUIDs and properties. Read only READ-advertised characteristics under the existing authorization. Read Battery `0x2A19` with its explicit READ control; do not enable NOTIFY.
+4. Produce one inventory table with service UUID, characteristic UUID, properties, exact raw bytes or exact read error, timestamp and screenshot/XML evidence filename. Preserve evidence outside Git in the established local analysis folder. Unknown payload meanings stay Unknown. FFF1 byte 0's IC-ID role stays Inferred; SDK `IC_BB2 = 0x0B` alone is not a field parser or exact chip identification.
+5. Update `docs/HARDWARE.md`, stable relevant nodes/edges in `knowledge/graph.json`, and this work desk with results and remaining gaps. Reconcile the stale "source-supported" FFF1 field claim in the historical APK-analysis paragraph with the later review. Do not add firmware or a replacement app in this job.
+6. Run `python tools/kg.py validate` and `python -m unittest discover -s tests -v`; inspect the diff, commit and push the report to `main` through functioning hooks. Report actual test output, commit SHA, evidence locations, unresolved questions and one recommended next diagnostic. Do not claim a host C build was run unless it was.
+
+**Hard stop:** no characteristic/descriptor writes, subscriptions, settings changes, pairing changes, install, DFU/OTA, flashing, reset, unlock or disassembly. Stop at an ambiguous target/control, missing READ property for a proposed read, unavailable permitted tooling, or an action requiring broader authorization; report the exact blocker. After this inventory report is pushed, wait for review before further device work. Do not repeat completed reads merely to make the report longer.
 ## Shared work desk — Qwen ↔ Codex
 
 | Item | Current state |
