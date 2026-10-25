@@ -28,6 +28,13 @@
 - **Governance:** Paul (owner) decision, stated 2026-10-24.
 - **Status:** Accepted (2026-10-24).
 
+## D-006: Versioned one-owner Git governance templates
+- **Decision:** Maintain governance, contribution, security, ownership, issue and pull-request templates in Git so every authorized agent follows the same decision, evidence, validation and approval workflow.
+- **Reason:** Repository files are more durable and reviewable than session-specific conventions, and reusable forms reduce omitted safety or test information.
+- **Constraints:** Routine authorized changes may still go directly to `main`; pull requests are optional coordination tools. No outside collaborator or mandatory external review is introduced. Issues and checked boxes do not grant device-operation approval, and all D-002 safety gates remain unchanged. This decision establishes templates only; it does not change GitHub repository settings or branch protection.
+- **Governance:** Paul (owner) requested the governance template setup on 2026-10-25.
+- **Status:** Accepted (2026-10-25).
+
 ## Pending decisions
 - Whether an existing watch OS base is suitable for the T60 (D-004 evaluation output).
 - Companion app requirements and supported platforms for the replacement.

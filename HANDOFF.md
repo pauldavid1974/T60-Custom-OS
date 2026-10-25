@@ -22,6 +22,14 @@
 
 **Hard stop:** no writes/subscriptions, settings or pairing changes, installation, DFU/OTA, flashing, reset, unlock, debug-port access or disassembly. Stop at an ambiguous target/control, unavailable permitted tooling, blocked hook or a step requiring broader authorization. No new software installation or broad unrelated filesystem searches. After the bounded identification/OS assessment is pushed, await review before further device work.
 
+## Repository governance setup — Kimi Work (2026-10-25)
+
+- **Result (Documented):** added `GOVERNANCE.md`, `CONTRIBUTING.md`, `SECURITY.md`, `.github/CODEOWNERS`, a pull-request template, and issue forms for bugs, bounded research/engineering tasks, and device-action requests. README, D-006 and the `decision-owner` graph node link the new policy.
+- **Scope and confidence:** template-only repository governance; high confidence that it preserves Paul's one-owner authority, routine direct-to-`main` work, optional pull requests, evidence labels, validation reporting, and exact-action device approval. No live-device action, GitHub settings change, branch protection, collaborator change, firmware or app implementation occurred.
+- **Verification (Observed):** `python tools/kg.py validate` passed (51 nodes / 81 edges; references and links valid offline); `python -m unittest discover -s tests -v` passed 5/5; a local PyYAML syntax/structure check passed all three issue forms plus CODEOWNERS and the pull-request template; `git diff --check` passed; Git emitted only LF-to-CRLF working-copy conversion warnings on Windows. Host CMake/CTest **not run** because no portable C source changed.
+- **Unresolved:** repository settings such as owner-only branch protection, signed-commit enforcement and security features remain unchanged and are not implied by the templates.
+- **Next assignment:** unchanged — Qwen's processor-identification / OS-assessment job at the top of this file remains active. Future agents should use `GOVERNANCE.md` and the task template when receiving or recording new assignments.
+
 ## Shared work desk — Qwen ↔ Codex
 
 | Item | Current state |

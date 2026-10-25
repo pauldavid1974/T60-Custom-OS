@@ -366,15 +366,22 @@
       "kind": "decision",
       "certainty": "documented",
       "title": "Personal repository and one-owner governance",
-      "summary": "This private repository contains entire product; Paul makes approvals, no required outside reviewers.",
+      "summary": "D-001/D-006: this private repository contains the entire product; Paul makes approvals with no required outside reviewers. Versioned governance, contribution, security, CODEOWNERS, issue and pull-request templates preserve direct-to-main routine work and exact-action device approval gates without changing GitHub settings.",
       "tags": [
         "github",
         "governance",
-        "ownership"
+        "ownership",
+        "templates",
+        "workflow"
       ],
       "refs": [
         "docs/DECISIONS.md",
-        "AGENTS.md"
+        "AGENTS.md",
+        "GOVERNANCE.md",
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        ".github/CODEOWNERS",
+        ".github/PULL_REQUEST_TEMPLATE.md"
       ]
     },
     {

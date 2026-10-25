@@ -1,0 +1,63 @@
+name: Research or engineering task
+description: Define a bounded assignment with evidence, files, tools, tests, and stop conditions
+title: "[Task]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One task should have one bounded objective. This template does not authorize live-device actions, new tool installation, repository-setting changes, or scope expansion.
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: State the single outcome and why it matters.
+    validations:
+      required: true
+  - type: textarea
+    id: starting_point
+    attributes:
+      label: Starting point and verified evidence
+      description: List the commit, files, graph nodes, source versions/hashes, and known unknowns to start from.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Files and permitted tools
+      description: Name files expected to change, read-only sources, available tools, and anything explicitly out of scope.
+    validations:
+      required: true
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Deliverables and acceptance criteria
+      description: Include required docs, code, tests, graph updates, and evidence labels.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Required validation
+      value: |
+        - `python tools/kg.py validate`
+        - `python -m unittest discover -s tests -v`
+        - Host CMake build and CTest if portable C changes (otherwise record not run)
+    validations:
+      required: true
+  - type: textarea
+    id: hard_stop
+    attributes:
+      label: Hard stops and approval boundaries
+      description: State when the agent must stop and ask Paul. Include any exact device operations already approved, or write “No live-device operation authorized.”
+      value: |
+        No live-device operation authorized. Stop at ambiguous evidence, unavailable permitted tooling, blocked hooks, or any scope/safety boundary.
+    validations:
+      required: true
+  - type: textarea
+    id: reporting
+    attributes:
+      label: Reporting contract
+      value: |
+        Update relevant source, docs, knowledge graph, and HANDOFF.md together. Inspect the diff; never bypass hooks. Report actual test results, commit SHA if committed, unresolved questions, and one specific next action.
+    validations:
+      required: true

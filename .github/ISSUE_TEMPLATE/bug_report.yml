@@ -1,0 +1,68 @@
+name: Bug report
+description: Report a reproducible repository, tooling, documentation, or host-only software defect
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for repository defects. Do not include secrets, private device dumps, proprietary artifacts, or sensitive vulnerability details. Do not experiment on a live device without Paul's exact-action approval.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Problem
+      description: What is wrong, and where does it occur?
+      placeholder: Describe the defect and affected file, command, or document.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide the smallest host-only steps or source reference that demonstrates the problem.
+      placeholder: |
+        1. Starting commit or version:
+        2. Command or action:
+        3. Observed output:
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and evidence
+      description: Paste sanitized output and label relevant claims Observed / Documented / Inferred / Unknown.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Documentation or evidence
+        - Knowledge graph or tools
+        - Portable host-only firmware
+        - GitHub workflow or governance
+        - Other repository tooling
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: Reproduction uses no unapproved live-device operation and no device write or installation.
+          required: true
+        - label: Logs and attachments contain no secrets, personal data, private dumps, or proprietary binaries.
+          required: true
+  - type: textarea
+    id: suggested_fix
+    attributes:
+      label: Suspected cause or fix
+      description: Optional. Mark speculation as Inferred.
+    validations:
+      required: false

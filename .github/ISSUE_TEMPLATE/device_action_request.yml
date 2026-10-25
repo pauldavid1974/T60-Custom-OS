@@ -1,0 +1,69 @@
+name: Device-action request
+description: Propose or record a specific live-watch or paired-phone operation and its approval boundary
+title: "[Device approval]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This issue is not approval.** Paul must explicitly approve the exact action. READ capability, a GATT UUID, prior research authorization, or a checked box does not grant permission. Any device write, DFU/OTA, flashing, reset, unlock, debug-port access, disassembly, or other state-changing operation requires separate approval and all applicable recovery gates.
+  - type: input
+    id: target
+    attributes:
+      label: Exact target
+      description: Identify the physical device/app and relevant service, characteristic, partition, interface, or setting.
+    validations:
+      required: true
+  - type: textarea
+    id: action
+    attributes:
+      label: Exact proposed action
+      description: Include command or UI operation, direction (read/write/etc.), parameters, expected duration, and how the session ends.
+    validations:
+      required: true
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Uncertainty this action could resolve
+      description: Explain why this is the smallest useful diagnostic and what result would change the project decision.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected results and evidence capture
+      description: List expected values if known, raw data/screenshots/logs to retain, and secure local evidence location.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and stop conditions
+      description: Cover ambiguity, interruption, battery/power, state changes, and conditions requiring immediate stop.
+    validations:
+      required: true
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisite review
+      options:
+        - label: Existing authorization and `HANDOFF.md` were checked; any missing exact-action approval is explicitly identified.
+          required: true
+        - label: No prohibited or state-changing side effect is included without separate owner approval.
+          required: true
+        - label: For a device write/install, exact compatibility, restorable factory backup, signature requirements, tested recovery, rollback, and stop plan are established and linked, or the action is marked blocked.
+          required: true
+  - type: textarea
+    id: approval
+    attributes:
+      label: Paul's decision
+      description: Record “Pending” until Paul explicitly approves or rejects this exact action. Quote/link the decision and date; do not infer approval.
+      value: Pending — no approval granted by this issue.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Result
+      description: After execution, record Observed results, evidence paths, errors, tests, and follow-up. Do not execute while approval is pending.
+    validations:
+      required: false
