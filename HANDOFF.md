@@ -67,10 +67,10 @@ Carried out the active assignment (offline verification of `0x0B -> BB2` from lo
 - **BB2 identification:** unchanged — **Unknown** as to exact RTL part. `BB2` remains a Documented-in-transcript SDK label only; no vendor documentation or code examined this session maps it to a named SoC.
 - **FFF1 fields:** no change. Byte 0 `0B` has the reported SDK label; bytes 1–12 remain **Unknown** (no local source available to decode them).
 - **Files changed:** `knowledge/graph.json` (fact-bb2 summary), `docs/HARDWARE.md` (absence check bullet), this handoff.
-- **Tests run:** `python tools/kg.py validate` and `python -m unittest discover -s tests -v` — see below for actual output. Host C build **not run** (no CMake/C compiler on this laptop; no portable C code changed).
+- **Tests reported by Qwen:** `python tools/kg.py validate` → `OK: 38 nodes, 48 edges`; `python -m unittest discover -s tests -v` → 5/5 passed. Host C build **not run** (no CMake/C compiler on this laptop; no portable C code changed).
 - **No device interaction:** no watch or phone action of any kind was performed.
 
-**Next action for Paul (requires his explicit approval):** make the primary-source artifact available — either approve a one-off read-only ADB pull of the installed GloryFit APK (`com.yc.gloryfit` v4.0.12) from the dedicated phone (an action on the phone, so not done without that approval), or point to the local path of the Work session's working files (class dump / firmware-documentation copy) if they exist elsewhere on the machine. The pending `FFF3` read request above stands separately and is not implied by this.
+**At that time, next action:** make primary-source app evidence available by locating a local class dump or pulling the installed APK. Paul's later authorization for read-only ADB extraction and BLE reconnaissance is recorded at the top of this handoff and supersedes this earlier approval request.
 
 ## Status — Qwen lane (2026-10-24)
 
