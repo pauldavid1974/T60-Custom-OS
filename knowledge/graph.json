@@ -54,7 +54,7 @@
       "kind": "interface",
       "certainty": "observed",
       "title": "BLE GATT service enumeration",
-      "summary": "Observed full GATT tree via nRF Connect CLIENT view 2026-10-25 (T60 60:1A:B7:00:AE:67, connected/bonded), list order: 0x1801 Generic Attribute (no characteristics); 0x1800 Generic Access (no characteristics); 0x55FF (0x33F1 READ+WRITE; 0x33F2 NOTIFY+CCCD); 0x56FF (0x34F1 READ+WRITE NO RESPONSE; 0x34F2 NOTIFY+CCCD); 0x60FF and 0x61FF (expanded, characteristics not yet read from captured view); 0x180F Battery Service (Battery Level 0x2A19 READ+NOTIFY = 100%, CCCD 0x2902); service 0000d0ff-3c17-d293-8e48-14fe2e4da212 with 16-bit-base characteristics 0xFFD1 (WRITE NO RESPONSE), 0xFFD2/FFD3/FFD4/FFF1/FFE0/FFE1/FFF3/FFF4/FFF5 (all READ, no NOTIFY/INDICATE); 00006287-3c17-d293-8e48-14fe2e4da212 (0x6387 WRITE NO RESPONSE; 0x6487 NOTIFY+WRITE + CCCD); 000002fd-3c17-d293-8e48-14fe2e4da212 (0xFD03 WRITE+WRITE NO RESPONSE; 0xFD04 NOTIFY + CCCD; no READ characteristics). 128-bit service 6a24eeab-4b65-4693-986b-3c26c352264f is not a GATT service (SPP only).",
+      "summary": "Observed full GATT tree via nRF Connect CLIENT view 2026-10-25 (T60 60:1A:B7:00:AE:67, connected/bonded): 0x1801 and 0x1800 (no characteristics); 0x55FF (0x33F1 READ+WRITE; 0x33F2 NOTIFY+CCCD); 0x56FF (0x34F1 READ+WRITE NO RESPONSE; 0x34F2 NOTIFY+CCCD); 0x60FF (0x6001 READ+WRITE; 0x6002 NOTIFY+CCCD); 0x61FF (no characteristics); 0x180F Battery Service (0x2A19 READ+NOTIFY = 100%, CCCD); D0FF with 0xFFD1 WRITE NO RESPONSE and 0xFFD2/FFD3/FFD4/FFF1/FFE0/FFE1/FFF3/FFF4/FFF5 READ; 00006287-3c17-d293-8e48-14fe2e4da212 (0x6387 WRITE NO RESPONSE; 0x6487 NOTIFY+WRITE + CCCD); 000002fd-3c17-d293-8e48-14fe2e4da212 (0xFD03 WRITE+WRITE NO RESPONSE; 0xFD04 NOTIFY + CCCD; no READ). The SPP UUID 6a24eeab-4b65-4693-986b-3c26c352264f is not a GATT service. No writes or subscriptions.",
       "tags": [
         "ble",
         "bluetooth",
@@ -140,11 +140,66 @@
       ]
     },
     {
+      "id": "fact-final-reads",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "Final authorized T60 reads and 60FF/61FF enumeration",
+      "summary": "Observed 2026-10-25 with explicit nRF Connect Read controls only: 55FF/33F1 = 08 08 44 2A 01 24 39 43 75 6F FF FE D9 21 00 5F 78 4B E1 DC (20 bytes); 56FF/34F1 = 00 F4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 04 02 (20 bytes); 60FF/6001 returned the same 20 bytes as 34F1; 60FF/6002 is NOTIFY+CCCD and was not subscribed; 61FF exposes no characteristics. Ignored local evidence: scratch/live/33f1-read, 34f1-read, 6001-read and 61ff-target PNG/XML. No decoder was found for 6001; no writes or state changes occurred.",
+      "tags": [
+        "gatt",
+        "33f1",
+        "34f1",
+        "6001",
+        "61ff",
+        "read-only"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-rtl8773ewe-capability",
+      "kind": "fact",
+      "certainty": "documented",
+      "title": "T60 RTL8773EWE app capability bit is clear",
+      "summary": "GloryFit v4.0.12 classes6.dex defines IS_PLATFORM_RK_RTL8773EWE = 0x00020000; DevicePlatform.isRKPlatform8773 tests it in function list 13. BluetoothLeService$7.onCharacteristicRead directly matches 34F1 and, for 20 bytes, parses bytes 2-4 as big-endian function list 13. Observed T60 bytes 2-4 are 00 00 00, so the value is 0 and isRKPlatform8773 evaluates false for the captured state. This device-specific app-capability negative does not identify the actual SoC or prove a broader physical exclusion.",
+      "tags": [
+        "rtl8773ewe",
+        "34f1",
+        "function-list-13",
+        "gloryfit",
+        "negative-evidence"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "source-rtl87x3e-sdk",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "Public Realtek RTL87x3E Common SDK",
+      "summary": "Realtek's public SDK README identifies only the RTL87x3E series and links RTL8763E-series documentation. Its GCC sample uses Cortex-M3/Thumb flags and Realtek post-build/header tools. No evidence ties this SDK or its memory constants to Paul's T60; the watch's GloryFit RTL8773EWE app capability is clear. Comparison lead only, not documented compatibility.",
+      "tags": [
+        "realtek",
+        "rtl87x3e",
+        "sdk",
+        "toolchain",
+        "comparison-only"
+      ],
+      "refs": [
+        "https://github.com/rtkconnectivity/RTL87x3E-Common-SDK",
+        "docs/HARDWARE.md"
+      ]
+    },
+    {
       "id": "question-soc",
       "kind": "question",
       "certainty": "unknown",
       "title": "Exact SoC and memory map",
-      "summary": "Determine exact RTL part number, ROM/RAM, flash layout, board revision and SDK compatibility.",
+      "summary": "Exact RTL part, RAM/flash, board revision and matching build SDK remain Unknown after FCC/mirror retrieval failures, offline GloryFit analysis and all authorized reads. BB2 remains only a product-line clue; the RTL8773EWE app capability is clear. Next smallest diagnostic is a readable exact-FCC internal-photo PDF supplied for offline inspection; physical inspection requires separate approval.",
       "tags": [
         "soc",
         "rtl",
@@ -270,7 +325,7 @@
       "kind": "source",
       "certainty": "documented",
       "title": "FCC T60 internal photos",
-      "summary": "Public filing for FCC ID 2BEQO-T60 (retrieved 2026-10-25): applicant SHENZHEN HAOCHENG TECHNOLOGY CO.,LTD (grantee 2BEQO), product T60 SmartWatch, filed 2024-02-06, tested by SHENZHEN TONGCE TESTING LAB, 2402-2480 MHz; exhibits include internal photos (Internal-photo-7108448), external photos, label and user manual. Direct PDF download from fccid.io is Cloudflare-blocked; page-listed mirrors (fcc.id, gov.fccid.io, fccid.ai) not yet tried. Primary lead for chip markings.",
+      "summary": "Public filing for FCC ID 2BEQO-T60 identifies the four-page Internal-photo-7108448 exhibit, but no photo or chip marking was obtained in the 2026-10-25 Kimi Work pass. Paul reported an unworkable CAPTCHA and instructed against .gov access. Candidate device.report document 316f5b0cc706625ffa3e3bc2fec40a5de7648d54faf0d04f670d7b5e336b8b5b and corresponding manuals.plus URL returned HTTP 403; fccinsights.com returned HTTP 429 and was not retried. Candidate contents remain unverified. A readable exact-exhibit PDF supplied manually is the smallest next diagnostic.",
       "tags": [
         "fcc",
         "source",
@@ -799,7 +854,7 @@
       "kind": "source",
       "certainty": "observed",
       "title": "nRF Connect live GATT capture on dedicated phone (2026-10-25)",
-      "summary": "Captured 2026-10-25 (~11:34-11:38 phone clock) in nRF Connect for Mobile CLIENT view on dedicated phone RFCNC10FA3K while the T60 (60:1A:B7:00:AE:67) was connected/bonded. Sequence of screenshots plus uiautomator XML dumps (files 01-10, ui*.xml) stored outside Git at C:\\Users\\pdo74\\AppData\\Local\\Temp\\opencode\\t60-gloryfit\\screens\\. Only read-only UI actions were used: scrolling, expanding the D0FF service, and invoking the explicit action_read control on 0xFFF1 and 0xFFF3 after visual confirmation of target and control. No writes, subscriptions, or state changes. Screens contain phone UI only.",
+      "summary": "Captured 2026-10-25 in nRF Connect for Mobile CLIENT view on dedicated phone RFCNC10FA3K while T60(ID-AE67), 60:1A:B7:00:AE:67, was connected/bonded. Earlier screenshots/XML are at C:\\Users\\pdo74\\AppData\\Local\\Temp\\opencode\\t60-gloryfit\\screens\\; final-read working copies are in ignored scratch/live/ (33f1-read, 34f1-read, 6001-read and 61ff-target PNG/XML). Every read used a verified explicit action_read control. No writes, subscriptions, settings changes or other device state changes occurred.",
       "tags": [
         "nrf-connect",
         "gatt",
@@ -892,7 +947,7 @@
       "kind": "fact",
       "certainty": "documented",
       "title": "FCC filing applicant: Shenzhen Haocheng Technology",
-      "summary": "Documented (fccid.io, retrieved 2026-10-25): FCC ID 2BEQO-T60 was filed 2024-02-06 by SHENZHEN HAOCHENG TECHNOLOGY CO.,LTD (grantee 2BEQO) for the T60 SmartWatch, tested by SHENZHEN TONGCE TESTING LAB, 2402-2480 MHz. Exhibits include internal photos (Internal-photo-7108448), external photos, label and user manual. Direct PDF download is Cloudflare-blocked; mirrors (fcc.id, gov.fccid.io, fccid.ai) untried. Does not by itself identify the SoC.",
+      "summary": "Documented (fccid.io, retrieved 2026-10-25): FCC ID 2BEQO-T60 was filed 2024-02-06 by SHENZHEN HAOCHENG TECHNOLOGY CO.,LTD (grantee 2BEQO) for the T60 SmartWatch, tested by SHENZHEN TONGCE TESTING LAB, 2402-2480 MHz. Exhibits include Internal-photo-7108448, external photos, label and user manual. Subsequent automated photo retrieval was blocked (403 on candidate device.report/manuals.plus documents; 429 on fccinsights); official .gov access was not used per Paul's instruction. No chip marking was obtained; applicant identity alone does not resolve the SoC.",
       "tags": [
         "fcc",
         "manufacturer",
@@ -1329,6 +1384,41 @@
       "from": "fact-live-reads-2",
       "to": "question-app-protocol",
       "relation": "related-evidence"
+    },
+    {
+      "from": "fact-final-reads",
+      "to": "source-nrf-capture",
+      "relation": "observed-in"
+    },
+    {
+      "from": "fact-final-reads",
+      "to": "iface-gatt",
+      "relation": "extends"
+    },
+    {
+      "from": "fact-rtl8773ewe-capability",
+      "to": "fact-final-reads",
+      "relation": "derived-from"
+    },
+    {
+      "from": "fact-rtl8773ewe-capability",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-rtl8773ewe-capability",
+      "to": "question-soc",
+      "relation": "does-not-resolve"
+    },
+    {
+      "from": "question-soc",
+      "to": "source-fcc",
+      "relation": "awaiting-readable-exhibit"
+    },
+    {
+      "from": "question-os-base",
+      "to": "source-rtl87x3e-sdk",
+      "relation": "comparison-lead-only"
     }
   ]
 }
