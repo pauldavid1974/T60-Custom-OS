@@ -9,7 +9,7 @@ This document defines how decisions, changes, reviews, releases, and device-rela
 - **Owner:** Paul (`pauldavid1974`) is the sole human project owner and final decision-maker.
 - **Authorized agents:** ChatGPT, Qwen, and other assistants may research, implement, test, document, and commit within a bounded assignment. They are not independent owners or safety approvers.
 - **Collaborators:** No outside collaborator, reviewer, or approval authority is required or implied.
-- **Repository:** This private repository is the source of truth for code, tests, evidence, decisions, documentation, tooling, and handoffs.
+- **Repository:** This public, one-owner repository is the source of truth for code, tests, evidence, decisions, documentation, tooling, and handoffs. Public visibility does not grant write access or permission to expose protected evidence.
 
 An assignment, issue, pull request, CODEOWNERS entry, CI result, or agent recommendation does not expand authority or grant device-operation approval.
 
@@ -32,7 +32,7 @@ Do not use an old handoff entry to override a newer decision or current owner in
 
 ### A. Routine repository changes
 
-Small, reversible documentation, research, test, tooling, and portable host-only code changes within an authorized assignment may be committed directly to `main` by the owner or an authorized agent.
+Small, reversible documentation, research, test, tooling, and portable host-only code changes within an authorized assignment use a short-lived branch and pull request so the required `check` CI job passes before integration into protected `main`.
 
 Requirements:
 
@@ -68,11 +68,11 @@ Host-only builds and tests never satisfy these gates.
 
 ### Default branch and branches
 
-- `main` is the integration branch and shared agent work desk.
-- Routine authorized changes may go directly to `main`.
-- Feature branches are optional for substantial, experimental, or review-heavy work.
+- `main` is the protected integration branch and shared agent work desk.
+- Use a short-lived branch and pull request for routine and substantial changes so required CI can pass before integration.
+- Protection requires the GitHub Actions `check` context and up-to-date branches, applies to administrators, and disables force-pushes and branch deletion. No pull-request reviews are required.
 - Do not rewrite published history, force-push, delete branches, change visibility, or alter repository settings without Paul's explicit instruction.
-- Do not add branch protection that demands outside reviews. Owner-only protections may be considered separately; no protection rule is created by this document.
+- Do not add branch protection that demands outside reviews or changes these settings without Paul's approval.
 
 ### Commits
 
@@ -84,7 +84,7 @@ Host-only builds and tests never satisfy these gates.
 
 ### Pull requests
 
-Pull requests are optional unless Paul requests one for a specific change. When used:
+Pull requests are the normal integration path while `main` requires CI. No outside review is required.
 
 - Complete `.github/PULL_REQUEST_TEMPLATE.md` with evidence, safety scope, tests, and rollback notes.
 - CODEOWNERS identifies Paul as owner; it does not require an external review.
@@ -134,7 +134,7 @@ A device-action issue is a request or record only. Approval must be an explicit 
 
 ## 8. Security, privacy, and licensing
 
-- Keep the repository private unless Paul explicitly changes that decision.
+- The repository is public by Paul's explicit 2026-10-25 decision (D-007); do not change its visibility without new explicit owner approval.
 - Report sensitive findings through Paul's existing private channel, not a public issue or pull request.
 - Store proprietary or private evidence only in approved local locations and document non-sensitive provenance in the repository.
 - Verify license compatibility before importing third-party source, firmware, SDKs, fonts, images, or other assets.

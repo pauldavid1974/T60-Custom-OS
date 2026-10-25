@@ -1,6 +1,6 @@
 # T60 Custom OS
 
-**A complete, private source repository for replacing both the watch software on Paul's T60 smartwatch and its GloryFit companion app.** This contains firmware-core source code, tests, reverse-engineering evidence, technical documentation, and a searchable knowledge graph—not just AI messages.
+**A complete, public source repository for replacing both the watch software on Paul's T60 smartwatch and its GloryFit companion app.** This contains firmware-core source code, tests, reverse-engineering evidence, technical documentation, and a searchable knowledge graph—not just AI messages.
 
 > **Device status:** Exploration only. Nothing has been flashed. The exact SoC, target toolchain, genuine factory-firmware backup and safe recovery method are still unknown. No code in this repo is currently installable on the watch.
 
@@ -50,7 +50,7 @@ ctest --test-dir build/host --output-on-failure
 
 ## Collaboration and safety
 
-- **Owner:** Paul (`pauldavid1974`), personal account and private repository; no outside collaborators or mandatory outside reviews.
+- **Owner:** Paul (`pauldavid1974`), personal account and public repository; no outside collaborators or mandatory outside reviews.
 - **ChatGPT:** research coordination, architecture, evidence and code review, task planning.
 - **Qwen through Engine Room (RunPod/Colab):** code generation and research using a user-approved local harness.
 - **Single source of truth:** actual source in `firmware/`, documented decisions/evidence in `docs/` and `knowledge/`, next agent work in `HANDOFF.md`. Agents commit source code, tests and documentation to this repo.

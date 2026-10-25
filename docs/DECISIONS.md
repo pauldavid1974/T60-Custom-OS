@@ -33,7 +33,15 @@
 - **Reason:** Repository files are more durable and reviewable than session-specific conventions, and reusable forms reduce omitted safety or test information.
 - **Constraints:** Routine authorized changes may still go directly to `main`; pull requests are optional coordination tools. No outside collaborator or mandatory external review is introduced. Issues and checked boxes do not grant device-operation approval, and all D-002 safety gates remain unchanged. This decision establishes templates only; it does not change GitHub repository settings or branch protection.
 - **Governance:** Paul (owner) requested the governance template setup on 2026-10-25.
-- **Status:** Accepted (2026-10-25).
+- **Status:** Accepted (2026-10-25); direct-to-`main` workflow superseded by D-007.
+
+## D-007: Public repository with CI-protected main
+- **Decision:** Make `pauldavid1974/T60-Custom-OS` public and protect `main` with GitHub branch protection.
+- **Reason:** Paul explicitly authorized public visibility on 2026-10-25 after GitHub reported that the current private-repository plan did not include branch protection or rulesets.
+- **Protection:** Require the GitHub Actions `check` job and up-to-date branches; include administrators; disable force-pushes and branch deletion. No pull-request reviews or outside reviewers are required.
+- **Workflow:** Use a short-lived branch and pull request for changes to `main` so required CI can pass before integration. Paul still decides merges; an agent may merge only when explicitly authorized. No collaborators or outside approval authority are added.
+- **Safety/privacy:** Public visibility does not change device-safety gates or permit secrets, private device dumps, proprietary APKs/firmware/SDK binaries, or other protected evidence in Git.
+- **Status:** Accepted and observed configured through the GitHub API (2026-10-25).
 
 ## Pending decisions
 - Whether an existing watch OS base is suitable for the T60 (D-004 evaluation output).

@@ -1,4 +1,4 @@
-<!-- Pull requests are optional for routine owner-authorized work. Remove inapplicable prompts. -->
+<!-- Pull requests are the normal integration path while protected main requires CI. Remove inapplicable prompts. -->
 
 ## Summary
 

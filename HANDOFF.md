@@ -3,7 +3,7 @@
 **Updated:** 2026-10-25
 **Phase:** Read-only feasibility investigation
 **Next agent:** Qwen through Engine Room + a local harness (or ChatGPT)
-**Owner:** Paul; private personal repo `pauldavid1974/T60-Custom-OS`
+**Owner:** Paul; public one-owner repo `pauldavid1974/T60-Custom-OS` (public by Paul's explicit 2026-10-25 approval)
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
@@ -29,6 +29,16 @@
 - **Verification (Observed):** `python tools/kg.py validate` passed (51 nodes / 81 edges; references and links valid offline); `python -m unittest discover -s tests -v` passed 5/5; a local PyYAML syntax/structure check passed all three issue forms plus CODEOWNERS and the pull-request template; `git diff --check` passed; Git emitted only LF-to-CRLF working-copy conversion warnings on Windows. Host CMake/CTest **not run** because no portable C source changed.
 - **Unresolved:** repository settings such as owner-only branch protection, signed-commit enforcement and security features remain unchanged and are not implied by the templates.
 - **Next assignment:** unchanged — Qwen's processor-identification / OS-assessment job at the top of this file remains active. Future agents should use `GOVERNANCE.md` and the task template when receiving or recording new assignments.
+
+## Public visibility and main branch protection — Kimi Work (2026-10-25)
+
+- **Owner decision:** after the initial API requests returned the private-plan feature gate, Paul explicitly authorized making `pauldavid1974/T60-Custom-OS` public. This supersedes the earlier privacy setting, not any device-safety or evidence-handling rule.
+- **Observed configuration:** GitHub API `PATCH` confirmed `private: false`, `visibility: public`, and default branch `main`. Branch-protection `PUT` returned HTTP 200. No collaborators or outside reviewers were added.
+- **Effective protection (Observed, verified by API GET):** required status check `check`; `strict: true` (branches must be up to date); `enforce_admins: true`; `required_pull_request_reviews: null`; force-pushes and branch deletion disabled. Required signatures and linear history remain disabled. The intended `check` context previously completed successfully on commit `6387a0a`.
+- **Workflow consequence:** use a short-lived branch and pull request for changes to `main` so CI passes before integration. The earlier routine direct-to-`main` policy is superseded. Paul still decides merges; agents do not merge without explicit authorization.
+- **Verification:** `python tools/kg.py validate` passed (51 nodes / 81 edges); `python -m unittest discover -s tests -v` passed 5/5; `git diff --check` passed with only Windows line-ending conversion warnings. Host CMake/CTest **not run locally**; the GitHub `check` job covers them on the documentation PR. No C source or live-device state changed.
+- **PR evidence:** GitHub PR [#1](https://github.com/pauldavid1974/T60-Custom-OS/pull/1) was opened with no requested reviewers or teams. On commit `ccbcfc4`, required `check` and GitGuardian Security Checks both completed successfully; GitHub reported `mergeable: true`, `mergeable_state: clean`. The PR remains open for Paul's merge decision.
+- **Next assignment:** Qwen's processor-identification / OS-assessment job above remains active and unchanged.
 
 ## Shared work desk — Qwen ↔ Codex
 
