@@ -60,8 +60,8 @@ Lead-engineer (Qwen) session started in the local checkout.
 - **Workspace initialized:** repo cloned from `pauldavid1974/T60-Custom-OS`; README, AGENTS, HANDOFF, all `docs/`, and the knowledge graph read.
 - **Baseline verified green:** HEAD `8de3f02` passes the `verify` CI workflow (graph validate, knowledge-graph tests, host CMake build, ctest) — CI run `40125521186`, 2026-10-24.
 - **Local toolchain note:** the working laptop has Python 3.13 but **no CMake and no C compiler**, so the host C build/test runs in GitHub Actions only, not on the machine. Graph checks run locally via `python tools/kg.py validate` and `python -m unittest discover -s tests -v`.
-- **Active assignment confirmed** (below): identify Realtek IC id `0x0B` / `BB2`, document only the verified `FFF1` 13-byte layout, and compare public Realtek OTA/recovery procedures to this T60. Offline and read-only; no watch interaction.
-- **Next:** run the research and record sourced findings here and in `docs/HARDWARE.md` and `knowledge/graph.json`, then commit.
+- **Historical assignment:** offline investigation of `0x0B` / `BB2`, the `FFF1` response, recovery comparison, and D-004 OS candidates. The general pass is summarized above and in `docs/HARDWARE.md`; the remaining primary-source lookup is the active Qwen assignment at the top of this file.
+- **No device interaction:** the assignment permitted only offline research; no watch operation was performed.
 
 ## Status — Claude Code continuation session (2026-10-24)
 
