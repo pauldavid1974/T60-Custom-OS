@@ -37,6 +37,7 @@
 - **Effective protection (Observed, verified by API GET):** required status check `check`; `strict: true` (branches must be up to date); `enforce_admins: true`; `required_pull_request_reviews: null`; force-pushes and branch deletion disabled. Required signatures and linear history remain disabled. The intended `check` context previously completed successfully on commit `6387a0a`.
 - **Workflow consequence:** use a short-lived branch and pull request for changes to `main` so CI passes before integration. The earlier routine direct-to-`main` policy is superseded. Paul still decides merges; agents do not merge without explicit authorization.
 - **Verification:** `python tools/kg.py validate` passed (51 nodes / 81 edges); `python -m unittest discover -s tests -v` passed 5/5; `git diff --check` passed with only Windows line-ending conversion warnings. Host CMake/CTest **not run locally**; the GitHub `check` job covers them on the documentation PR. No C source or live-device state changed.
+- **PR evidence:** GitHub PR [#1](https://github.com/pauldavid1974/T60-Custom-OS/pull/1) was opened with no requested reviewers or teams. On commit `ccbcfc4`, required `check` and GitGuardian Security Checks both completed successfully; GitHub reported `mergeable: true`, `mergeable_state: clean`. The PR remains open for Paul's merge decision.
 - **Next assignment:** Qwen's processor-identification / OS-assessment job above remains active and unchanged.
 
 ## Shared work desk — Qwen ↔ Codex
