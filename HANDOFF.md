@@ -4,7 +4,8 @@
 **Phase:** Read-only feasibility investigation
 **Next agent:** Qwen through Engine Room + a local harness (or ChatGPT)
 **Owner:** Paul; private personal repo `pauldavid1974/T60-Custom-OS`
-**Hard stop:** NO writing to the watch, flashing, factory resets, unpairing, disassembly, or opening debug interfaces without explicit, action-specific approval from Paul.
+**Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
+**Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
 ## Status — offline BB2 research (2026-10-24)
 
@@ -15,43 +16,47 @@
 - **Unknown:** FFF1 byte layout, exact RTL part, genuine factory backup, signature/protection behavior, and safe recovery. The OTA-looking GATT interface does not establish restoration capability.
 - Research details and candidate table: `docs/HARDWARE.md`. Relevant knowledge graph nodes were updated/added. No device interaction occurred.
 
-**Next action for Paul:** if he wants another live diagnostic, explicitly approve a read-only read of characteristic `FFF3` on the existing `D0FF` service. This may expose additional protocol/device information but cannot be assumed to identify the exact SoC or prove recovery. Do not perform it until that exact read is approved.
+**Authorization note:** The read-only reverse-engineering scope above supersedes the earlier pending approval request for a read of `FFF3`; that read is within the approved scope if the connected device exposes it as readable. It does not prove recovery or authorize writes.
 
-## ACTIVE ASSIGNMENT — Qwen via OpenCode (offline, read-only)
+## ACTIVE ASSIGNMENT — Qwen via OpenCode (read-only device and app reverse engineering)
 
 ### Goal
 
-Use the local GloryFit APK or already-extracted SDK evidence, if available, to independently verify the reported `0x0B -> BB2` mapping and determine whether the vendor code or documentation connects `BB2` to an exact RTL SoC. Inspect related decoder code or protocol definitions for the observed `D0FF/FFF1` 13-byte response, but document only fields whose meaning is explicitly supported by source. The aim is to resolve the missing primary-source trail; do not repeat the general OS survey unless new chip evidence changes it.
+Reverse engineer the actual T60 and its GloryFit companion app together using the owner-authorized read-only scope. Identify the physical watch over BLE, inventory its GATT interface, collect readable characteristic values, and inspect the installed app's code/data offline to trace how it communicates with the watch. Verify the reported `0x0B -> BB2` mapping and whether it identifies an exact RTL SoC. Map only protocol fields and behavior supported by observed data or source. The long-term product goal is to replace both the watch software and companion app; this task is reconnaissance and evidence gathering, not installation or implementation.
 
 ### Read first and evidence to start from
 
-Read `README.md`, `AGENTS.md`, `HANDOFF.md`, `knowledge/README.md`, `docs/HARDWARE.md`, `docs/RECOVERY.md`, and `docs/QWEN38_AGENT_GUIDE.md`. Search the graph with `python tools/kg.py search BB2` and `python tools/kg.py search FFF1` before researching.
+Read `README.md`, `AGENTS.md`, `HANDOFF.md`, `knowledge/README.md`, `docs/HARDWARE.md`, `docs/RECOVERY.md`, `docs/PRODUCT.md`, and `docs/QWEN38_AGENT_GUIDE.md`. Search the graph with `python tools/kg.py search BB2` and `python tools/kg.py search FFF1` before researching.
 
-Known evidence: the observed FFF1 bytes are `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`; an exported Work-session report says the GloryFit Realtek SDK labels leading byte `0B` as `BB2`. The APK, class dump, and vendor guide are not committed. Treat that mapping as transcript-reported until the local SDK evidence is found and its code path/version recorded.
+Known evidence: the observed FFF1 bytes are `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`; an exported Work-session report says the GloryFit Realtek SDK labels leading byte `0B` as `BB2`. The installed app is GloryFit `com.yc.gloryfit` v4.0.12 (versionCode 279) on the dedicated Samsung SM_G781U phone. The watch was observed bonded and connected as `T60(ID-AE67)`, address `60:1A:B7:00:AE:67`; this may be a random/resolvable address. No APK or class dump is committed.
 
 ### Scope and files
 
-- Check the repository and any clearly project-scoped local evidence locations for the existing APK/class dump. Do not scan unrelated personal folders. Do not download, copy into Git, or publish the APK, proprietary SDK, private device dumps, or copyrighted extracts.
-- Use offline APK/class analysis and primary manufacturer documentation. Record the exact class/file/member path, SDK/APK version when available, and a short description of the symbol/data flow (no large copyrighted excerpts).
-- Check whether the code maps only `0x0B` to an SDK family label or whether it maps `BB2` further to a named SoC. Trace FFF1 response parsing only as far as source explicitly supports.
-- If the necessary local artifact is absent or unreadable, stop after recording what was checked; do not substitute guesses or expand into unrelated research.
-- If evidence changes durable conclusions, update only `HANDOFF.md`, `docs/HARDWARE.md`, and relevant stable nodes/edges in `knowledge/graph.json`.
+- Confirm the correct project directory, branch, and clean/dirty state; preserve existing user changes. Check connected tools and phone state without changing settings.
+- Locate the nearby watch with a BLE scan, matching the recorded name/address and observed services; log timestamp, advertised name/address type when available, RSSI, and scan method. Do not assume a MAC is stable.
+- Connect to the identified T60 for read-only GATT service/characteristic enumeration. Read characteristics only when the characteristic advertises READ; include `D0FF/FFF1` and `FFF3` if present/readable. Record raw bytes, UUIDs, property flags, read results/errors, and disconnect afterward. Do not write characteristics/descriptors or enable notifications/indications.
+- Pull only the installed package `com.yc.gloryfit` APK from the dedicated phone using ADB, into a temporary/local analysis area outside Git. Record package version, APK hash and source path. Decompile/analyze offline; never commit the APK, proprietary SDK, firmware binaries, private device dumps, or copyrighted extracts.
+- Trace app code paths for service discovery, characteristic IDs, read/write/notification handling, firmware selection and chip-ID mapping. Do not trigger app operations that change watch settings, pairing, firmware, or other persistent state.
+- Compare observed GATT data with app code and public manufacturer documentation. Do not infer field meanings from byte patterns alone. If any read requires a write/subscribe or an app action that may change state, stop and report it for Paul's separate approval.
+- If ADB, BLE tooling, permissions, or artifact extraction are unavailable, stop at that boundary and report the exact blocker; do not install software, alter phone settings, or broaden filesystem searches without asking.
+- Update `HANDOFF.md`, `docs/HARDWARE.md`, `docs/PRODUCT.md`/`docs/DECISIONS.md` if durable scope findings warrant it, and relevant stable nodes/edges in `knowledge/graph.json`.
 
 ### Allowed and prohibited actions
 
-Allowed: repository reads/edits, local offline APK/class inspection, public Realtek manufacturer documentation, graph and unit checks.
+Allowed by Paul's explicit approval: read-only BLE scan, connection, GATT enumeration and reads of characteristics marked READ; read-only ADB package metadata/APK pull for GloryFit; offline static analysis of that APK; repository and manufacturer-documentation research.
 
-Prohibited: any live watch or phone action, BLE read/write (including pending `FFF3`), pairing changes, DFU/OTA, flashing, reset, unlock, debug-port access, or disassembly. This assignment grants no device permission. Do not commit APKs, SDK binaries, firmware images, secrets, or personal dumps.
+Prohibited: characteristic/descriptor writes, notification subscriptions, pairing changes, DFU/OTA, flashing, reset, unlock, debug-port access, physical disassembly, or any action likely to alter persistent device/app state. Do not install or uninstall phone apps, change phone developer/Bluetooth settings, or commit APKs, SDK binaries, firmware images, secrets, or private dumps. Ask Paul before crossing any boundary.
 
 ### Acceptance and report
 
+- Produce an evidence inventory of the live GATT database and readable values, and an app protocol map linking exact code paths to observed UUIDs/bytes. Report mismatches and unknowns rather than filling gaps.
 - `python tools/kg.py validate` and `python -m unittest discover -s tests -v` must pass if project files are changed. Do not claim host C checks unless actually run.
 - Review `git diff`; commit to `main` only if the existing safety hooks permit it. Never bypass a failing hook.
 - Report exact evidence paths/version, whether `BB2` resolves to a part number, fields decoded versus unknown, files changed, tests run, commit SHA if committed, and one next action. Label each claim Observed, Documented, Inferred, or Unknown.
 
 ### Hard stop
 
-Stop once the mapping and field-decoding evidence is recorded, or immediately if required artifacts are unavailable. Do not interact with the watch or attempt firmware installation.
+Stop after read-only watch/app reconnaissance is documented, or immediately at any blocker requiring a prohibited state-changing action. Do not implement or install replacement firmware or app in this assignment.
 
 ## Status — Qwen via OpenCode session (2026-10-24)
 

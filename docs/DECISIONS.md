@@ -21,8 +21,16 @@
 - **Governance:** Paul (owner) decision, stated 2026-10-24.
 - **Status:** Accepted (2026-10-24).
 
+## D-005: Replace both watch software and companion app
+- **Decision:** The long-term goal includes replacing the T60's factory watch operating software and the GloryFit companion app. Replacing only one is incomplete.
+- **Reason:** The customized watch and its phone companion must work together without depending on the factory software stack.
+- **Constraints:** Reverse engineer and document the existing watch/app protocols before choosing an implementation. D-002's recovery and device-write gates remain in force; this decision is not approval to install either replacement.
+- **Governance:** Paul (owner) decision, stated 2026-10-24.
+- **Status:** Accepted (2026-10-24).
+
 ## Pending decisions
 - Whether an existing watch OS base is suitable for the T60 (D-004 evaluation output).
+- Companion app requirements and supported platforms for the replacement.
 - Exact processor target and SDK/toolchain.
 - Native firmware framework or RTOS.
 - Screen and input drivers.

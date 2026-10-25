@@ -16,6 +16,15 @@ No deadlines or hardware compatibility claims are implied.
 
 The stages are decision gates, not permission to progress automatically. Host-only source code may be developed for Stage 4 while Stages 1–3 are still open, but nothing should be flashed.
 
+## Companion-app track (runs alongside Stages 1–3)
+
+| Deliverable | Exit gate |
+|---|---|
+| Reverse engineer the installed GloryFit app and compare its protocol implementation with observed T60 GATT services and readable values | Protocol map is tied to exact APK/version and observed evidence; unsupported fields and behaviors remain marked unknown |
+| Specify a replacement companion app that works with the selected customized watch software | Owner-approved requirements, supported phone platforms, and a test plan; no dependence on guessed or write-only behavior |
+
+Replacing only the watch software or only the phone app is not the complete product goal. Implementations and any deployment remain subject to the recovery and device-write safety gates.
+
 ## Current priority
 
 Resolve `BB2` / IC ID `0B` and compare Realtek protocol documentation to evidence from this exact T60. This is a prerequisite for both the existing-OS evaluation (Stage 2) and the build-own path. See `HANDOFF.md` for the single active assignment.

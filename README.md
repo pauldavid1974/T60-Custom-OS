@@ -1,6 +1,6 @@
 # T60 Custom OS
 
-**A complete, private source repository for developing a replacement operating system for Paul's T60 smartwatch.** This contains real firmware-core source code, tests, research, technical documentation, and a searchable evidence/dependency knowledge graph—not just AI messages.
+**A complete, private source repository for replacing both the watch software on Paul's T60 smartwatch and its GloryFit companion app.** This contains firmware-core source code, tests, reverse-engineering evidence, technical documentation, and a searchable knowledge graph—not just AI messages.
 
 > **Device status:** Exploration only. Nothing has been flashed. The exact SoC, target toolchain, genuine factory-firmware backup and safe recovery method are still unknown. No code in this repo is currently installable on the watch.
 
@@ -51,8 +51,8 @@ ctest --test-dir build/host --output-on-failure
 - **Qwen through Engine Room (RunPod/Colab):** code generation and research using a user-approved local harness.
 - **Single source of truth:** actual source in `firmware/`, documented decisions/evidence in `docs/` and `knowledge/`, next agent work in `HANDOFF.md`. Agents commit source code, tests and documentation to this repo.
 
-**Owner approval is mandatory** before any new live watch operation. Read-only research is the default, and no firmware writes until the exact chip, original backup, recovery path and image verification are established. Full rules: [AGENTS.md](AGENTS.md).
+Paul has authorized read-only reverse engineering of the T60 and GloryFit, including BLE discovery/GATT reads and offline analysis of the installed app. Other live operations still require action-specific approval. No firmware writes until the exact chip, original backup, recovery path and image verification are established. Full rules and current scope: [AGENTS.md](AGENTS.md) and [HANDOFF.md](HANDOFF.md).
 
 ## Current technical lead
 
-Work read BLE `D0FF/FFF1`: `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`. GloryFit's bundled Realtek SDK reportedly maps `0B` to `BB2`. This is a chipset-family clue, **not** an exact chip model. Research task and sources: [HANDOFF.md](HANDOFF.md).
+The T60's observed BLE `D0FF/FFF1` read is `0B 01 1D 00 51 01 00 F7 00 00 00 00 00`. GloryFit's bundled Realtek SDK reportedly maps `0B` to `BB2`; this is a family clue, **not** an exact chip model. The active read-only device/app reverse-engineering assignment is in [HANDOFF.md](HANDOFF.md).

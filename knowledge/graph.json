@@ -615,6 +615,44 @@
       ]
     },
     {
+      "id": "decision-app-path",
+      "kind": "decision",
+      "certainty": "documented",
+      "title": "Replace both T60 watch software and GloryFit companion app",
+      "summary": "Owner decision (2026-10-24): the long-term goal is to replace both the factory watch software and GloryFit. Reverse engineer their protocol before implementation; installation remains gated by D-002.",
+      "tags": [
+        "decision",
+        "companion-app",
+        "gloryfit",
+        "replacement",
+        "protocol"
+      ],
+      "refs": [
+        "docs/DECISIONS.md",
+        "docs/PRODUCT.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "question-app-protocol",
+      "kind": "question",
+      "certainty": "unknown",
+      "title": "GloryFit to T60 protocol and companion replacement requirements",
+      "summary": "Trace the installed GloryFit app's protocol code against observed T60 GATT services and readable values; identify required app/watch behaviors without changing device state.",
+      "tags": [
+        "gloryfit",
+        "companion-app",
+        "ble",
+        "protocol",
+        "open"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "docs/PRODUCT.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
       "id": "question-os-base",
       "kind": "question",
       "certainty": "unknown",
@@ -906,6 +944,16 @@
       "from": "decision-os-path",
       "to": "question-os-base",
       "relation": "requires-resolution"
+    },
+    {
+      "from": "decision-app-path",
+      "to": "question-app-protocol",
+      "relation": "requires-resolution"
+    },
+    {
+      "from": "device-t60",
+      "to": "question-app-protocol",
+      "relation": "communicates-with"
     },
     {
       "from": "component-bsp",
