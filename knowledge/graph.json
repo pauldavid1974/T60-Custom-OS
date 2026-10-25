@@ -89,7 +89,7 @@
       "kind": "fact",
       "certainty": "observed",
       "title": "FFF1 device information response",
-      "summary": "Thirteen bytes: 0B 01 1D 00 51 01 00 F7 00 00 00 00 00. Unverified fields must not be decoded speculatively.",
+      "summary": "Thirteen bytes: 0B 01 1D 00 51 01 00 F7 00 00 00 00 00. Byte 0 is the IC ID per the vendor SDK in the app (0x0B = BB2); no explicit 13-byte parser was found in the SDK, so bytes 1-12 must not be decoded speculatively.",
       "tags": [
         "ble",
         "read",
@@ -107,7 +107,7 @@
       "kind": "fact",
       "certainty": "documented",
       "title": "Realtek SDK 0B -> BB2 mapping",
-      "summary": "A supplied Work transcript reports that the GloryFit Realtek SDK maps 0B to BB2. An OpenCode search found no APK/class dump in the repository, My Projects siblings, T60-name-matched top-level Documents/Desktop locations, or filename-matched Downloads; it was not an exhaustive search of the laptop. The mapping remains unverified from source. Public research did not establish a unique RTL part. BB2 remains an SDK label, not an exact chip model. Paul has since authorized read-only APK extraction from the dedicated phone.",
+      "summary": "Verified from primary source in GloryFit v4.0.12 (APK pulled from the dedicated phone 2026-10-24 under owner authorization): classes5.dex embeds the RealSil SDK (com.realsil.sdk, Realtek's MCU brand) whose com.realsil.sdk.dfu.DfuConstants defines IC_BB2 = 0x0B alongside IC_BEE1/BBPRO/BEE2/BBLITE_ANC/BBPRO2/BBLITE/SBEE2/BBPRO3/BEE3 and MANUFACTURER_ID_REALTEK = 0x5D. BB2 is a vendor product-line label, not an RTL part number; the exact SoC remains unknown.",
       "tags": [
         "bb2",
         "realtek",
@@ -707,6 +707,66 @@
         "https://opencode.ai/v2/docs/models",
         "docs/QWEN38_AGENT_GUIDE.md"
       ]
+    },
+    {
+      "id": "source-gloryfit-apk",
+      "kind": "source",
+      "certainty": "documented",
+      "title": "GloryFit v4.0.12 APK (pulled, uncommitted)",
+      "summary": "com.yc.gloryfit v4.0.12 (versionCode 279) pulled read-only via ADB from the dedicated phone 2026-10-24 under owner authorization. base.apk SHA-256 470B7EAE5C79F9CBF26B59AC651832A70143A1A4DC6C849C8204DFB2D72159AB, split_config.arm64_v8a.apk SHA-256 4EC08F3D753D300F243B8A1ABDA9B54D76AE439ACFBD10BC1B91369A99F593F2. Stored outside Git at C:\\Users\\pdo74\\AppData\\Local\\Temp\\opencode\\t60-gloryfit\\. Contains the RealSil SDK (com.realsil.sdk) in classes5.dex and Realtek native libs (libRtkAesJni.so, libRtkMediaCodec.so). No watch firmware blobs in this version's assets.",
+      "tags": [
+        "gloryfit",
+        "apk",
+        "realsil",
+        "realtek",
+        "sdk",
+        "source",
+        "evidence"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-sdk-gatt-map",
+      "kind": "fact",
+      "certainty": "documented",
+      "title": "RealSil SDK GATT map matches observed T60 UUIDs",
+      "summary": "The RealSil SDK in GloryFit v4.0.12 defaults its DFU GATT to service 0000d0ff-3c17-d293-8e48-14fe2e4da212 (exactly the observed T60 service) with characteristics 00006287/6387/6487 (same 128-bit base), MTU 256. Per-profile classes define 16-bit characteristics fff1/fff2 (and m.o pairs d0ff with fff3); ExtendedBluetoothDevice scans on fff6; classes6.dex defines services 55ff/56ff/57ff and characteristics fff0, ffd0-ffd5, ffd8. The observed 128-bit service 6a24eeab-4b65-4693-986b-3c26c352264f is the SDK's WELL_KNOWN_SPP_UUID (SPP transport). Observed 60FF/61FF services are absent from SDK string constants; their origin is unknown.",
+      "tags": [
+        "gatt",
+        "uuid",
+        "d0ff",
+        "fff1",
+        "fff3",
+        "spp",
+        "realsil",
+        "sdk"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-nrf-phone-gatt",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "nRF Connect for Mobile is the phone's GATT client to T60",
+      "summary": "Observed 2026-10-24 via read-only dumpsys bluetooth_manager on the dedicated phone (RFCNC10FA3K): Paul installed nRF Connect for Mobile (no.nordicsemi.android.mcp), which is the phone's current GATT client connected to the T60 (60:1A:B7:00:AE:67) since 10-24 22:34:42. Android's stack dump does not expose the remote GATT database, so the service tree and FFF1/FFF3 read values must be captured in the app or via a laptop GATT client (not installed).",
+      "tags": [
+        "nrf-connect",
+        "gatt",
+        "phone",
+        "adb",
+        "dumpsys",
+        "ble"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
     }
   ],
   "edges": [
@@ -959,6 +1019,41 @@
       "from": "component-bsp",
       "to": "decision-os-path",
       "relation": "contingent-on"
+    },
+    {
+      "from": "fact-bb2",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-fff1",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-sdk-gatt-map",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-sdk-gatt-map",
+      "to": "iface-gatt",
+      "relation": "related-evidence"
+    },
+    {
+      "from": "fact-sdk-gatt-map",
+      "to": "question-soc",
+      "relation": "does-not-resolve"
+    },
+    {
+      "from": "fact-nrf-phone-gatt",
+      "to": "device-t60",
+      "relation": "observed-on"
+    },
+    {
+      "from": "fact-nrf-phone-gatt",
+      "to": "question-app-protocol",
+      "relation": "unblocks"
     }
   ]
 }
