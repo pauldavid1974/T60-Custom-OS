@@ -54,7 +54,7 @@
       "kind": "interface",
       "certainty": "observed",
       "title": "BLE GATT service enumeration",
-      "summary": "Observed 55FF, 56FF, 60FF, 61FF, 180F and D0FF service UUID groups through nRF Connect.",
+      "summary": "Observed full GATT tree via nRF Connect CLIENT view 2026-10-25 (T60 60:1A:B7:00:AE:67, connected/bonded), list order: 0x1801 Generic Attribute; 0x1800 Generic Access; 0x55FF; 0x56FF; 0x60FF; 0x61FF; 0x180F Battery Service (Battery Level 0x2A19 READ+NOTIFY, CCCD 0x2902); service 0000d0ff-3c17-d293-8e48-14fe2e4da212 with characteristics 0xFFD1 (WRITE NO RESPONSE), 0xFFD2/FFD3/FFD4/FFF1/FFE0/FFE1/FFF3/FFF4/FFF5 (all READ, no NOTIFY/INDICATE); 00006287-3c17-d293-8e48-14fe2e4da212 and 000002fd-3c17-d293-8e48-14fe2e4da212 (collapsed, not enumerated). 128-bit service 6a24eeab-4b65-4693-986b-3c26c352264f is not a GATT service (SPP only).",
       "tags": [
         "ble",
         "bluetooth",
@@ -89,13 +89,14 @@
       "kind": "fact",
       "certainty": "observed",
       "title": "FFF1 device information response",
-      "summary": "Observed 13-byte payload: 0B 01 1D 00 51 01 00 F7 00 00 00 00 00. The SDK independently documents IC_BB2 = 0x0B, but no explicit 13-byte FFF1 parser links this response to the SDK's icId field. Bytes 1-12 and byte 0's field role remain unverified.",
+      "summary": "Observed 13-byte payload: 0B 01 1D 00 51 01 00 F7 00 00 00 00 00, first via the Work session and independently re-confirmed 2026-10-25 by a live READ of characteristic 0xFFF1 in service 0000d0ff-3c17-d293-8e48-14fe2e4da212 using the explicit Read control of nRF Connect (screenshots + uiautomator dumps, stored outside Git). The SDK independently documents IC_BB2 = 0x0B, but no explicit 13-byte FFF1 parser links this response to the SDK icId field; byte 0 field role stays inferred, bytes 1-12 unknown.",
       "tags": [
         "ble",
         "read",
         "fff1",
         "bytes",
-        "0b"
+        "0b",
+        "nrf-connect"
       ],
       "refs": [
         "docs/HARDWARE.md",
@@ -771,7 +772,7 @@
       "kind": "fact",
       "certainty": "observed",
       "title": "nRF Connect for Mobile is the phone's GATT client to T60",
-      "summary": "Observed 2026-10-24 via read-only dumpsys bluetooth_manager on the dedicated phone (RFCNC10FA3K): Paul installed nRF Connect for Mobile (no.nordicsemi.android.mcp), which is the phone's current GATT client connected to the T60 (60:1A:B7:00:AE:67) since 10-24 22:34:42. Android's stack dump does not expose the remote GATT database, so the service tree and FFF1/FFF3 read values must be captured in the app or via a laptop GATT client (not installed).",
+      "summary": "Observed 2026-10-24 via read-only dumpsys bluetooth_manager on the dedicated phone (RFCNC10FA3K): Paul installed nRF Connect for Mobile (no.nordicsemi.android.mcp), which is the phone current GATT client connected to the T60 (60:1A:B7:00:AE:67) since 10-24 22:34:42. The remote GATT database was subsequently captured in the app on 2026-10-25 (see source-nrf-capture), including live reads of FFF1 and FFF3.",
       "tags": [
         "nrf-connect",
         "gatt",
@@ -779,6 +780,43 @@
         "adb",
         "dumpsys",
         "ble"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "source-nrf-capture",
+      "kind": "source",
+      "certainty": "observed",
+      "title": "nRF Connect live GATT capture on dedicated phone (2026-10-25)",
+      "summary": "Captured 2026-10-25 (~11:34-11:38 phone clock) in nRF Connect for Mobile CLIENT view on dedicated phone RFCNC10FA3K while the T60 (60:1A:B7:00:AE:67) was connected/bonded. Sequence of screenshots plus uiautomator XML dumps (files 01-10, ui*.xml) stored outside Git at C:\\Users\\pdo74\\AppData\\Local\\Temp\\opencode\\t60-gloryfit\\screens\\. Only read-only UI actions were used: scrolling, expanding the D0FF service, and invoking the explicit action_read control on 0xFFF1 and 0xFFF3 after visual confirmation of target and control. No writes, subscriptions, or state changes. Screens contain phone UI only.",
+      "tags": [
+        "nrf-connect",
+        "gatt",
+        "capture",
+        "phone",
+        "read",
+        "evidence"
+      ],
+      "refs": [
+        "docs/HARDWARE.md",
+        "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-fff3",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "FFF3 characteristic live read value",
+      "summary": "Live READ of characteristic 0xFFF3 (READ property) in service 0000d0ff-3c17-d293-8e48-14fe2e4da212 performed 2026-10-25 via the explicit Read control of nRF Connect returned the 2-byte value 14 00 (displayed as Value: (0x) 14-00). Field meaning is unknown; the SDK profile m.o pairs fff3 with the d0ff service but no payload definition was found in the app.",
+      "tags": [
+        "fff3",
+        "gatt",
+        "read",
+        "d0ff",
+        "bytes"
       ],
       "refs": [
         "docs/HARDWARE.md",
@@ -1081,6 +1119,36 @@
       "from": "fact-nrf-phone-gatt",
       "to": "question-app-protocol",
       "relation": "unblocks"
+    },
+    {
+      "from": "iface-gatt",
+      "to": "source-nrf-capture",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-fff1",
+      "to": "source-nrf-capture",
+      "relation": "observed-in"
+    },
+    {
+      "from": "fact-fff3",
+      "to": "source-nrf-capture",
+      "relation": "observed-in"
+    },
+    {
+      "from": "iface-ota",
+      "to": "fact-fff3",
+      "relation": "reports"
+    },
+    {
+      "from": "fact-fff3",
+      "to": "question-app-protocol",
+      "relation": "related-evidence"
+    },
+    {
+      "from": "source-nrf-capture",
+      "to": "fact-nrf-phone-gatt",
+      "relation": "related-evidence"
     }
   ]
 }

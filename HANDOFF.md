@@ -1,6 +1,6 @@
 # HANDOFF — T60 custom firmware investigation
 
-**Updated:** 2026-10-24
+**Updated:** 2026-10-25
 **Phase:** Read-only feasibility investigation
 **Next agent:** Qwen through Engine Room + a local harness (or ChatGPT)
 **Owner:** Paul; private personal repo `pauldavid1974/T60-Custom-OS`
@@ -13,10 +13,10 @@
 |---|---|
 | Project goal | Reverse engineer the T60 and GloryFit, then eventually replace both. First evaluate a compatible existing watch OS; build one only if needed. |
 | Phase | Read-only physical-watch and companion-app reconnaissance. No replacement has been implemented or installed. |
-| Latest Qwen report | Commit `62a4ac5`: pulled and analyzed GloryFit v4.0.12; verified SDK mapping `IC_BB2 = 0x0B`; exact RTL SoC remains unknown. |
-| Current Qwen action | Capture the live GATT tree in the already-connected nRF Connect app, then read `FFF1` and `FFF3` only if they advertise READ. See the detailed step and safety checks below. |
-| Current review | Codex review `d175f6e` corrected the claim that FFF1 byte 0 is proven to be an IC-ID field. The SDK mapping is documented; the FFF1 field role remains inferred because no parser links the response to the SDK `icId` model. |
-| Verification | Latest review run: graph validation passed at 44 nodes / 59 edges; 5/5 unit tests passed. |
+| Latest Qwen report | Live GATT capture (this commit, 2026-10-25): full 10-service tree recorded in nRF Connect; explicit READ controls invoked only for `FFF1` (`0B 01 1D 00 51 01 00 F7 00 00 00 00 00`, re-confirmed) and `FFF3` (`14 00`). See "Status — Qwen via OpenCode session 3" below. |
+| Current Qwen action | Awaiting Codex review of the live GATT capture report. Proposed next (read-only, needs review/owner go-ahead): read remaining READ characteristics `FFD2`–`FFD4`, `FFE0`, `FFE1`, `FFF4`, `FFF5`; expand collapsed services `00006287-…` and `000002fd-…`; read Battery `0x2A19`. |
+| Current review | Codex review `d175f6e` corrected the claim that FFF1 byte 0 is proven to be an IC-ID field. The SDK mapping is documented; the FFF1 field role remains inferred because no parser links the response to the SDK `icId` model. Review of the live capture report is pending. |
+| Verification | Latest review run: graph validation passed at 46 nodes / 65 edges; 5/5 unit tests passed. |
 | Shared channel | This file on GitHub `main` is the work desk. Qwen reports by committing findings here and in source docs/graph. Codex reviews each new report and posts guidance here. A Qwen commit is a report, not a completed review. |
 
 ### Turn-taking
@@ -114,6 +114,21 @@ Carried out the expanded active assignment. Paul's 2026-10-24 authorization cove
 
 - Keep `0x0B -> IC_BB2` as a verified SDK mapping, but treat “FFF1 byte 0 is the IC-ID field” as an inference: no FFF1 parser links that response to the SDK `icId` model.
 - Proceed with the approved nRF Connect screen inspection and explicit READ operations after visually confirming the exact target/control. Report the live GATT properties and raw values, then sync `main` and check this handoff for further review before continuing.
+
+## Status — Qwen via OpenCode session 3 (2026-10-25, live GATT capture)
+
+Completed the work-desk action: live GATT tree capture and the two explicit reads, all within the owner-authorized read-only scope, using only the already-connected nRF Connect app on the dedicated phone.
+
+- **Method (Observed):** nRF Connect CLIENT view, `T60(ID-AE67)` `60:1A:B7:00:AE:67`, CONNECTED + BONDED; phone clock ~11:34–11:38. Every screen state verified via screenshot plus `uiautomator` XML dump (exact element bounds) before any tap. Only the per-characteristic **Read** control (resource `action_read`, content-desc "Read") was invoked, after visually confirming the target row. One mis-tap on a row body (no-op, layout unchanged) and one scroll overshoot were corrected by re-dumping bounds. No writes, no subscriptions, no state changes, no new software installed.
+- **Observed GATT tree (10 services, list order):** `0x1801` Generic Attribute; `0x1800` Generic Access; `0x55FF`; `0x56FF`; `0x60FF`; `0x61FF`; `0x180F` Battery Service (Battery Level `0x2A19` READ+NOTIFY, CCCD `0x2902`); `0000d0ff-3c17-d293-8e48-14fe2e4da212`; `00006287-3c17-d293-8e48-14fe2e4da212` (collapsed); `000002fd-3c17-d293-8e48-14fe2e4da212` (collapsed). The 128-bit service `6a24eeab-…` is **not** a GATT service (SPP only — consistent with the SDK `WELL_KNOWN_SPP_UUID` finding).
+- **Observed D0FF characteristics (10, list order):** `FFD1` WRITE NO RESPONSE (only write capability in the service); `FFD2`, `FFD3`, `FFD4`, `FFF1`, `FFE0`, `FFE1`, `FFF3`, `FFF4`, `FFF5` — all READ, none NOTIFY/INDICATE. This is the live subset of the SDK's documented template (SDK also lists `ffd0`, `ffd5`, `ffd8`, `fff0`, `fff2`, which this device does not expose).
+- **Observed FFF1 read:** `Value: (0x) 0B-01-1D-00-51-01-00-F7-00-00-00-00-00` — 13 bytes, byte-identical to the Work-session payload, independently re-confirmed live. Byte 0 `0x0B` equals SDK `IC_BB2`; per review `d175f6e` the IC-ID field role stays **Inferred**; bytes 1–12 remain **Unknown**.
+- **Observed FFF3 read:** `Value: (0x) 14-00` — 2 bytes `14 00`; meaning **Unknown** (no SDK payload definition found).
+- **Evidence:** screenshots `01`–`10` (PNG + resized JPG) and `uiautomator` dumps `ui.xml`–`ui7.xml` at `C:\Users\pdo74\AppData\Local\Temp\opencode\t60-gloryfit\screens\` (outside Git; UI only, no secrets). Read-only ADB used for `screencap`, `input` (swipe/tap on the nRF UI only), `uiautomator dump`, `pull`.
+- **Files changed:** `HANDOFF.md` (this section + work desk), `docs/HARDWARE.md` (summary table + new "Live GATT capture via nRF Connect" section; corrected stale "nRF not installed" line), `knowledge/graph.json` (updated `iface-gatt`, `fact-fff1`, `fact-nrf-phone-gatt`; added `source-nrf-capture`, `fact-fff3`; +6 edges).
+- **Tests:** `python tools/kg.py validate` and `python -m unittest discover -s tests -v` — results recorded at commit time (see work desk Verification row). Host C build not run (no C code changed).
+
+**Next Qwen action (pending review):** read the remaining READ-advertised characteristics (`FFD2`–`FFD4`, `FFE0`, `FFE1`, `FFF4`, `FFF5`), expand and enumerate the collapsed `00006287-…`/`000002fd-…` services, and read Battery `0x2A19` — all READ-only, same verified-UI procedure. Hold until Codex reviews this report or Paul directs otherwise, per the desk's report-then-review flow.
 
 ## Status — Qwen lane (2026-10-24)
 

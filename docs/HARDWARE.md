@@ -5,8 +5,9 @@
 | Model | Observed: T60 |
 | FCC ID | Observed: 2BEQO-T60 |
 | Factory firmware | Observed: V007108 |
-| BLE GATT | Observed: services 55FF, 56FF, 60FF, 61FF, standard 180F, proprietary D0FF |
-| D0FF characteristic FFF1 | Observed read: `0B 01 1D 00 51 01 00 F7 00 00 00 00 00` |
+| BLE GATT | Observed: 10 services — 1801, 1800, 55FF, 56FF, 60FF, 61FF, standard 180F (Battery), D0FF (10 characteristics incl. FFF1/FFF3), `00006287-3c17-d293-8e48-14fe2e4da212`, `000002fd-3c17-d293-8e48-14fe2e4da212` (full tree captured in-app 2026-10-25, see below) |
+| D0FF characteristic FFF1 | Observed read (re-confirmed live 2026-10-25 via nRF Connect): `0B 01 1D 00 51 01 00 F7 00 00 00 00 00` |
+| D0FF characteristic FFF3 | Observed read 2026-10-25 via nRF Connect: `14 00` (2 bytes; meaning unknown) |
 | Vendor chip-family string | Documented in GloryFit's Realtek SDK as `0B` -> `BB2`, per Work session analysis |
 | Exact SoC, board revision, memory | Unknown |
 | Display controller, touch/button inputs, sensors | Unknown |
@@ -15,7 +16,7 @@
 | True factory firmware backup | Not acquired or verified |
 | Dedicated phone (ADB) | Observed 2026-10-24: Samsung SM_G781U (serial RFCNC10FA3K), connected over USB, ADB authorized |
 | Phone pairing with T60 | Observed 2026-10-24 via read-only `dumpsys bluetooth_manager`: bonded **and connected** as "T60(ID-AE67)", address `60:1A:B7:00:AE:67` (DUAL BR/EDR+LE). Advertised services include standard 1101, HSP, Handsfree, AVRCP and a custom UUID `6a24eeab-4b65-4693-986b-3c26c352264f`. The address may be a random/resolvable LE identifier, not a factory MAC |
-| Companion apps on phone | Observed 2026-10-24: GloryFit `com.yc.gloryfit` v4.0.12 (versionCode 279) installed; nRF Connect **not** installed (no `no.nrfconnect`/Nordic package found) |
+| Companion apps on phone | Observed 2026-10-24: GloryFit `com.yc.gloryfit` v4.0.12 (versionCode 279) installed. Superseded 2026-10-24/25: nRF Connect for Mobile (`no.nordicsemi.android.mcp`) installed by Paul and connected to the T60 as the phone's GATT client (see "Live GATT capture" section) |
 
 ## Offline Realtek mapping and OS survey (2026-10-24)
 
@@ -48,6 +49,16 @@ Do not identify the exact SoC based on other products also sold under the name "
 - **Documented (FFF1 semantics):** the SDK's `DeviceInfo` model carries an `icId` byte plus protocol/app/pnp/bank/OTA fields; the OTA command dispatcher `com.realsil.sdk.dfu.v.a` parses a single `icId` byte from the 0x108 command response (other observed command IDs: 0x102, 0x60C, 0x60D). No explicit 13-byte `FFF1` parser was found in the Java code. Consequence: **byte 0 of the observed FFF1 response = IC ID (0x0B = BB2) is source-supported; bytes 1–12 remain Unknown** and must not be decoded speculatively.
 - **Observed (negative):** this APK version's assets contain **no** watch firmware blobs (no RTL8762C/D images found); the earlier Work-transcript claim of two bundled firmware images was not reproduced in v4.0.12. `assets/ble_analyze.js` is a parser for a different (non-D0FF) protocol.
 - **Observed (phone state):** nRF Connect for Mobile (`no.nordicsemi.android.mcp`) installed by Paul and connected to the T60 as the phone's GATT client (read-only `dumpsys bluetooth_manager`, 2026-10-24 22:34:42). Android's stack dump does not expose the remote GATT DB, so the service tree and `FFF1`/`FFF3` values require capture in the app (or a laptop GATT client, which is not installed).
+
+## Live GATT capture via nRF Connect (2026-10-25, owner-authorized read-only)
+
+- **Method (Observed):** nRF Connect for Mobile CLIENT view on the dedicated phone (`RFCNC10FA3K`), watch shown as `T60(ID-AE67)` `60:1A:B7:00:AE:67`, CONNECTED + BONDED. Each screen state was verified with screenshots plus `uiautomator` XML dumps (element bounds); only the explicit per-characteristic **Read** control (app resource `action_read`, content-desc "Read") was invoked, and only after the target row and control were visually confirmed. No writes, subscriptions, or state changes. Phone clock during capture: ~11:34–11:38.
+- **Observed (full GATT tree, CLIENT view, list order):** 10 services: `0x1801` Generic Attribute; `0x1800` Generic Access; `0x55FF`; `0x56FF`; `0x60FF`; `0x61FF`; `0x180F` Battery Service (contains Battery Level `0x2A19`, properties READ+NOTIFY, descriptor CCCD `0x2902`); `0000d0ff-3c17-d293-8e48-14fe2e4da212`; `00006287-3c17-d293-8e48-14fe2e4da212`; `000002fd-3c17-d293-8e48-14fe2e4da212`. The last two services stayed collapsed and were not enumerated. The 128-bit service `6a24eeab-4b65-4693-986b-3c26c352264f` is **not** present in the GATT database (it is the SPP/RFCOMM UUID, consistent with the SDK's `WELL_KNOWN_SPP_UUID`).
+- **Observed (D0FF service characteristics, list order):** `0xFFD1` (WRITE NO RESPONSE — the only write capability in this service), `0xFFD2` READ, `0xFFD3` READ, `0xFFD4` READ, `0xFFF1` READ, `0xFFE0` READ, `0xFFE1` READ, `0xFFF3` READ, `0xFFF4` READ, `0xFFF5` READ. Ten characteristics; none advertise NOTIFY or INDICATE.
+- **Observed (FFF1 live read):** `Value: (0x) 0B-01-1D-00-51-01-00-F7-00-00-00-00-00` — 13 bytes, byte-identical to the earlier Work-session payload; independently re-confirmed 2026-10-25. Byte 0 `0x0B` equals the SDK constant `IC_BB2`; the role of byte 0 as an IC-ID field remains **Inferred** (no parser links FFF1 to the SDK `icId` model). Bytes 1–12 remain **Unknown**.
+- **Observed (FFF3 live read):** `Value: (0x) 14-00` — 2 bytes `14 00`. Field meaning is **Unknown**; the SDK profile `m.o` pairs `fff3` with the d0ff service, but no payload definition was found.
+- **Evidence storage:** screenshots and `uiautomator` dumps (`01`–`10`, `ui*.xml`) are stored outside Git at `C:\Users\pdo74\AppData\Local\Temp\opencode\t60-gloryfit\screens\`. They contain phone UI only; no secrets were captured.
+- **Remaining READ-only opportunities (not yet performed — deferred to work-desk review):** reads of `FFD2`, `FFD3`, `FFD4`, `FFE0`, `FFE1`, `FFF4`, `FFF5`, the collapsed services `00006287-…`/`000002fd-…`, and Battery `0x2A19`. All are READ-advertised; per the desk's report-then-review flow they are not executed until reviewed.
 
 ## Evidence and leads
 
