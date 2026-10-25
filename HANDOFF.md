@@ -13,10 +13,10 @@
 |---|---|
 | Project goal | Reverse engineer the T60 and GloryFit, then eventually replace both. First evaluate a compatible existing watch OS; build one only if needed. |
 | Phase | Read-only physical-watch and companion-app reconnaissance. No replacement has been implemented or installed. |
-| Latest Qwen report | Live GATT capture (this commit, 2026-10-25): full 10-service tree recorded in nRF Connect; explicit READ controls invoked only for `FFF1` (`0B 01 1D 00 51 01 00 F7 00 00 00 00 00`, re-confirmed) and `FFF3` (`14 00`). See "Status — Qwen via OpenCode session 3" below. |
-| Current Qwen action | Awaiting Codex review of the live GATT capture report. Proposed next (read-only, needs review/owner go-ahead): read remaining READ characteristics `FFD2`–`FFD4`, `FFE0`, `FFE1`, `FFF4`, `FFF5`; expand collapsed services `00006287-…` and `000002fd-…`; read Battery `0x2A19`. |
-| Current review | Codex review `d175f6e` corrected the claim that FFF1 byte 0 is proven to be an IC-ID field. The SDK mapping is documented; the FFF1 field role remains inferred because no parser links the response to the SDK `icId` model. Review of the live capture report is pending. |
-| Verification | Latest review run: graph validation passed at 46 nodes / 65 edges; 5/5 unit tests passed. |
+| Latest Qwen report | Live GATT capture (Qwen commit `771838b`, 2026-10-25): observed 10 top-level services, with two left collapsed; READ-only `FFF1` and `FFF3` values captured. See "Status — Qwen via OpenCode session 3" below. |
+| Current Qwen action | After this review, continue the already-authorized READ-only reconnaissance: read remaining READ characteristics `FFD2`–`FFD4`, `FFE0`, `FFE1`, `FFF4`, `FFF5`; expand and enumerate services `00006287-…` and `000002fd-…`; read Battery `0x2A19` only via its READ control. No notification subscriptions or writes. |
+| Current review | Codex reviewed Qwen commit `771838b` and the available nRF screenshots. Service/characteristic list and `FFF1`/`FFF3` values match the visible evidence. `d175f6e` still applies: FFF1 byte 0's field role is inferred, not proven. |
+| Verification | Codex reran `python tools/kg.py validate` → 46 nodes / 65 edges OK; `python -m unittest discover -s tests -v` → 5/5 passed. |
 | Shared channel | This file on GitHub `main` is the work desk. Qwen reports by committing findings here and in source docs/graph. Codex reviews each new report and posts guidance here. A Qwen commit is a report, not a completed review. |
 
 ### Turn-taking
@@ -128,7 +128,9 @@ Completed the work-desk action: live GATT tree capture and the two explicit read
 - **Files changed:** `HANDOFF.md` (this section + work desk), `docs/HARDWARE.md` (summary table + new "Live GATT capture via nRF Connect" section; corrected stale "nRF not installed" line), `knowledge/graph.json` (updated `iface-gatt`, `fact-fff1`, `fact-nrf-phone-gatt`; added `source-nrf-capture`, `fact-fff3`; +6 edges).
 - **Tests:** `python tools/kg.py validate` and `python -m unittest discover -s tests -v` — results recorded at commit time (see work desk Verification row). Host C build not run (no C code changed).
 
-**Next Qwen action (pending review):** read the remaining READ-advertised characteristics (`FFD2`–`FFD4`, `FFE0`, `FFE1`, `FFF4`, `FFF5`), expand and enumerate the collapsed `00006287-…`/`000002fd-…` services, and read Battery `0x2A19` — all READ-only, same verified-UI procedure. Hold until Codex reviews this report or Paul directs otherwise, per the desk's report-then-review flow.
+**Codex review (2026-10-25):** compared the screenshots `08_fff1_result.png` and `10_fff3_result.png` with the reported reads: the visible FFF1 value is `0B-01-1D-00-51-01-00-F7-00-00-00-00-00`, and FFF3 is `14-00`; both are shown under READ properties. Screenshot `08` also visibly supports the reported D0FF characteristic IDs/properties. The report correctly leaves two services collapsed and payload meanings unknown. Graph validation and all five unit tests reran successfully against `771838b`. No inconsistency found in the reviewed evidence. The previously documented interpretation limit remains: `0B -> IC_BB2` is an SDK mapping, while FFF1 byte 0's role in this response is still inferred.
+
+**Next Qwen action (authorized):** continue with the remaining READ-advertised D0FF characteristics (`FFD2`–`FFD4`, `FFE0`, `FFE1`, `FFF4`, `FFF5`), expand and enumerate `00006287-…` and `000002fd-…`, and invoke the Battery Level `0x2A19` READ control. Before each UI action, verify the target and control in a fresh screenshot/XML view. Do not enable notifications, write, or change settings. If a service/characteristic has no READ property, record its visible properties and stop there. Report raw values without assigning meanings absent source-backed evidence; then sync `main` and check this work desk for review notes before any further live read.
 
 ## Status — Qwen lane (2026-10-24)
 
