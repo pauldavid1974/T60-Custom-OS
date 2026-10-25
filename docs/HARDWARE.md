@@ -80,21 +80,50 @@ All code citations below are from `classes5.dex` of GloryFit v4.0.12 (`base.apk`
   - Battery `0x2A19` = `100%` (raw `0x64`).
   - `00006287-3c17-…` enumerated: `0x6387` WRITE NO RESPONSE; `0x6487` NOTIFY+WRITE with CCCD `0x2902` — the profile-r write/notify pair; no 6587 on this device.
   - `000002fd-3c17-…` enumerated: `0xFD03` WRITE + WRITE NO RESPONSE; `0xFD04` NOTIFY with CCCD `0x2902`; no READ characteristics.
-  - `0x1801` and `0x1800` carry no characteristics; `0x55FF` = `0x33F1` READ+WRITE and `0x33F2` NOTIFY+CCCD; `0x56FF` = `0x34F1` READ+WRITE NO RESPONSE and `0x34F2` NOTIFY+CCCD; `0x60FF`/`0x61FF` were expanded but their characteristics were not yet read from the captured view.
-- **Documented (FCC filing, retrieved 2026-10-25 from fccid.io):** FCC ID `2BEQO-T60` — applicant **SHENZHEN HAOCHENG TECHNOLOGY CO.,LTD** (grantee 2BEQO), product `T60` SmartWatch, filed 2024-02-06, tested by SHENZHEN TONGCE TESTING LAB, 2402–2480 MHz. Exhibits include internal photos (`Internal-photo-7108448`), external photos, label and user manual. Direct PDF download from fccid.io was blocked by a Cloudflare security check; the page-listed mirrors (fcc.id, gov.fccid.io, fccid.ai) were not yet tried.
-- **Processor/OS decision table (current state):**
+  - `0x1801` and `0x1800` carry no characteristics; `0x55FF` = `0x33F1` READ+WRITE and `0x33F2` NOTIFY+CCCD; `0x56FF` = `0x34F1` READ+WRITE NO RESPONSE and `0x34F2` NOTIFY+CCCD. At this checkpoint `0x60FF`/`0x61FF` had only been expanded; their final enumeration and reads are recorded below.
+- **Documented (FCC filing, retrieved 2026-10-25 from fccid.io):** FCC ID `2BEQO-T60` — applicant **SHENZHEN HAOCHENG TECHNOLOGY CO.,LTD** (grantee 2BEQO), product `T60` SmartWatch, filed 2024-02-06, tested by SHENZHEN TONGCE TESTING LAB, 2402–2480 MHz. Exhibits include internal photos (`Internal-photo-7108448`), external photos, label and user manual. Retrieval attempts and their limits are recorded below.
 
-  | Item | Status |
-  |---|---|
-  | SoC vendor | **Documented**: Realtek — in-app SDK is `com.realsil.sdk` (RealSil = Realtek's MCU brand) with `MANUFACTURER_ID_REALTEK = 0x5D` and native `libRtkAesJni.so`; the T60's GATT exactly matches the SDK's default Realtek DFU layout. |
-  | SoC product line | **Documented (device-reported)**: IC type `0x0B` = `BB2` per the SDK parser; the decoding of the observed payload is inferred (strong) per the exact GATT match. Siblings in the same SDK: BBPro1–3, BBLite/ANC/2, BB2_PLUS, BB2_ULTRA, BB3, BEE1–5. |
-  | Exact RTL part number | **Unknown.** No part string for `BB2` appears anywhere in the app; FCC internal photos (chip markings) not yet obtained. |
-  | RAM / flash | **Unknown.** The protocol defines dual-bank and extended-flash OTA modes, but sizes are device-specific and unconfirmed. |
-  | SDK / toolchain | The RealSil SDK `com.realsil.sdk` in the app defines the protocol; the vendor build SDK for the exact part is **Unknown** (access/license unverified). |
-  | Existing OS candidates | Unchanged from the survey table above: no candidate is documented for `BB2`; a Realtek vendor SDK for the exact part is the leading conditional candidate; Zephyr and ZSWatch remain incompatible as documented. |
-  | Missing board/peripheral support | Display, touch, sensors, power, RTC — **Unknown** (FCC photos pending). |
+## Final read-only identification and OS assessment — Kimi Work (2026-10-25)
 
-  **Conclusion:** the processor is a **Realtek BLE SoC of the vendor product line `BB2`** — high confidence on vendor and product line, **not** an exact part number. The OS decision stays **blocked** on the exact part. Smallest next diagnostics (all within existing read-only authorization): (1) obtain the FCC internal photos via the listed mirrors and read the chip markings; (2) check the T60's BLE advertisement for Realtek manufacturer data (company ID `0x5D`) in the nRF Connect UI; (3) enumerate the `0x60FF`/`0x61FF` characteristics and read the READ-marked `0x33F1`/`0x34F1` app-service characteristics for hardware/version identifiers (purpose stated before each read).
+### Remaining authorized reads
+
+Using the same verified nRF Connect method on `T60(ID-AE67)`, only explicit Read controls were invoked. No writes, notification subscriptions, settings changes, OTA/DFU commands or other state changes occurred.
+
+| Target | Observed result | Interpretation |
+|---|---|---|
+| `55FF` / `33F1` (READ+WRITE) | 20 bytes: `08 08 44 2A 01 24 39 43 75 6F FF FE D9 21 00 5F 78 4B E1 DC` | GloryFit parses this characteristic's 20-byte value as function lists 1–7; no exact-part identifier was established. |
+| `56FF` / `34F1` (READ+WRITE NO RESPONSE) | 20 bytes: `00 F4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 04 02` | Directly linked to GloryFit's function-list 8–13 parser; RTL8773EWE result below. |
+| `60FF` / `6001` (READ+WRITE) | Same 20 bytes as `34F1` | No documented decoder or exact-part identifier found; the shared value alone does not establish equivalence. |
+| `60FF` / `6002` | NOTIFY with CCCD | Not subscribed or read. |
+| `61FF` | No characteristics exposed | No further read available. |
+
+Local raw evidence is in ignored `scratch/live/33f1-read.png`/`.xml`, `34f1-read.png`/`.xml`, `6001-read.png`/`.xml`, and `61ff-target.png`/`.xml`. These are working evidence copies, not Git deliverables.
+
+### Device-specific RTL8773EWE capability trace
+
+- **Documented (GloryFit v4.0.12, `classes6.dex`):** `GlobalVariable.IS_PLATFORM_RK_RTL8773EWE = 131072` (`0x00020000`). `com.yc.pedometer.ble.DevicePlatform.isRKPlatform8773()` tests that mask through `GetFunctionList.isSupportFunction_13(I)`, which reads `SPUtil.getCharacterisicFunctionList13()`.
+- **Documented (direct parser path):** `com.yc.pedometer.sdk.BluetoothLeService$7.onCharacteristicRead` explicitly matches UUID `000034f1-0000-1000-8000-00805f9b34fb`. For a 20-byte value it parses six big-endian 24-bit words; bytes 2–4 become `CharacterisicFunctionList13`. This is a direct characteristic-to-parser link, not an inference from a similar UUID.
+- **Observed + documented decode:** the captured `34F1` is 20 bytes and bytes 2–4 are `00 00 00`, so function list 13 is `0x000000` and the `0x00020000` RTL8773EWE bit is clear. GloryFit's `isRKPlatform8773()` therefore evaluates false for this captured state. This is a device-specific negative for that app platform capability; it does **not** identify the actual part, and no broader physical exclusion is claimed.
+- **Observed (negative sweep):** the app's other explicit RTL strings are RTL8762Ax/Cx; the two `res/raw/rh266fp*.bin` images name RTL8762C/D. None is tied to this watch by the traced capability path or a verified image-selection result. They remain non-identifying.
+
+### FCC photo retrieval outcome
+
+The four-page `Internal-photo-7108448` exhibit remains the best lead for physical chip markings, but no internal photo or chip marking was obtained in this pass. The official page was not used further after Paul reported an unworkable CAPTCHA and instructed against `.gov` access. Candidate document `https://device.report/m/316f5b0cc706625ffa3e3bc2fec40a5de7648d54faf0d04f670d7b5e336b8b5b` and the corresponding `manuals.plus/m/` URL both returned HTTP 403 to automated retrieval; `fccinsights.com` returned HTTP 429 and was not retried. The candidate document's contents are therefore **unverified**. No exact part is inferred from the exhibit title or from unrelated products named T60.
+
+### Processor / SDK / OS decision
+
+| Item | Evidence-labeled conclusion |
+|---|---|
+| SoC vendor and product line | **Documented + inferred-strong:** Realtek; FFF1 byte 0 `0x0B` maps to `BB2` under the SDK parser and exact GATT-layout match. This is not an exact part number. |
+| Exact RTL part number | **Unknown.** FCC markings were unavailable; the app and authorized reads did not yield an exact part. The RTL8773EWE app capability is clear and does not support that candidate. |
+| RAM / flash | **Unknown.** No T60 memory size or layout was observed. Memory constants in another family's SDK must not be assigned to this watch. |
+| Board / peripherals | **Unknown:** board revision, display/controller, touch/buttons, sensors, power, RTC, UART/SWD and flash geometry. |
+| Matching build SDK / toolchain | **Unknown for the T60.** The app's RealSil SDK documents a transport/protocol, not a watch build target. Realtek's public `RTL87x3E-Common-SDK` identifies only the RTL87x3E series and links RTL8763E-series documentation; its GCC sample uses Cortex-M3/Thumb and Realtek post-build/header tools. With the T60's RTL8773EWE app capability clear and no exact-part evidence, this is a comparison lead, **not documented compatibility**. |
+| Zephyr | **Not documented as compatible.** Listed Realtek support is for other named evaluation targets; no T60/BB2 board or exact-SoC port is established. |
+| ZSWatch | **Not a compatible base:** it targets Nordic nRF5340 and different board/peripherals. |
+| Vendor SDK for the eventual exact part | **Leading conditional route only.** Compatibility, access, license, memory budget and board support all remain unproven. No OS base is recommended for installation. |
+
+**Assessment complete to the available evidence.** There is currently no existing watch OS or vendor build SDK documented as compatible with an identified exact T60 SoC. The smallest next diagnostic is for Paul to obtain a readable copy of the exact FCC internal-photo PDF through a working manual source and supply it for offline inspection; this needs no new watch operation. If that remains unavailable, any physical inspection/disassembly requires a separate explicit approval and is not part of this completed read-only pass. Factory backup, signature requirements and recovery remain separate hard blockers even after chip identification.
 
 ## Evidence and leads
 
