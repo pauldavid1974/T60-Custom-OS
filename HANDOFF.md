@@ -7,6 +7,17 @@
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
+## COMPLETED — Switches easy to see when on (Claude Code, 2026-10-26)
+
+- **Paul's report:** switches are hard to see in the on position.
+- **Cause:** the app used the stock `android.widget.Switch`, which takes the phone theme's accent and draws the track
+  at 30% opacity, so on the dark cards an "on" switch nearly vanished.
+- **Change:** new `Ui.toggle(boolean)` sets the colours from `design/*.dc.html`: on = solid blue track `#5AB0FF` +
+  white knob, off = `#3A4452` track + `#C9D1DB` knob. Used by `Ui.switchRow` (every settings switch) and the
+  Today-cards editor in `MainActivity`.
+- **Checks:** `python android/build_apk.py` built; installed with `adb install -r` on the Galaxy S24 (`RFCXA0S5N4J`).
+  **Not visually verified:** the phone was locked, so no screenshot was taken. Paul to confirm on the phone.
+
 ## COMPLETED — Permissions asked per feature, not all at launch (Claude Code, 2026-10-26)
 
 - **Paul's request:** "Don't ask anything at launch. Ask Bluetooth at setup step 1, location at step 4, and

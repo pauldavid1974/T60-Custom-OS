@@ -752,8 +752,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
                 render();
             });
             r.addView(up);
-            android.widget.Switch sw = new android.widget.Switch(this);
-            sw.setChecked(!hidden.contains(name));
+            android.widget.Switch sw = ui.toggle(!hidden.contains(name));
             sw.setOnCheckedChangeListener((x, on) -> {
                 if (on) hidden.remove(name); else hidden.add(name);
                 store.setTodayCards(order, hidden);
