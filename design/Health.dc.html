@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>T60 Health</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; flex-direction: column; gap: 12px; padding: 20px 20px 12px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px">Health</h1>
+<a href="Workouts.dc.html" style="min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid #2B3440; background: #14181E; display: flex; align-items: center; font-size: 14px; font-weight: 700; text-decoration: none">Workouts ›</a>
+</div>
+<div role="group" aria-label="Time range" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #14181E; border: 1px solid #232A33; border-radius: 14px">
+<button aria-pressed="{{g.g0.o0.on}}" onClick="{{g.g0.o0.pick}}" style="min-height: 36px; border: 0; border-radius: 10px; background: {{g.g0.o0.v0}}; color: {{g.g0.o0.v1}}; font: {{g.g0.o0.v2}}; cursor: pointer">Day</button>
+<button aria-pressed="{{g.g0.o1.on}}" onClick="{{g.g0.o1.pick}}" style="min-height: 36px; border: 0; border-radius: 10px; background: {{g.g0.o1.v0}}; color: {{g.g0.o1.v1}}; font: {{g.g0.o1.v2}}; cursor: pointer">Week</button>
+<button aria-pressed="{{g.g0.o2.on}}" onClick="{{g.g0.o2.pick}}" style="min-height: 36px; border: 0; border-radius: 10px; background: {{g.g0.o2.v0}}; color: {{g.g0.o2.v1}}; font: {{g.g0.o2.v2}}; cursor: pointer">Month</button>
+</div>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 0; display: flex; flex-direction: column; gap: 12px">
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 15px; font-weight: 700">Steps</h2>
+<span style="font-size: 13px; color: #9AA4B2">Avg 7,110 / day</span>
+</div>
+<div style="height: 72px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; align-items: end; position: relative">
+<div style="height: 64%; border-radius: 6px 6px 3px 3px; background: #2E5F8F"></div>
+<div style="height: 88%; border-radius: 6px 6px 3px 3px; background: #2E5F8F"></div>
+<div style="height: 100%; border-radius: 6px 6px 3px 3px; background: #2E5F8F"></div>
+<div style="height: 52%; border-radius: 6px 6px 3px 3px; background: #2E5F8F"></div>
+<div style="height: 94%; border-radius: 6px 6px 3px 3px; background: #2E5F8F"></div>
+<div style="height: 71%; border-radius: 6px 6px 3px 3px; background: #2E5F8F"></div>
+<div style="height: 62%; border-radius: 6px 6px 3px 3px; background: #5AB0FF"></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; font-size: 12px; color: #8792A2; text-align: center">
+<span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span style="color: #F2F4F7; font-weight: 700">Sa</span>
+</div>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 15px; font-weight: 700"><a href="HeartRate.dc.html" style="color: #F2F4F7; text-decoration: none">Heart rate ›</a></h2>
+<span style="font-size: 13px; color: #9AA4B2">Resting 61 · High 132</span>
+</div>
+<div style="height: 72px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; align-items: stretch">
+<div style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 18%"><div style="height: 46%; border-radius: 999px; background: #FF8A5B; width: 10px; align-self: center"></div></div>
+<div style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 22%"><div style="height: 58%; border-radius: 999px; background: #FF8A5B; width: 10px; align-self: center"></div></div>
+<div style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 16%"><div style="height: 72%; border-radius: 999px; background: #FF8A5B; width: 10px; align-self: center"></div></div>
+<div style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 20%"><div style="height: 40%; border-radius: 999px; background: #FF8A5B; width: 10px; align-self: center"></div></div>
+<div style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 18%"><div style="height: 66%; border-radius: 999px; background: #FF8A5B; width: 10px; align-self: center"></div></div>
+<div style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 24%"><div style="height: 50%; border-radius: 999px; background: #FF8A5B; width: 10px; align-self: center"></div></div>
+<div style="display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 20%"><div style="height: 44%; border-radius: 999px; background: #FF8A5B; width: 10px; align-self: center"></div></div>
+</div>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 700"><a href="Oxygen.dc.html" style="color: #F2F4F7; text-decoration: none">Blood oxygen ›</a></h2>
+<span style="font-size: 13px; color: #9AA4B2">Range this week 95–99%</span>
+</div>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 28px; font-weight: 600">97%</span>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 15px; font-weight: 700"><a href="SleepNight.dc.html" style="color: #F2F4F7; text-decoration: none">Last night ›</a></h2>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600">7h 24m</span>
+</div>
+<div style="display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px">
+<div style="flex: 22; background: #3B4BB8"></div>
+<div style="flex: 56; background: #7C8CF5"></div>
+<div style="flex: 18; background: #C9D0FF"></div>
+<div style="flex: 4; background: #FFB38A"></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; font-size: 13px; color: #C9D1DB">
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #3B4BB8"></span>Deep 1h 38m</span>
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #7C8CF5"></span>Light 4h 09m</span>
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #C9D0FF"></span>REM 1h 20m</span>
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #FFB38A"></span>Awake 17m</span>
+</div>
+</section>
+</main>
+
+<nav aria-label="Main" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 8px 8px 22px; background: #0F1216; border-top: 1px solid #1C222A">
+<a href="Main.dc.html" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #8792A2; font-size: 12px; font-weight: 600">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10H3z"></path></svg>Today</a>
+<a href="Health.dc.html" aria-current="page" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5AB0FF; font-size: 12px; font-weight: 700">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg>Health</a>
+<a href="Alerts.dc.html" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #8792A2; font-size: 12px; font-weight: 600">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>Alerts</a>
+<a href="Watch.dc.html" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #8792A2; font-size: 12px; font-weight: 600">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="3"></rect><path d="M9 6V3h6v3M9 18v3h6v-3"></path></svg>Watch</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {}, "g": {"g0": {"multi": false, "init": [1], "keys": ["background", "color", "font"], "n": 3, "sel": ["#253244", "#F2F4F7", "700 14px Manrope, sans-serif"], "uns": ["transparent", "#9AA4B2", "600 14px Manrope, sans-serif"]}}}; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

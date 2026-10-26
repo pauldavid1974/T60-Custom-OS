@@ -4,15 +4,15 @@
 |---|---|
 | Model | Observed: T60 |
 | FCC ID | Observed: 2BEQO-T60 |
-| Factory firmware | Observed: V007108 |
+| Factory firmware | **Observed:** UI displays `T60V007108`; live BLE query `0xA1` (`33F1` -> `33F2`, 2026-10-25) reports internal factory project/firmware ID **`RH281LWJV007108`** (`btname="RH281LWJ"`, `version="V007108"`) |
 | BLE GATT | Observed: 10 services — 1801, 1800, 55FF, 56FF, 60FF, 61FF, standard 180F (Battery), D0FF (10 characteristics incl. FFF1/FFF3), `00006287-3c17-d293-8e48-14fe2e4da212`, `000002fd-3c17-d293-8e48-14fe2e4da212` (full tree captured in-app 2026-10-25, see below) |
 | D0FF characteristic FFF1 | Observed read (re-confirmed live 2026-10-25 via nRF Connect): `0B 01 1D 00 51 01 00 F7 00 00 00 00 00` |
 | D0FF characteristic FFF3 | Observed read 2026-10-25 via nRF Connect: `14 00` (2 bytes; meaning unknown) |
 | Vendor chip-family string | Documented in GloryFit's Realtek SDK as `0B` -> `BB2`, per Work session analysis |
-| Exact SoC, board revision, memory | Unknown |
-| Display controller, touch/button inputs, sensors | Unknown |
-| UART/SWD pad access | Unknown |
-| Firmware signing/encryption requirements | Unknown |
+| Exact SoC, board revision, memory | **Observed (FCC Internal-photo-7108448 Page 3, 2026-10-25):** Main SoC = **Realtek `RTL8763EWE`** (`N8AT8H1` / `GN33 TAIWAN`, 40.0 MHz crystal); External SPI NOR Flash = **Puya `PY25Q128HA`** (`3H1PP2D`, 128 Mbit = **16 MB**); PCB silkscreen = **`RH235_V02`** / **`PH235_V02`** with labeled `3V3`, `+`, `-`, and `RF` pads |
+| Display geometry & controller | **Observed (Live BLE `0x26 01` read on `33F2`, 2026-10-25):** Resolution = **`320 × 380` pixels** (`0x0140` × `0x017C`), rectangular (`screenType = 1`), max watchface partition = **1.0 MB (`1,048,576` bytes, `0x00100000`)**, `compatibleLevel = 2`, `watchFaceCount = 1`, active `dialNumber = 16004999` (`0x00F43789`). Display controller IC/pinout = Unknown (pending flash `0x2797` dump) |
+| UART/SWD pad access | **Observed (FCC Internal-photo-7108448 Pages 1–3, 2026-10-25):** Labeled **`TX`** and **`RX`** UART pads (plus `-BAT+`, `+SPK-`, `RF`) on the display-facing side of the PCB; labeled **`3V3`** pad and 8-pin **`PUYA PY25Q128HA`** SPI NOR flash on the opposite side |
+| Firmware signing/encryption requirements | **Documented (GloryFit `FirmwareActivity`, `classes6.dex`):** Three 32-byte Realtek DFU AES/secret keys extracted (`mSecretkey` containing `UTE_RK`, `mSecretkeyRH276N`, `mSecretkey8762C`); hardware bootloader enforcement remains Unknown until flash dump |
 | True factory firmware backup | Not acquired or verified |
 | Dedicated phone (ADB) | Observed 2026-10-24: Samsung SM_G781U (serial RFCNC10FA3K), connected over USB, ADB authorized |
 | Phone pairing with T60 | Observed 2026-10-24 via read-only `dumpsys bluetooth_manager`: bonded **and connected** as "T60(ID-AE67)", address `60:1A:B7:00:AE:67` (DUAL BR/EDR+LE). Advertised services include standard 1101, HSP, Handsfree, AVRCP and a custom UUID `6a24eeab-4b65-4693-986b-3c26c352264f`. The address may be a random/resolvable LE identifier, not a factory MAC |
@@ -91,7 +91,7 @@ Using the same verified nRF Connect method on `T60(ID-AE67)`, only explicit Read
 
 | Target | Observed result | Interpretation |
 |---|---|---|
-| `55FF` / `33F1` (READ+WRITE) | 20 bytes: `08 08 44 2A 01 24 39 43 75 6F FF FE D9 21 00 5F 78 4B E1 DC` | GloryFit parses this characteristic's 20-byte value as function lists 1–7; no exact-part identifier was established. |
+| `55FF` / `33F1` (READ+WRITE) | 20 bytes: `08 08 44 2A 01 24 39 43 75 6F FF FE D9 21 00 5F 78 4B E1 DC` | GloryFit (`BluetoothLeService$7`) parses this 20-byte value from right to left into `FunctionList 1..7`. Bytes `0..1` (`0x0808`) = `FunctionList 7`, which sets **`IS_PLATFORM_RTL8762Cx` (`0x0800`)** and `IS_SUPPORT_SLEEP_REM` (`0x0008`). Bytes `5..7` (`0x243943`) = `FunctionList 5`, which sets **`IS_SUPPORT_BT3_0_AGREEMENT` (`0x040000`)**, invoking the `RTL8763E` (`63E`) Classic BT 3.0 audio pairing path (`sendBt3AgreementCommand`). |
 | `56FF` / `34F1` (READ+WRITE NO RESPONSE) | 20 bytes: `00 F4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 04 02` | Directly linked to GloryFit's function-list 8–13 parser; RTL8773EWE result below. |
 | `60FF` / `6001` (READ+WRITE) | Same 20 bytes as `34F1` | No documented decoder or exact-part identifier found; the shared value alone does not establish equivalence. |
 | `60FF` / `6002` | NOTIFY with CCCD | Not subscribed or read. |
@@ -99,24 +99,43 @@ Using the same verified nRF Connect method on `T60(ID-AE67)`, only explicit Read
 
 Local raw evidence is in ignored `scratch/live/33f1-read.png`/`.xml`, `34f1-read.png`/`.xml`, `6001-read.png`/`.xml`, and `61ff-target.png`/`.xml`. These are working evidence copies, not Git deliverables.
 
-### Device-specific RTL8773EWE capability trace
+### Device-specific platform, BBPro GATT transport & RTL8763E capability trace (Updated 2026-10-25)
 
-- **Documented (GloryFit v4.0.12, `classes6.dex`):** `GlobalVariable.IS_PLATFORM_RK_RTL8773EWE = 131072` (`0x00020000`). `com.yc.pedometer.ble.DevicePlatform.isRKPlatform8773()` tests that mask through `GetFunctionList.isSupportFunction_13(I)`, which reads `SPUtil.getCharacterisicFunctionList13()`.
-- **Documented (direct parser path):** `com.yc.pedometer.sdk.BluetoothLeService$7.onCharacteristicRead` explicitly matches UUID `000034f1-0000-1000-8000-00805f9b34fb`. For a 20-byte value it parses six big-endian 24-bit words; bytes 2–4 become `CharacterisicFunctionList13`. This is a direct characteristic-to-parser link, not an inference from a similar UUID.
-- **Observed + documented decode:** the captured `34F1` is 20 bytes and bytes 2–4 are `00 00 00`, so function list 13 is `0x000000` and the `0x00020000` RTL8773EWE bit is clear. GloryFit's `isRKPlatform8773()` therefore evaluates false for this captured state. This is a device-specific negative for that app platform capability; it does **not** identify the actual part, and no broader physical exclusion is claimed.
-- **Observed (negative sweep):** the app's other explicit RTL strings are RTL8762Ax/Cx; the two `res/raw/rh266fp*.bin` images name RTL8762C/D. None is tied to this watch by the traced capability path or a verified image-selection result. They remain non-identifying.
+- **Documented + Observed (`33F1` `FunctionList 7` and `FunctionList 5`, `classes6.dex`):**
+  - `BluetoothLeService$7.onCharacteristicRead` (`0x37a3fe`–`0x37a660`) slices the 20-byte `33F1` payload (`08 08 44 2A 01 24 39 43 75 6F FF FE D9 21 00 5F 78 4B E1 DC`) into seven bitmasks (`FunctionList 1..7`).
+  - `FunctionList 7` (bytes `0..1`) is `0x0808` (`2056 = 0x0800 | 0x0008`), which explicitly sets **`GlobalVariable.IS_PLATFORM_RTL8762Cx = 2048` (`0x0800`)** and `IS_SUPPORT_SLEEP_REM = 8` (`0x0008`). Other platform bits in `FunctionList 7` (`IS_PLATFORM_RTL8762Ax = 0x0200`, `IS_PLATFORM_NRF = 0x0400`, `IS_PLATFORM_FRK = 0x2000`, `IS_PLATFORM_JX_3085L = 0x8000`) are `0`.
+  - `FunctionList 5` (bytes `5..7`) is `0x243943`, which sets **`GlobalVariable.IS_SUPPORT_BT3_0_AGREEMENT = 262144` (`0x040000`)**. When set, GloryFit invokes `WriteCommandToBLE.sendBt3AgreementCommand()` (`0x3af988`), which manages Classic Bluetooth (BT 3.0 Handsfree/Audio) one-key pairing using `SPUtil.getNeedToRegenerateRandom63E()` / `setPairingSystemBluetooth63E()` (`BleDevices.needPair8763E`, i.e., Realtek `RTL8763E` series).
+- **Documented (`000002fd-3c17-d293-8e48-14fe2e4da212`, `classes5.dex` UTF-16LE dexdump):**
+  - `com.realsil.sdk.bbpro.core.gatt.GattTransportConnParams.<clinit>` (`0x3a7c18`) defines `000002FD-3C17-D293-8E48-14FE2E4DA212` as Realtek's **BBPro GATT Transport Service** (`0xFD03` Write, `0xFD04` Notify), used alongside `00006287-3c17-d293-8e48-14fe2e4da212` (`OTA_SERVICE_RK_SLIENT_MODE_UUID`) by Realtek's BBPro/BB2 (`icType = 0x0B = IC_BB2`) DFU handlers (`com.realsil.sdk.dfu.p.d`, `q.d`, `s.h`).
+- **Documented + Observed (`34F1` `FunctionList 8..13` and `maxCommunicationLength`, `classes6.dex`):**
+  - `BluetoothLeService$7.onCharacteristicRead` (`0x37a6f8`–`0x37a940`) parses `34F1` bytes `0..1` (`0x00F4`) as `GlobalVariable.maxCommunicationLength = 244` bytes, bytes `17..19` (`0x000402`) as `FunctionList 8`, and bytes `2..16` (`0x000000`) as `FunctionList 9..13`. Thus `GlobalVariable.IS_PLATFORM_RK_RTL8773EWE = 131072` (`0x00020000` in `FunctionList 13`) is `0` (`false`).
+- **Observed (`res/raw/rh266fp*.bin` in unpacked APK):**
+  - Unpacked `scratch/offline/base/res/raw/` contains `rh266fp.bin` (`521,896` bytes, ASCII string `RTL8762C`) and `rh266fp_ui.bin` (`644,672` bytes, ASCII strings `RTL8762D` and `RH266FPV000682_U0001`). These are bundled factory test binaries for board `RH266FP`, not `T60V007108`.
+- **Full BLE Protocol & Zero-Auth Reference:** See [docs/PROTOCOL.md](PROTOCOL.md) and local CLI tool [tools/t60_control.py](../tools/t60_control.py).
 
-### FCC photo retrieval outcome
+### FCC internal photo verification (Observed 2026-10-25, supplied by Paul in `fcc/chip-pic.png`)
 
-The four-page `Internal-photo-7108448` exhibit remains the best lead for physical chip markings, but no internal photo or chip marking was obtained in this pass. The official page was not used further after Paul reported an unworkable CAPTCHA and instructed against `.gov` access. Candidate document `https://device.report/m/316f5b0cc706625ffa3e3bc2fec40a5de7648d54faf0d04f670d7b5e336b8b5b` and the corresponding `manuals.plus/m/` URL both returned HTTP 403 to automated retrieval; `fccinsights.com` returned HTTP 429 and was not retried. The candidate document's contents are therefore **unverified**. No exact part is inferred from the exhibit title or from unrelated products named T60.
+Paul retrieved Page 3 of 4 of FCC exhibit `Internal-photo-7108448` (`fcc/chip-pic.png`, file SHA-256 of PDF listed on `fcc/fcc-details.png` as `16b9a43326915378dc00f59793dfa321f45feec79ecd07390f899901c55165bf`). Visible hardware markings on the T60 mainboard:
+
+1. **Main SoC (Observed):** **`REALTEK RTL8763EWE`** (package markings: `REALTEK` / `RTL8763EWE` / `N8AT8H1` / `GN33 TAIWAN`), paired with a `40.0` MHz crystal (`T 3L 40.0`).
+   - This directly confirms our code trace from GloryFit's `FFF1` (`0x0B` = `IC_BB2`) and `FunctionList 5` (`IS_SUPPORT_BT3_0_AGREEMENT` -> `SPUtil.getNeedToRegenerateRandom63E` / `setPairingSystemBluetooth63E`).
+2. **External Flash Memory (Observed):** **`PUYA PY25Q128HA`** (package markings: `PUYA` / `PY25Q128HA` / `3H1PP2D`).
+   - Standard **128-Megabit (16 MB) SPI NOR Flash** chip mounted adjacent to the `RTL8763EWE`.
+3. **PCB Revision, UART Pads & Mechanical Access (Observed, Pages 1–3):**
+   - **Front/Screen-Side Opening (Page 1):** Lifting the front glass/display assembly exposes the top side of the mainboard without removing the PCB from the housing.
+   - **Top Side of PCB (Page 2):** Exposes the display FPC connector, solder pads **`-BAT+`** and **`+SPK-`**, and clearly labeled gold test pads **`RX`**, **`TX`**, and **`RF`**.
+   - **Bottom/Chip Side of PCB (Page 3):** Silkscreen **`RH235_V02`** (or `PH235_V02`), carrying the **`REALTEK RTL8763EWE`** SoC, **`PUYA PY25Q128HA`** (16 MB SPI NOR Flash), `40.0` MHz crystal, and labeled **`3V3`** test pad.
+4. **Decoded `FFE0` (Active Image Versions) & `FFF4` (Flash Partition Sizes) from `D0FF` Reads (Documented + Observed):**
+   - `FFE0` (74 bytes) is a 2-byte count (`0x000C` = 12 entries) followed by twelve 6-byte `(uint16_le image_id, uint32_le version)` records (`0x2790` Boot/OCCD, `0x2791` Patch, `0x2793` MCU App, `0x2794` DSP Sys, `0x2795` DSP App, `0x2797` MCU Config, `0x2796` DSP Config, `0x2798` Ext, `0x279C`/`0x279D` UI/VP, `0xFFFD`/`0xFFFE`).
+   - `FFF4` (55 bytes) is a 1-byte count (`0x09` = 9 entries) followed by nine 6-byte `(uint16_le image_id, uint32_le partition_bytes)` records: `0x2791` = 8 KB (`0x2000`), `0x2793` (MCU App) = **1,372,160 B (~1.34 MB, `0x14F000`)**, `0x2794` = 128 KB (`0x20000`), `0x2795` = 384 KB (`0x60000`), `0x2797` = 40 KB (`0xA000`), `0x2796` = 8 KB (`0x2000`), `0x2798` = 200 KB (`0x32000`), `0x279C` = 104 KB (`0x1A000`), `0x279D` = 164 KB (`0x29000`).
 
 ### Processor / SDK / OS decision
 
 | Item | Evidence-labeled conclusion |
 |---|---|
 | SoC vendor and product line | **Documented + inferred-strong:** Realtek; FFF1 byte 0 `0x0B` maps to `BB2` under the SDK parser and exact GATT-layout match. This is not an exact part number. |
-| Exact RTL part number | **Unknown.** FCC markings were unavailable; the app and authorized reads did not yield an exact part. The RTL8773EWE app capability is clear and does not support that candidate. |
-| RAM / flash | **Unknown.** No T60 memory size or layout was observed. Memory constants in another family's SDK must not be assigned to this watch. |
+| Exact RTL part number | **Observed: `Realtek RTL8763EWE`** (`N8AT8H1` / `GN33 TAIWAN`) on FCC exhibit `Internal-photo-7108448` Page 3 (`fcc/chip-pic.png`). Matches `FFF1` `icType = 0x0B` (`IC_BB2`) and GloryFit's `63E` (`RTL8763E`) BT 3.0 pairing code path. |
+| External Flash / RAM | **Observed (External Flash): 16 MB (128 Mbit) SPI NOR Flash — `Puya PY25Q128HA`** (`3H1PP2D`) on the mainboard next to the `RTL8763EWE`. On-die SRAM size of `RTL8763EWE` is documented in Realtek's `RTL87x3E` series specifications. |
 | Board / peripherals | **Unknown:** board revision, display/controller, touch/buttons, sensors, power, RTC, UART/SWD and flash geometry. |
 | Matching build SDK / toolchain | **Unknown for the T60.** The app's RealSil SDK documents a transport/protocol, not a watch build target. Realtek's public `RTL87x3E-Common-SDK` identifies only the RTL87x3E series and links RTL8763E-series documentation; its GCC sample uses Cortex-M3/Thumb and Realtek post-build/header tools. With the T60's RTL8773EWE app capability clear and no exact-part evidence, this is a comparison lead, **not documented compatibility**. |
 | Zephyr | **Not documented as compatible.** Listed Realtek support is for other named evaluation targets; no T60/BB2 board or exact-SoC port is established. |

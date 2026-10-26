@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Today cards</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Main.dc.html" aria-label="Back to Today" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Today cards</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+<p style="margin: 0 4px; font-size: 14px; color: #C9D1DB; line-height: 1.5">Choose what shows on Today. Tap the arrow to move a card up.</p>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 4px 16px">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="8">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-bottom: {{c.line}}"><button aria-label="{{c.upLabel}}" onClick="{{c.up}}" style="width: 36px; height: 44px; border: 0; background: transparent; color: {{c.upColor}}; cursor: pointer"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"></path></svg></button><span style="flex: 1; font-size: 15px; font-weight: 600; color: {{c.text}}">{{c.name}}</span><button aria-pressed="{{c.on}}" aria-label="{{c.showLabel}}" onClick="{{c.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{c.bg}}; padding: 3px; display: flex; justify-content: {{c.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{c.knob}}"></span></button></div>
+</sc-for>
+</section>
+
+<a href="Main.dc.html" style="margin-top: auto; min-height: 52px; border-radius: 16px; background: #5AB0FF; color: #06121F; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">Done</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {}, "g": {}}; }
+extra(st) { const names = ['Steps', 'Heart rate', 'Sleep', 'Quick actions', 'Blood oxygen', 'Weather', 'Last workout', "Women's health"];
+const order = st.order || [0, 1, 2, 3, 4, 5, 6, 7]; const shown = st.shown || [0, 1, 2, 3];
+const cards = order.map((id, pos) => { const on = shown.indexOf(id) >= 0; return { name: names[id], on: on,
+line: pos === order.length - 1 ? '0' : '1px solid #232A33', text: on ? '#F2F4F7' : '#9AA4B2', upColor: pos === 0 ? '#3A4452' : '#8792A2',
+upLabel: 'Move ' + names[id] + ' up', showLabel: 'Show ' + names[id],
+bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ shown: on ? shown.filter((x) => x !== id) : shown.concat([id]) }),
+up: () => { if (pos === 0) return; const o = order.slice(); o[pos] = o[pos - 1]; o[pos - 1] = id; this.setState({ order: o }); } }; });
+return { cards: cards }; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

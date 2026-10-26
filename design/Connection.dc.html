@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Watch not connected</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Main.dc.html" aria-label="Back to Today" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Connection</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 24px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 0">
+<div aria-hidden="true" style="width: 96px; height: 96px; border-radius: 50%; background: #2A1E14; border: 1px solid #5A3A22; display: flex; align-items: center; justify-content: center">
+<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FFB38A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="3"></rect><path d="M9 6V3h6v3M9 18v3h6v-3"></path><path d="M3 3l18 18"></path></svg>
+</div>
+<h2 style="margin: 0; font-size: 22px; font-weight: 800">Watch not connected</h2>
+<p style="margin: 0; font-size: 14px; color: #9AA4B2">Last seen 8:54 PM · battery was 56%</p>
+</div>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-size: 14px; font-weight: 700; color: #9AA4B2">Things to try</h3>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; color: #C9D1DB; line-height: 1.4">
+<li>Bring the watch near the phone</li>
+<li>Make sure Bluetooth is on</li>
+<li>Check the watch has battery left</li>
+</ul>
+<p style="margin: 0; font-size: 13px; color: #9AA4B2">The app keeps trying on its own. Your data is safe on the watch until it reconnects.</p>
+</section>
+
+<a href="Main.dc.html" style="margin-top: auto; min-height: 56px; border-radius: 16px; background: #5AB0FF; color: #06121F; font-size: 17px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">Try again now</a>
+<a href="Setup.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; text-decoration: none">Set up the watch again</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

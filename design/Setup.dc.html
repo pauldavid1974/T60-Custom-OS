@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>First-time setup</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column; padding: 40px 20px 28px; gap: 20px">
+
+<header style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; font-weight: 700; color: #5AB0FF">T60</span>
+<h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.15">Let's connect your watch</h1>
+<p style="margin: 0; font-size: 15px; color: #C9D1DB; line-height: 1.5">No account. Your data stays on this phone.</p>
+</header>
+
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+<li style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 14px">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: #3DDC84; color: #06210F; font-weight: 800; display: flex; align-items: center; justify-content: center">✓</span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">Allow Bluetooth</span><span style="font-size: 13px; color: #9AA4B2">Done</span></div>
+</li>
+<li style="background: #14181E; border: 2px solid #5AB0FF; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 14px">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: #5AB0FF; color: #06121F; font-weight: 800; display: flex; align-items: center; justify-content: center">2</span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">Pick your watch</span><span style="font-size: 13px; color: #9AA4B2">Keep it close to the phone</span></div>
+</div>
+<button aria-pressed="{{picked}}" onClick="{{pick}}" style="cursor: pointer; min-height: 60px; border-radius: 14px; border: {{pickBorder}}; background: #1A2028; color: #F2F4F7; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; font: 700 15px Manrope, sans-serif">T60(ID-AE67)<span style="font-size: 12px; color: #7BE8A8; font-weight: 700">Strong signal</span></button>
+</li>
+<li style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 14px">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #3A4452; color: #9AA4B2; font-weight: 800; display: flex; align-items: center; justify-content: center; box-sizing: border-box">3</span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">Allow notification access</span><span style="font-size: 13px; color: #9AA4B2">So alerts reach your wrist</span></div>
+</li>
+<li style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 14px">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #3A4452; color: #9AA4B2; font-weight: 800; display: flex; align-items: center; justify-content: center; box-sizing: border-box">4</span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">Allow location</span><span style="font-size: 13px; color: #9AA4B2">For weather and workout maps</span></div>
+</li>
+</ol>
+
+<a href="Main.dc.html" style="margin-top: auto; min-height: 56px; border-radius: 16px; background: #5AB0FF; color: #06121F; font-size: 17px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">Connect</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {}; const picked = st.picked === undefined ? true : st.picked;
+return { picked: picked, pick: () => this.setState({ picked: !picked }), pickBorder: picked ? '2px solid #5AB0FF' : '1px solid #2B3440' };
+}
+}
+</script>
+</body>
+</html>

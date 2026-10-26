@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workouts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Health.dc.html" aria-label="Back to Health" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Workouts</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 14px; font-weight: 700; color: #9AA4B2">Start a workout</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<a href="LiveWorkout.dc.html" style="min-height: 72px; border: 1px solid #2B3440; border-radius: 16px; background: #1A2028; color: #F2F4F7; font-size: 14px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none">Walk<span style="font-size: 11px; color: #9AA4B2; font-weight: 600">with GPS</span></a>
+<a href="LiveWorkout.dc.html" style="min-height: 72px; border: 1px solid #2B3440; border-radius: 16px; background: #1A2028; color: #F2F4F7; font-size: 14px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none">Run<span style="font-size: 11px; color: #9AA4B2; font-weight: 600">with GPS</span></a>
+<a href="LiveWorkout.dc.html" style="min-height: 72px; border: 1px solid #2B3440; border-radius: 16px; background: #1A2028; color: #F2F4F7; font-size: 14px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none">Bike<span style="font-size: 11px; color: #9AA4B2; font-weight: 600">with GPS</span></a>
+</div>
+<p style="margin: 0; font-size: 13px; color: #9AA4B2">Indoor workouts started on the watch show up here too.</p>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 12px 16px 4px; display: flex; flex-direction: column">
+<h2 style="margin: 0 0 4px; font-size: 14px; font-weight: 700; color: #9AA4B2">Recent</h2>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: 1px solid #232A33">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">Walk</span><span style="font-size: 13px; color: #9AA4B2">Today, 5:40 PM</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px">2.1 mi</span><span style="font-size: 13px; color: #9AA4B2">38 min · avg 104 bpm</span></div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: 1px solid #232A33">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">Bike</span><span style="font-size: 13px; color: #9AA4B2">Thu, Oct 23</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px">8.4 mi</span><span style="font-size: 13px; color: #9AA4B2">47 min · avg 121 bpm</span></div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: 1px solid #232A33">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">Walk</span><span style="font-size: 13px; color: #9AA4B2">Tue, Oct 21</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px">1.6 mi</span><span style="font-size: 13px; color: #9AA4B2">31 min · avg 98 bpm</span></div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">Indoor walk</span><span style="font-size: 13px; color: #9AA4B2">Sun, Oct 19 · from watch</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px">2,980 steps</span><span style="font-size: 13px; color: #9AA4B2">25 min · avg 96 bpm</span></div>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

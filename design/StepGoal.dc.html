@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Step goal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Main.dc.html" aria-label="Back to Today" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Step goal</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 16px">
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 28px 16px; display: flex; align-items: center; justify-content: space-between">
+<button aria-label="500 fewer steps" onClick="{{down}}" style="width: 56px; height: 56px; border-radius: 16px; border: 1px solid #2B3440; background: #1A2028; color: #F2F4F7; font: 700 26px Manrope, sans-serif">−</button>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 48px; font-weight: 600">{{goalText}}</span>
+<span style="font-size: 14px; color: #9AA4B2">steps a day</span>
+</div>
+<button aria-label="500 more steps" onClick="{{up}}" style="width: 56px; height: 56px; border-radius: 16px; border: 1px solid #2B3440; background: #1A2028; color: #F2F4F7; font: 700 26px Manrope, sans-serif">+</button>
+</section>
+
+<div role="group" aria-label="Quick picks" data-manual="1" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<button aria-pressed="{{pr.p6.on}}" onClick="{{pr.p6.pick}}" style="height: 48px; border-radius: 14px; border: {{pr.p6.border}}; background: {{pr.p6.bg}}; color: {{pr.p6.color}}; font: {{pr.p6.font}}; cursor: pointer">6,000</button>
+<button aria-pressed="{{pr.p8.on}}" onClick="{{pr.p8.pick}}" style="height: 48px; border-radius: 14px; border: {{pr.p8.border}}; background: {{pr.p8.bg}}; color: {{pr.p8.color}}; font: {{pr.p8.font}}; cursor: pointer">8,000</button>
+<button aria-pressed="{{pr.p10.on}}" onClick="{{pr.p10.pick}}" style="height: 48px; border-radius: 14px; border: {{pr.p10.border}}; background: {{pr.p10.bg}}; color: {{pr.p10.color}}; font: {{pr.p10.font}}; cursor: pointer">10,000</button>
+<button aria-pressed="{{pr.p12.on}}" onClick="{{pr.p12.pick}}" style="height: 48px; border-radius: 14px; border: {{pr.p12.border}}; background: {{pr.p12.bg}}; color: {{pr.p12.color}}; font: {{pr.p12.font}}; cursor: pointer">12,000</button>
+</div>
+
+<p style="margin: 0 4px; font-size: 14px; color: #9AA4B2; line-height: 1.5">The watch celebrates when you reach it. Your last 7 days averaged 7,110.</p>
+
+<a href="Main.dc.html" style="margin-top: auto; min-height: 52px; border-radius: 16px; background: #5AB0FF; color: #06121F; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">Save to watch</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {}, "g": {}}; }
+extra(st) { const goal = st.goal || 8000; const pr = {};
+[6, 8, 10, 12].forEach((v) => { const on = goal === v * 1000; pr['p' + v] = { on: on, pick: () => this.setState({ goal: v * 1000 }),
+border: on ? '0' : '1px solid #2B3440', bg: on ? '#5AB0FF' : 'transparent', color: on ? '#06121F' : '#C9D1DB', font: on ? '800 15px Manrope, sans-serif' : '700 15px Manrope, sans-serif' }; });
+return { pr: pr, goalText: goal.toLocaleString('en-US'), down: () => this.setState({ goal: Math.max(1000, goal - 500) }), up: () => this.setState({ goal: Math.min(30000, goal + 500) }) }; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

@@ -7,7 +7,7 @@
       "kind": "device",
       "certainty": "observed",
       "title": "Physical T60 smartwatch",
-      "summary": "Paul's T60 watch; FCC ID 2BEQO-T60; factory firmware V007108. Exact SoC and board unknown.",
+      "summary": "Paul's T60 watch; FCC ID 2BEQO-T60; factory firmware V007108; observed main SoC Realtek RTL8763EWE + Puya PY25Q128HA (16 MB SPI NOR Flash) on PCB RH235_V02 / PH235_V02.",
       "tags": [
         "t60",
         "watch",
@@ -162,8 +162,8 @@
       "id": "fact-rtl8773ewe-capability",
       "kind": "fact",
       "certainty": "documented",
-      "title": "T60 RTL8773EWE app capability bit is clear",
-      "summary": "GloryFit v4.0.12 classes6.dex defines IS_PLATFORM_RK_RTL8773EWE = 0x00020000; DevicePlatform.isRKPlatform8773 tests it in function list 13. BluetoothLeService$7.onCharacteristicRead directly matches 34F1 and, for 20 bytes, parses bytes 2-4 as big-endian function list 13. Observed T60 bytes 2-4 are 00 00 00, so the value is 0 and isRKPlatform8773 evaluates false for the captured state. This device-specific app-capability negative does not identify the actual SoC or prove a broader physical exclusion.",
+      "title": "T60 capability decode: IS_PLATFORM_RTL8762Cx + BT3_0_AGREEMENT (63E) set; RTL8773EWE clear",
+      "summary": "GloryFit v4.0.12 classes6.dex BluetoothLeService$7 parses 33F1 into FunctionList 1..7 and 34F1 into maxCommunicationLength (0x00F4 = 244) plus FunctionList 8..13. On Paul's T60, FunctionList 7 = 0x0808 sets IS_PLATFORM_RTL8762Cx (0x0800) and IS_SUPPORT_SLEEP_REM (0x0008); FunctionList 5 = 0x243943 sets IS_SUPPORT_BT3_0_AGREEMENT (0x040000, invoking WriteCommandToBLE.sendBt3AgreementCommand which tracks RTL8763E / 63E audio pairing via SPUtil.getNeedToRegenerateRandom63E); FunctionList 13 = 0x000000 leaves IS_PLATFORM_RK_RTL8773EWE clear. In classes5.dex (UTF-16LE), 000002FD-3C17-D293-8E48-14FE2E4DA212 is documented as com.realsil.sdk.bbpro.core.gatt.GattTransportConnParams.",
       "tags": [
         "rtl8773ewe",
         "34f1",
@@ -173,7 +173,8 @@
       ],
       "refs": [
         "docs/HARDWARE.md",
-        "HANDOFF.md"
+        "HANDOFF.md",
+        "docs/PROTOCOL.md"
       ]
     },
     {
@@ -181,7 +182,7 @@
       "kind": "source",
       "certainty": "documented",
       "title": "Public Realtek RTL87x3E Common SDK",
-      "summary": "Realtek's public SDK README identifies only the RTL87x3E series and links RTL8763E-series documentation. Its GCC sample uses Cortex-M3/Thumb flags and Realtek post-build/header tools. No evidence ties this SDK or its memory constants to Paul's T60; the watch's GloryFit RTL8773EWE app capability is clear. Comparison lead only, not documented compatibility.",
+      "summary": "Realtek's public RTL87x3E-Common-SDK targets the RTL87x3E / RTL8763E series, which matches the physical REALTEK RTL8763EWE SoC observed on the T60 mainboard in FCC exhibit Internal-photo-7108448 Page 3.",
       "tags": [
         "realtek",
         "rtl87x3e",
@@ -197,9 +198,9 @@
     {
       "id": "question-soc",
       "kind": "question",
-      "certainty": "unknown",
-      "title": "Exact SoC and memory map",
-      "summary": "Exact RTL part, RAM/flash, board revision and matching build SDK remain Unknown after FCC/mirror retrieval failures, offline GloryFit analysis and all authorized reads. BB2 remains only a product-line clue; the RTL8773EWE app capability is clear. Next smallest diagnostic is a readable exact-FCC internal-photo PDF supplied for offline inspection; physical inspection requires separate approval.",
+      "certainty": "observed",
+      "title": "Exact SoC and external flash identified: Realtek RTL8763EWE + Puya PY25Q128HA (16 MB)",
+      "summary": "Observed on FCC Internal-photo-7108448 Page 3 (fcc/chip-pic.png, 2026-10-25): Main SoC is REALTEK RTL8763EWE (N8AT8H1 / GN33 TAIWAN, 40.0 MHz crystal) and external flash is PUYA PY25Q128HA (3H1PP2D, 128 Mbit = 16 MB SPI NOR Flash) on PCB revision RH235_V02 / PH235_V02. Matches FFF1 icType 0x0B (IC_BB2), GloryFit 63E BT3 pairing path, and public Realtek RTL87x3E-Common-SDK.",
       "tags": [
         "soc",
         "rtl",
@@ -216,9 +217,9 @@
     {
       "id": "question-peripherals",
       "kind": "question",
-      "certainty": "unknown",
-      "title": "Actual display and peripheral hardware",
-      "summary": "Identify display, input, power, RTC, sensor controllers and wire protocols before driver development.",
+      "certainty": "observed",
+      "title": "Display geometry identified (320x380px, 1 MB dial partition); peripheral pinout pending flash 0x2797 dump",
+      "summary": "Live BLE query 0x26 01 (2026-10-25) returned 26 01 00 F4 37 89 01 40 01 7C 01 00 10 00 00 02 01 00 00 00: 320x380 pixel rectangular screen (screenType=1) with 1,048,576-byte (1 MB) max watchface partition; 0xA1 returned internal project ID RH281LWJV007108. Exact GPIO pin-mux and controller IC drivers remain inside the 40 KB 0x2797 MCU Config partition on the Puya PY25Q128HA flash chip.",
       "tags": [
         "display",
         "sensors",
@@ -228,6 +229,7 @@
       ],
       "refs": [
         "docs/HARDWARE.md",
+        "docs/PROTOCOL.md",
         "docs/ARCHITECTURE.md"
       ]
     },
@@ -323,9 +325,9 @@
     {
       "id": "source-fcc",
       "kind": "source",
-      "certainty": "documented",
+      "certainty": "observed",
       "title": "FCC T60 internal photos",
-      "summary": "Public filing for FCC ID 2BEQO-T60 identifies the four-page Internal-photo-7108448 exhibit, but no photo or chip marking was obtained in the 2026-10-25 Kimi Work pass. Paul reported an unworkable CAPTCHA and instructed against .gov access. Candidate device.report document 316f5b0cc706625ffa3e3bc2fec40a5de7648d54faf0d04f670d7b5e336b8b5b and corresponding manuals.plus URL returned HTTP 403; fccinsights.com returned HTTP 429 and was not retried. Candidate contents remain unverified. A readable exact-exhibit PDF supplied manually is the smallest next diagnostic.",
+      "summary": "Page 3 of 4 of FCC ID 2BEQO-T60 Internal-photo-7108448 retrieved by Paul (2026-10-25, fcc/chip-pic.png and fcc/fcc-details.png). Legibly shows REALTEK RTL8763EWE (N8AT8H1, GN33 TAIWAN), PUYA PY25Q128HA (16 MB SPI NOR Flash), 40.0 MHz crystal, 3V3 pad, and PCB silkscreen RH235_V02 / PH235_V02.",
       "tags": [
         "fcc",
         "source",
@@ -717,9 +719,9 @@
     {
       "id": "question-app-protocol",
       "kind": "question",
-      "certainty": "unknown",
-      "title": "GloryFit to T60 protocol and companion replacement requirements",
-      "summary": "Trace the installed GloryFit app's protocol code against observed T60 GATT services and readable values; identify required app/watch behaviors without changing device state.",
+      "certainty": "documented",
+      "title": "GloryFit to T60 BLE & BT3 audio protocol decoded",
+      "summary": "Decoded in docs/PROTOCOL.md and implemented in tools/t60_control.py: T60 requires zero pairing password or account binding (IS_SUPPORT_PASS_WORD_PAIR=0, IS_SUPPORT_ACCOUNT_ID_BIND=0, IS_SUPPORT_ACCOUNT_ID_BIND_NEW=0). Commands on 33F1/34F1 cover time sync (0xA3), version (0xA1), battery (0xA2), find watch (0xAB), notification text chunks (0xC5), steps (0xB2 FA), sleep (0x31 01), live HR (0xE5), custom watchface background (0x26 0A/0B), and Classic BT 3.0 speaker/mic control (0x38 02).",
       "tags": [
         "gloryfit",
         "companion-app",
@@ -730,7 +732,10 @@
       "refs": [
         "docs/HARDWARE.md",
         "docs/PRODUCT.md",
-        "HANDOFF.md"
+        "HANDOFF.md",
+        "docs/PROTOCOL.md",
+        "tools/t60_control.py",
+        "tests/test_t60_control.py"
       ]
     },
     {
@@ -976,6 +981,46 @@
       "refs": [
         "docs/HARDWARE.md",
         "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-t60-feature-support",
+      "kind": "fact",
+      "certainty": "inferred",
+      "title": "T60 feature support decoded from FunctionList bits (blood oxygen yes; BP/ECG/temperature no)",
+      "summary": "tools/t60_feature_flags.py maps every GetFunctionList.isSupportFunction*(bit) call in GloryFit classes6.dex to its calling class/method and tests the bit against the observed 33F1/34F1 FunctionList values. Set on this T60 (meaning inferred from caller names): heart rate + 24h/high-rate alarm (L1 0x080000, L1 0x80), blood oxygen (L5 0x40, UploadOxygenData), REM sleep (L7 0x08), weather (L1 0x2000, L6 0x800), multi-sport + phone GPS (L5 0x02, L6 0x2000), BT calling (L5 0x2000, BtCallActivity), music control (L5 0x01) and song metadata (L5 0x1000), call/SMS/app alerts (L1 0x400000, L4 0x010000, L3/L5 0x800), sedentary reminder (L2 0x10), alarms (L6 0x01), step goal (L5 0x200000). Clear: blood pressure (L1 0x100000, L5 0x100000), ECG (L3 0x2000, L8 0x1000), temperature (L5 0x08), HRV (L11 0x20), mood/stress/fatigue (L8 0x400000), SOS (L7 0x02). Correction from the GloryFit menu audit (docs/APP_FEATURES.md): raise-to-wake (L1 0x40), Do Not Disturb (L1 0x08), contacts (L5 0x2000 + L6 0x40000), quick text replies (L6 0x200), watch language (L2 0x08) and women's health (L3 0x8000) ARE set.",
+      "tags": [
+        "function-list",
+        "features",
+        "gloryfit",
+        "33f1",
+        "34f1",
+        "android-app"
+      ],
+      "refs": [
+        "docs/APP_FEATURES.md",
+        "docs/PROTOCOL.md",
+        "tools/t60_feature_flags.py",
+        "tools/t60_menu_audit.py"
+      ]
+    },
+    {
+      "id": "fact-app-v2-live",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "T60 phone app v2: every watch command decoded from GloryFit and confirmed by the live watch (2026-10-26)",
+      "summary": "android/ rebuilt to the approved 33-screen design. Commands are queued one at a time and each waits for the watch's reply (same first byte) or a timeout, as GloryFit's command index queue does; this fixed the missing A2/A1 replies. Observed replies on T60(ID-AE67): time A3, version A1, battery A2, profile A9, units A0, dial config 26 01, find phone D1 0A, all-day HR F7 01, step target 3F, move reminder D3, quiet hours D7, alarms AB, women's health 29, languages AF AA/AB, quick replies 46 FA/FD + 52 01, call audio link 38 01, history syncs B2/31/F7/34/FD FA, weather CB 01-03 (34F1), text push C5/C6 sections + AB buzz, call push + C1 04, sender number 45 FA, contacts 37 FA/FB/FC, music 3A 01/FA + D1 0C/0D, workouts FD 11/22/33/44/00, photo face upload 26 02 + 27 pieces + 26 03 04/00. Live heart-rate start (D6 01 then E5 11) got no reply and blood oxygen returned no reading while the watch was likely off the wrist: unverified. Corrections to the earlier app: find watch is AB 00 00 00 01 02 07 01; alarms use the 9-byte form; text is UTF-16BE sent before the buzz.",
+      "tags": [
+        "android-app",
+        "protocol",
+        "live-test",
+        "watch-face"
+      ],
+      "refs": [
+        "android/src/main/java/com/paul/t60/T60Protocol.java",
+        "android/src/main/java/com/paul/t60/T60BleService.java",
+        "android/src/main/java/com/paul/t60/T60Face.java",
+        "docs/PROTOCOL.md"
       ]
     }
   ],
@@ -1419,6 +1464,26 @@
       "from": "question-os-base",
       "to": "source-rtl87x3e-sdk",
       "relation": "comparison-lead-only"
+    },
+    {
+      "from": "fact-t60-feature-support",
+      "to": "fact-final-reads",
+      "relation": "derived-from"
+    },
+    {
+      "from": "fact-t60-feature-support",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-app-v2-live",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-app-v2-live",
+      "to": "fact-t60-feature-support",
+      "relation": "depends-on"
     }
   ]
 }

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Clear watch data</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Watch.dc.html" aria-label="Back to Watch" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Clear watch data</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 24px 20px 28px; display: flex; flex-direction: column; gap: 16px">
+
+<div aria-hidden="true" style="align-self: center; width: 88px; height: 88px; border-radius: 50%; background: #2A1E14; border: 1px solid #5A3A22; display: flex; align-items: center; justify-content: center">
+<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFB38A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"></path></svg>
+</div>
+
+<h2 style="margin: 0; font-size: 22px; font-weight: 800; text-align: center">Clear the watch's history?</h2>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.5">
+<p style="margin: 0; color: #C9D1DB"><strong style="color: #F2F4F7">Deleted from the watch:</strong> stored steps, sleep, heart rate, blood oxygen and workouts.</p>
+<p style="margin: 0; color: #C9D1DB"><strong style="color: #F2F4F7">Kept:</strong> everything already synced to this phone, your settings and watch faces.</p>
+<p style="margin: 0; color: #C9D1DB">The app syncs first, so nothing new is lost.</p>
+</section>
+
+<a href="Watch.dc.html" style="margin-top: auto; min-height: 56px; border-radius: 16px; background: #E5484D; color: #FFFFFF; font-size: 17px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">Sync, then clear watch</a>
+<a href="Watch.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; text-decoration: none">Cancel</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

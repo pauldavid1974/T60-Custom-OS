@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>T60 Alerts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="padding: 20px 20px 12px; display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px">Alerts</h1>
+<p style="margin: 0; font-size: 14px; color: #9AA4B2">What buzzes your wrist</p>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 0; display: flex; flex-direction: column; gap: 12px">
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 4px 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid #232A33">
+<span style="font-size: 15px; font-weight: 600">Phone calls</span>
+<button aria-pressed="{{sw.s0.on}}" aria-label="Phone calls" onClick="{{sw.s0.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s0.bg}}; padding: 3px; display: flex; justify-content: {{sw.s0.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s0.knob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px">
+<span style="font-size: 15px; font-weight: 600">Text messages</span>
+<button aria-pressed="{{sw.s1.on}}" aria-label="Text messages" onClick="{{sw.s1.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s1.bg}}; padding: 3px; display: flex; justify-content: {{sw.s1.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s1.knob}}"></span></button>
+</div>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 14px 16px 4px; display: flex; flex-direction: column">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 6px">
+<h2 style="margin: 0; font-size: 14px; font-weight: 700; color: #9AA4B2">Apps</h2>
+<span style="font-size: 13px; color: #9AA4B2">3 of 5 on</span>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid #232A33">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9px; background: #1F3B2A; color: #7BE8A8; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center">W</span>
+<span style="flex: 1; font-size: 15px">WhatsApp</span>
+<button aria-pressed="{{sw.s2.on}}" aria-label="WhatsApp" onClick="{{sw.s2.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s2.bg}}; padding: 3px; display: flex; justify-content: {{sw.s2.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s2.knob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid #232A33">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9px; background: #3A2222; color: #FF9D8A; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center">G</span>
+<span style="flex: 1; font-size: 15px">Gmail</span>
+<button aria-pressed="{{sw.s3.on}}" aria-label="Gmail" onClick="{{sw.s3.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s3.bg}}; padding: 3px; display: flex; justify-content: {{sw.s3.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s3.knob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid #232A33">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9px; background: #1E2E46; color: #8CC8FF; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center">C</span>
+<span style="flex: 1; font-size: 15px">Calendar</span>
+<button aria-pressed="{{sw.s4.on}}" aria-label="Calendar" onClick="{{sw.s4.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s4.bg}}; padding: 3px; display: flex; justify-content: {{sw.s4.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s4.knob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid #232A33">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9px; background: #2A2A2A; color: #C9D1DB; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center">Y</span>
+<span style="flex: 1; font-size: 15px; color: #9AA4B2">YouTube</span>
+<button aria-pressed="{{sw.s5.on}}" aria-label="YouTube" onClick="{{sw.s5.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s5.bg}}; padding: 3px; display: flex; justify-content: {{sw.s5.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s5.knob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9px; background: #2A2A2A; color: #C9D1DB; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center">A</span>
+<span style="flex: 1; font-size: 15px; color: #9AA4B2">Amazon Shopping</span>
+<button aria-pressed="{{sw.s6.on}}" aria-label="Amazon Shopping" onClick="{{sw.s6.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s6.bg}}; padding: 3px; display: flex; justify-content: {{sw.s6.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s6.knob}}"></span></button>
+</div>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 4px 16px">
+<a href="QuietHours.dc.html" style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid #232A33; text-decoration: none; color: #F2F4F7">
+<span style="font-size: 15px; font-weight: 600">Quiet hours</span>
+<span style="font-size: 14px; color: #9AA4B2">10:00 PM – 7:00 AM ›</span>
+</a>
+<a href="MoveReminder.dc.html"style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid #232A33; text-decoration: none; color: #F2F4F7">
+<span style="font-size: 15px; font-weight: 600">Move reminder</span>
+<span style="font-size: 14px; color: #9AA4B2">Every hour, 9–5 ›</span>
+</a>
+<a href="QuickReplies.dc.html" style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; text-decoration: none; color: #F2F4F7">
+<span style="font-size: 15px; font-weight: 600">Quick replies to texts</span>
+<span style="font-size: 14px; color: #9AA4B2">5 replies ›</span>
+</a>
+</section>
+</main>
+
+<nav aria-label="Main" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 8px 8px 22px; background: #0F1216; border-top: 1px solid #1C222A">
+<a href="Main.dc.html" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #8792A2; font-size: 12px; font-weight: 600">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10H3z"></path></svg>Today</a>
+<a href="Health.dc.html" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #8792A2; font-size: 12px; font-weight: 600">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg>Health</a>
+<a href="Alerts.dc.html" aria-current="page" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5AB0FF; font-size: 12px; font-weight: 700">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>Alerts</a>
+<a href="Watch.dc.html" style="min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #8792A2; font-size: 12px; font-weight: 600">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="3"></rect><path d="M9 6V3h6v3M9 18v3h6v-3"></path></svg>Watch</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {"s0": true, "s1": true, "s2": true, "s3": true, "s4": true, "s5": false, "s6": false}, "g": {}}; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>
