@@ -64,19 +64,19 @@ Commands below are written to `0x33F1` unless noted as `writeCharaBle5` (`0x34F1
 | Read DSP Version | `queryDeviceDspVersion` (`0x3af168`) | `A1 01` | **Observed live:** Returns `A1` + `RH281LWJV007108` on `33F2` |
 | Read UI Version | `sendToReadUIResoureVersion` (`0x3b3b6c`) | `CD 01` | Queries UI pack version |
 | Read Battery | `sendToReadBLEBattery` (`0x3b3afc`) | `A2` | **Observed live:** Returns 2-byte `A2 <pct>` (e.g. `A2 38` = `56%`) on `33F2` |
-| Find Watch | `findBand` (`0x3ad768`) | `AB 00 00 00 AB <01=start\|00=stop> 07 AB` | Vibrates/rings watch |
+| Find Watch | `findBand(2)` | `AB 00 00 00 01 02 07 01`; stop `AB 00 00 00 00 00 00 00` | **Corrected 2026-10-26** from decompiled source; watch replies `AB 00` |
 | Find Phone Toggle | `openFindPhone` (`0x3aed88`) | `D1 0A <01=on\|00=off>` | Watch sends `D1 0A` when triggered |
 | Wrist Media RX (`33F2`) | `BluetoothLeService` (`0x380d60`) | `D1 07` (Play/Pause), `D1 08` (Next), `D1 09` (Prev), `D1 0C` (Music Open), `D1 0D` (Vol+), `D1 0E` (Vol-), `D1 12` (Mute) | Watch -> Phone media & volume control triggers |
 | Wrist Media TX (`33F1`) | `controlBandMusic` / `Volume` (`0x3ad36c`) | `D1 0C <01=Play\|02=Pause>`, `D1 0D <volPct>`, `D1 0E <volPct>` | Phone -> Watch playback & volume % sync |
 | Unit & Clock Format | `sendUnitToBLE` (`0x3b4040`) | `A0 <01=Metric\|02=Imperial> <01=24h\|02=12h>` | Sets Imperial/Metric and 12h/24h clock |
 | Raise Wrist to Wake | `start/stopTurnWristCalibration` | `FC 01` (enable) / `FC 00` (disable) | Turn wrist to light screen |
-| Call Alert | `sendIncallCommand` (`0x3b03b4`) | `AB 00 00 00 01 <01=ring\|02=ans\|03=rej> 02 01` | Follow with text chunks (`C5`) |
-| SMS / App Alert | `sendSmsCommand` (`0x3b2508`) | `AB 00 00 00 01 <type> 00 00` | Follow with text chunks (`C5`) |
-| Push Text Chunks | `sendTextSectionKey` (`0x3b3668`) | `C5 <idx> <up to 18 UTF-8 bytes>` then `C5 FD` | Displays popup text on watch |
+| Call Alert | `sendIncallCommand(10)` | `AB 00 00 00 01 0A 02 01` | **Sent after** the caller-name `C5` sections are acknowledged; call ended: `C1 04` |
+| SMS / App Alert buzz | `sendQQWeChatVibrationCommand(1)` | `AB 00 00 00 01 01 00 00` | **Sent after** the text sections are acknowledged |
+| Push Text Chunks | `sendTextToBle` / `sendTextSectionKey` | payload `[type][len][UTF-16BE, max 240 B]` cut into `C5 <idx> <18 bytes>`, then `C5 FD` | Watch acks each piece (`C5 idx`) and the end (`C5 FD type len`). SMS sender name follows as `C6` sections (max 30 B). Types: 0 call, 3 SMS, 4 other app; app icons per GloryFit `getAppType` (7 WhatsApp, 19 Gmail, ...) |
 | Step/Sleep Status | `sendToGetStepOrSleepStatus` (`0x3b3aa4`) | `AA` | Current step/sleep summary |
 | Sync All Steps | `syncAllStepData` (`0x3b5a14`) | `B2 FA` | Streams `B2 ...` ending with `B2 FD` |
 | Sync All Sleep | `syncAllSleepData` (`0x3b58a8`) | `31 01` | Band sleep algorithm stream |
-| Live HR Test | `sendRateTestCommand` (`0x3b0dd8`) | `E5 11` (start) / `E5 00` (stop) | Streams live BPM via `E5 ...` |
+| Live HR Test | `sendRateTestCommand` | `D6 01`, wait 1.5 s, then `E5 11` (start) / `E5 00` (stop) | GloryFit RateDetailsActivity order on Realtek. **Unverified live**: no reply on 2026-10-26 (watch probably off the wrist) |
 | Sync All HR | `syncAllRateData` (`0x3b56dc`) | `E6 FA ...` | Historical HR stream |
 | Read Dial Config | `readDeviceOnlineDialConfiguration` (`0x3af4f0`) | `26 01` | **Observed live (2026-10-25):** Returns 20-byte `26 01 00 F4 37 89 01 40 01 7C 01 00 10 00 00 02 01 00 00 00` -> **`320×380` px**, `screenType=1`, `maxDataSize=1048576` (1 MB), `compat=2`, `slots=1`, `dialNumber=16004999` |
 | Prepare Dial Send | `prepareSendOnlineDialData` (`0x3aef28`) | `26 02` | Prepares custom watchface transfer |
@@ -129,3 +129,57 @@ GloryFit's `com.yc.server.yc_sdk.Agent` and `com.yc.pedometer.update.Updates` ch
 | Yes | Raise wrist to wake (Smart Play L1 `0x40`), quiet hours / Do Not Disturb (Smart Play L1 `0x08`). The L2 `0x040000` and L11 `0x080000` checks are secondary variants. |
 
 Full menu-by-menu audit: [`docs/APP_FEATURES.md`](APP_FEATURES.md) (`tools/t60_menu_audit.py`).
+
+## App v2 command set, verified against the live watch (2026-10-26)
+
+Source: GloryFit v4.0.12 decompiled offline with jadx (`scratch/offline/jadx`, not committed), following the branch
+this watch's FunctionList bits select. "Reply" is what the T60 sent back on 2026-10-26 (**Observed**). Implemented in
+`android/src/main/java/com/paul/t60/T60Protocol.java`.
+
+**Sequencing.** GloryFit sends one command, waits for a reply starting with the same byte (or a timeout), then sends
+the next (`SyncParameterUtils` command index + `CommandTimeOut`). Sending several back-to-back is why the earlier app
+only got `A3`/`A9` replies. App v2 does the same as GloryFit; every startup command is now answered.
+
+| What | Command | Reply |
+|---|---|---|
+| Profile, screen time, goal, raise-to-wake, HR alert, °F/°C | `A9 00 <height cm> 00 <kg> <screen s> <goal BE32> <raise> <HR limit or FF> 01 <age> <1 male/2 female> 00 02 <1 °C/2 °F> 00` (L2 0x1000 set: byte 2 is height) | `A9` |
+| Units / clock | `A0 <1 km/2 mi> <1 24h/2 12h>` | `A0 02 02` |
+| Step target | `3F 04 01 <goal BE32>` | echo |
+| Move reminder | `D3 <on> <minutes> 02 03 01 00 <fromH> <fromM> <toH> <toM> 00` (no weekday field; the app turns it off on unticked days) | `D3 00` |
+| Quiet hours | `D7 <flags: 4 no push + 2 no buzz> <fromH> <fromM> <toH> <toM> <window on>` | echo |
+| Alarm id 1-3 | on: `AB <days> <h> <m> 02 05 02 00 <id>`; off: `AB <days> <h> <m> 00 00 00 00 <id>` (9-byte form, L6 0x100 clear; days bit 0 = Sunday) | `AB 7F` |
+| Women's health | `29 <on> <year BE16> <month> <day> <period days> <cycle days>` | `29 00` |
+| All-day heart rate | `F7 01` on / `F7 02` off | `F7 01` |
+| Languages | query `AF AA` -> `AF AA <current> d5 d4 d3 d2 d1` (3-byte masks; language n is bit n-1 of d1, n-25 of d2, ...); set `AF AB <n>` | as described |
+| Call audio (classic BT) | link `38 01 02 00 <4 random bytes>` (34F1) -> `38 01 <name 20 B> <MAC 6 B> <switch> <paired> <connected>`; on/off `38 02 <0/1>` | Observed `T60(ID-AE67)`, switch 1, paired 1, connected 1 |
+| Quick replies | each `46 FA <total> <idx> <len> <UTF-8 max 90>` (34F1), then `46 FD 00`; allow `52 01` | `46 FA total idx`, `46 FD`, `52 01 FD` |
+| Quick reply chosen on watch | watch sends `52 <numLen> <number ASCII> <msgLen> <UTF-8>`; phone texts it and answers `52 FE` (sent) / `52 FF` (failed) | not yet triggered |
+| Sender number for replies | `45 FA <len> <ASCII>` (34F1) after a call or SMS push | `45 FA` |
+| Contacts | `37 FA <n>`; sections `37 FB <k>` + k records `37 FB <phoneLen> <nameLen> <ASCII phone max 15> <UTF-16BE name max 10 chars>` (6 per section at MTU 247); end `37 FC FD` (all 34F1) | each acked |
+| Weather | `CB 01` today (21 B: code, 0, now, max, min, PM2.5, AQI, city 8 B, humidity, UV), `CB 02` days 2-5, `CB 03` days 6-7, each after the previous ack (34F1, L6 0x800). Temperatures °C, negative = abs OR 0x80. Codes 1 sunny, 2 partly cloudy, 3 cloudy, 4 showers, 5 thunder, 6 sleet, 7 light rain, 8 rain, 9 snow, 10 dust, 11 fog, 12 wind | `CB 01/02/03` |
+| Music | `3A 01 <1 play/2 pause> FF x10`, `3A 06 <len> <UTF-8 title max 52>`, `3A FA` (34F1); `D1 0C <1/2>` play state; `D1 0D <vol%>` | `3A FA <xor of sent bytes>`; `D1 0C 00` is only an ack, not a request |
+| Workout from phone | start `FD 11 <code> 01`; pause/resume/end `FD 22/33/44 <code> 01 <h> <m> <s> <kcal BE16> <km> <km/100> <pace m> <pace s>`; stop `FD 00 <code> 01`; codes 1 run, 2 cycle, 9 walk | echoes; watch streams `FD <type> <hr> ...` (14 B) |
+| GPS for watch workouts | watch asks `FD 01 AA <type>`; phone `FD 01 01` on first fix, then `FD 02 <lat*1e6> <lon*1e6> <speed cm/s BE16> <point m BE32> <total m BE32>` every 3 s (34F1); watch ends with `FD 01 55` | not yet triggered |
+| History | steps `B2 FA` -> `B2 <yyyy> <mm> <dd> <hh> <steps BE16> ...` ... `B2 FD`; sleep `31 01` -> `31 01 <yyyy> <mm> <dd> <count>`, data in `32 ...` on 34F2 (6-byte records: hour, minute, stage 1 deep/2 light/3 awake/4 REM, unknown, minutes BE16), end `31 02`; heart rate `F7 FA` -> `F7 <yyyy> <mm> <dd> <hh> <12 x bpm, 10 min apart ending at hh:00>` ... `F7 FD`; blood oxygen `34 FA` -> `34 FA <yyyy> <mm> <dd> <hh> ? <12 x %>` ... `34 FA FD <crc>`; workouts `FD FA` + 6 zero bytes -> `FD FA ... <count BE16>`, then per workout serial packets and `FD FD` | Observed empty on 2026-10-26 (the earlier app had already pulled and discarded the history) |
+| Blood oxygen reading | `34 11` start / `34 00` stop | `34 11`, then `34 00 FF FF` (no reading; watch likely not worn) |
+| Clear watch data | `AD` | **Not sent** (destructive; the app syncs first and asks to confirm) |
+
+### Photo watch face (custom dial), verified live
+
+GloryFit builds this watch's photo face from a template downloaded from the maker's server
+(`WatchFaceCustomFragment`). App v2 draws the template pieces itself (`T60Face.java`), so no server is used.
+
+File: 24-byte header `FE FF FF FF <len LE32> <CRC32 LE32 of the rest> <320 LE16> <380 LE16> 00 01 FF <compat> FF FF FF FF`,
+then one 24-byte entry per piece (type LE16, width LE16, start LE32 from file start, height, x, y, animation time
+LE16, picture count) sorted by type, 2 zero bytes, then picture data. Pictures are RGB565 big-endian; pure black
+`0000` is transparent inside a piece. With compatibility level 2 or higher (this watch: 2) every picture except arc
+digits (types 57-70) and needles is compressed by `Rgb.picDataCompress`, whose bytecode emits each row as records
+`[n<=255][1][n pixels]`, preceded by an `LE32 total` and a per-row `LE32` offset table. App v2's encoder matched the
+original method byte-for-byte on 3,000 test images. Piece types used: 17 background, 10 preview, 57/58/59/60 hour
+and minute digits (14-picture strips `-./0123456789:`), 7 colon, 15 weekday (7 Chinese + 7 English), 63/64 month,
+14 `/`, 65/66 day, 16 AM/PM (4 pictures).
+
+Upload: `26 02` -> `26 02`; pieces `27 <idx BE16> <241 bytes>` on 34F1; the watch answers `26 03 04` after each 4 KB
+it writes; after the last piece wait 500 ms and send `26 03 00` -> `26 03 00` ok / `01` bad checksum / `02` too big /
+`03 <idx>` resend from idx. **Observed 2026-10-26:** a 931,406-byte test face uploaded in about 30 s, was answered
+`26 03 00`, and `26 01` then reported face number `FFFFFFFE` (custom face shown) instead of `FFFFFFFF`.

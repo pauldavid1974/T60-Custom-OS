@@ -1003,6 +1003,25 @@
         "tools/t60_feature_flags.py",
         "tools/t60_menu_audit.py"
       ]
+    },
+    {
+      "id": "fact-app-v2-live",
+      "kind": "fact",
+      "certainty": "observed",
+      "title": "T60 phone app v2: every watch command decoded from GloryFit and confirmed by the live watch (2026-10-26)",
+      "summary": "android/ rebuilt to the approved 33-screen design. Commands are queued one at a time and each waits for the watch's reply (same first byte) or a timeout, as GloryFit's command index queue does; this fixed the missing A2/A1 replies. Observed replies on T60(ID-AE67): time A3, version A1, battery A2, profile A9, units A0, dial config 26 01, find phone D1 0A, all-day HR F7 01, step target 3F, move reminder D3, quiet hours D7, alarms AB, women's health 29, languages AF AA/AB, quick replies 46 FA/FD + 52 01, call audio link 38 01, history syncs B2/31/F7/34/FD FA, weather CB 01-03 (34F1), text push C5/C6 sections + AB buzz, call push + C1 04, sender number 45 FA, contacts 37 FA/FB/FC, music 3A 01/FA + D1 0C/0D, workouts FD 11/22/33/44/00, photo face upload 26 02 + 27 pieces + 26 03 04/00. Live heart-rate start (D6 01 then E5 11) got no reply and blood oxygen returned no reading while the watch was likely off the wrist: unverified. Corrections to the earlier app: find watch is AB 00 00 00 01 02 07 01; alarms use the 9-byte form; text is UTF-16BE sent before the buzz.",
+      "tags": [
+        "android-app",
+        "protocol",
+        "live-test",
+        "watch-face"
+      ],
+      "refs": [
+        "android/src/main/java/com/paul/t60/T60Protocol.java",
+        "android/src/main/java/com/paul/t60/T60BleService.java",
+        "android/src/main/java/com/paul/t60/T60Face.java",
+        "docs/PROTOCOL.md"
+      ]
     }
   ],
   "edges": [
@@ -1455,6 +1474,16 @@
       "from": "fact-t60-feature-support",
       "to": "source-gloryfit-apk",
       "relation": "documented-by"
+    },
+    {
+      "from": "fact-app-v2-live",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
+    },
+    {
+      "from": "fact-app-v2-live",
+      "to": "fact-t60-feature-support",
+      "relation": "depends-on"
     }
   ]
 }

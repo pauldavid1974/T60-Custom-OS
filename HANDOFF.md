@@ -1,13 +1,51 @@
 # HANDOFF — T60 custom firmware investigation
 
-**Updated:** 2026-10-25
+**Updated:** 2026-10-26
 **Phase:** Read-only feasibility investigation
 **Next agent:** Qwen through Engine Room + a local harness (or ChatGPT)
 **Owner:** Paul; public one-owner repo `pauldavid1974/T60-Custom-OS` (public by Paul's explicit 2026-10-25 approval)
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
-## ACTIVE ASSIGNMENT — Build the new T60 phone app from the approved design (Paul approved 2026-10-25)
+## COMPLETED — App v2 built to the approved design and tested on the live watch (Claude Code, 2026-10-26)
+
+**Authority:** Paul, 2026-10-26: "you have full authority to send anything you need to, to the watch … work until the
+app is fully installed and working". This covered the new command types below; firmware/DFU was not touched.
+
+- **Result (Observed):** `android/` rewritten: 33 design screens in code (`MainActivity`, `HealthScreens`,
+  `AlertScreens`, `WatchScreens`, `Ui`), SQLite health history (`T60Db`), weather.gov forecast (`Weather`), photo
+  face encoder (`T60Face`). Installed on `RFCNC10FA3K` (Android 11) and connected to `T60(ID-AE67)`; no crashes.
+- **Startup fix (Observed):** commands now go one at a time and wait for the watch's reply, as GloryFit does. Battery
+  `A2 38` and version `A1 …RH281LWJV007108` now answer; every startup command is acknowledged.
+- **Protocol (Documented from jadx decompile, then Observed):** full command list with replies in
+  `docs/PROTOCOL.md` → "App v2 command set". Three earlier commands were wrong and are fixed: find watch, alarms
+  (9-byte form) and text alerts (UTF-16BE pieces sent before the buzz). New and confirmed live: weather (CB), quick
+  replies (46/52), contacts (37), call audio status (38), languages (AF), women's health (29), workouts from the phone
+  (FD 11/22/33/44/00), music title (3A), photo watch face upload (26 02/27/26 03).
+- **Photo face (Observed):** GloryFit downloads a face template from the maker's server; the app now draws its own
+  template pieces instead. The encoder matched GloryFit's compression byte-for-byte on 3,000 test images; a test face
+  (plain navy, white time) was accepted by the watch (`26 03 00`) and the watch then reported a custom face showing.
+- **Not verified (watch probably not worn, Paul away):** live heart-rate reading (`D6 01` + `E5 11` got no reply),
+  blood-oxygen value (`34 00 FF FF` = no reading), wrist buttons (music, find phone, quick reply from watch), GPS
+  requested by a watch-started workout, sleep/steps/heart-rate history (watch history was empty: the earlier app
+  pulled it at each connect and discarded it). Clear watch data (`AD`) is built but was **not sent** (destructive).
+- **Side effects Paul should know:** startup sends the app's settings to the watch, so the watch's alarms were set to
+  off, quiet hours and move reminder off, and the profile set to placeholders (5 ft 10 in, 174 lb, born 1985). Paul
+  should enter his real profile and alarms in the app. The test photo face is now on the watch.
+- **Limits:** Health Connect needs Android 14 or an added library (phone is Android 11) — the Export screen says so and
+  offers the CSV/JSON file. Workout map draws the GPS line without map tiles (Google key not created). The watch's
+  built-in faces can only be switched on the watch. Move-reminder weekdays are applied by the app at midnight.
+- **Checks:** `python tools/kg.py validate` and `python -m unittest discover -s tests -v` — see the commit. No host C
+  build (no C changed). Notification access for the new app must be switched on by Paul (setup step 3); it is a phone
+  privacy setting, so it was not changed by the agent.
+
+**Next assignment (with Paul wearing the watch):** (1) turn on notification access in setup step 3; (2) set profile
+and alarms; (3) on Heart rate press Measure now — if still no `E5` reply, compare with GloryFit's `RateDetailsActivity`
+flow (`D6 02` dynamic mode) in the decompile; (4) press the watch's find-phone, music and quick-reply buttons and check
+the Bluetooth log on the Connection screen; (5) start an outdoor walk on the watch and confirm `FD 01 AA` → GPS points;
+(6) choose a real photo face. Then the morning after a worn night, confirm sleep/steps/heart-rate history fill Health.
+
+## ACTIVE ASSIGNMENT (superseded by the section above) — Build the new T60 phone app from the approved design (Paul approved 2026-10-25)
 
 **Paul's words:** "Approved. Build the app now." The design is final for this build.
 
