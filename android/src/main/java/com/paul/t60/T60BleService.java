@@ -96,13 +96,38 @@ public class T60BleService extends Service {
     private boolean streaming; // current op expects several packets and ends on a marker
     private final Runnable timeout = () -> { if (current != null) { store.logEvent("No reply to " + current.label); finishCurrent(); } };
 
+    // Android 14+ kills the app if a connected-device service starts before Bluetooth is allowed.
+    private boolean granted(String perm) {
+        return checkSelfPermission(perm) == android.content.pm.PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean bluetoothAllowed() {
+        return Build.VERSION.SDK_INT < 31 || granted(android.Manifest.permission.BLUETOOTH_CONNECT);
+    }
+
+    // Also re-run on reconnect, so a location permission granted later adds workout GPS.
+    private void goForeground() {
+        if (Build.VERSION.SDK_INT >= 29) {
+            int type = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
+            if (granted(android.Manifest.permission.ACCESS_FINE_LOCATION)) type |= android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
+            startForeground(NOTIF_ID, statusNotification("Connecting…"), type);
+        } else {
+            startForeground(NOTIF_ID, statusNotification("Connecting…"));
+        }
+    }
+
     @Override public void onCreate() {
         super.onCreate();
-        activeInstance = this;
         store = T60Store.get(this);
+        if (!bluetoothAllowed()) {
+            store.logEvent("Service not started: Bluetooth permission not granted yet");
+            stopSelf();
+            return;
+        }
+        activeInstance = this;
         db = T60Db.get(this);
         createChannels();
-        startForeground(NOTIF_ID, statusNotification("Connecting…"));
+        goForeground();
         registerPhoneHooks();
         connectWatch();
         watchMedia();
@@ -110,7 +135,8 @@ public class T60BleService extends Service {
     }
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
-        if (gatt == null) connectWatch();
+        if (!bluetoothAllowed()) { stopSelf(); return START_NOT_STICKY; }
+        if (gatt == null) { goForeground(); connectWatch(); }
         return START_STICKY;
     }
 
