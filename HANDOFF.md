@@ -7,6 +7,28 @@
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
+## COMPLETED — Startup crash on Android 14+ fixed (Claude Code, 2026-10-26)
+
+- **Result (Observed):** on Paul's Galaxy S24 (`RFCXA0S5N4J`, model SM-S921U, Android 14+ rules) the app crashed ~30 ms after
+  opening, every time, after a fresh install. Logcat: `SecurityException: Starting FGS with type connectedDevice …
+  requires … BLUETOOTH_CONNECT` from `T60BleService.onCreate` → `startForeground`. `MainActivity` asks for permissions
+  and starts the service in the same breath, so on a fresh install (no grants yet) the service went foreground before
+  Bluetooth was allowed. The earlier phone (Android 11) never enforced this.
+- **Fix:** `T60BleService` checks `BLUETOOTH_CONNECT` before going foreground and stops quietly (event log line
+  "Service not started: Bluetooth permission not granted yet") if it is missing; `MainActivity` already restarts it
+  from `onRequestPermissionsResult`. The foreground type is now passed explicitly: connected device always, location
+  only when fine location is granted (denying location would otherwise crash the same way).
+- **Verified (Observed, 2026-10-26):** fresh launch with no grants → no crash, permission prompt shown, the guard log
+  line printed. After Paul tapped Allow: service foreground with types connectedDevice|location (`0x18`), watch
+  connected and synced (time, quick replies, step and heart-rate history, weather), crash buffer empty.
+- **Gap noted:** the app logs BLE traffic and events (`store.logEvent`, tag `T60`) but has no crash capture of its own;
+  crashes are only visible through `adb logcat -b crash`. Install command note: plain `adb install -r` (no `-g`) is
+  what a real user gets, so test first-run with it.
+- **Checks:** built with `python android/build_apk.py`; no host C or graph changes, so `kg.py validate` / unit tests not
+  run for this change.
+
+**Next assignment:** unchanged — the "Next assignment (with Paul wearing the watch)" list in the section below.
+
 ## COMPLETED — App v2 built to the approved design and tested on the live watch (Claude Code, 2026-10-26)
 
 **Authority:** Paul, 2026-10-26: "you have full authority to send anything you need to, to the watch … work until the
