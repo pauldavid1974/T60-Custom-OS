@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Weather</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Watch.dc.html" aria-label="Back to Watch" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Weather</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 4px 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid #232A33">
+<span style="font-size: 15px; font-weight: 600">Show weather on watch</span>
+<button aria-pressed="{{sw.s0.on}}" aria-label="Show weather on watch" onClick="{{sw.s0.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s0.bg}}; padding: 3px; display: flex; justify-content: {{sw.s0.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s0.knob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid #232A33">
+<span style="font-size: 15px; font-weight: 600">Location</span>
+<span style="font-size: 14px; color: #9AA4B2">Phone GPS</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px">
+<span style="font-size: 15px; font-weight: 600">Update</span>
+<span style="font-size: 14px; color: #9AA4B2">Every hour</span>
+</div>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 15px; font-weight: 700">[Your town]</h2>
+<span style="font-size: 13px; color: #9AA4B2">Updated 8:00 PM</span>
+</div>
+<div style="display: flex; align-items: baseline; gap: 10px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 44px; font-weight: 600">58°</span>
+<span style="font-size: 15px; color: #C9D1DB">Partly cloudy</span>
+</div>
+<div style="display: flex; flex-direction: column">
+<div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) 80px; align-items: center; min-height: 36px; font-size: 14px; border-top: 1px solid #232A33"><span>Sun</span><span style="color: #C9D1DB">Sunny</span><span style="font-family: 'IBM Plex Mono', monospace; text-align: right">64° / 45°</span></div>
+<div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) 80px; align-items: center; min-height: 36px; font-size: 14px; border-top: 1px solid #232A33"><span>Mon</span><span style="color: #C9D1DB">Rain likely</span><span style="font-family: 'IBM Plex Mono', monospace; text-align: right">57° / 48°</span></div>
+<div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) 80px; align-items: center; min-height: 36px; font-size: 14px; border-top: 1px solid #232A33"><span>Tue</span><span style="color: #C9D1DB">Showers</span><span style="font-family: 'IBM Plex Mono', monospace; text-align: right">55° / 44°</span></div>
+<div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) 80px; align-items: center; min-height: 36px; font-size: 14px; border-top: 1px solid #232A33"><span>Wed</span><span style="color: #C9D1DB">Mostly sunny</span><span style="font-family: 'IBM Plex Mono', monospace; text-align: right">61° / 42°</span></div>
+<div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) 80px; align-items: center; min-height: 36px; font-size: 14px; border-top: 1px solid #232A33"><span>Thu</span><span style="color: #C9D1DB">Sunny</span><span style="font-family: 'IBM Plex Mono', monospace; text-align: right">66° / 47°</span></div>
+</div>
+</section>
+
+<section style="border: 1px solid #232A33; border-radius: 20px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5AB0FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+<p style="margin: 0; font-size: 13px; color: #C9D1DB; line-height: 1.5">Forecast from the National Weather Service (weather.gov). Only your location, rounded to about a mile, is sent. No account, nothing else.</p>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {"s0": true}, "g": {}}; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

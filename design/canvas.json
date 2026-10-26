@@ -1,0 +1,417 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Alerts.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "3 · Alerts",
+      "w": 390,
+      "x": 940,
+      "y": 0,
+      "is_interactive": true
+    },
+    "Health.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "2 · Health",
+      "w": 390,
+      "x": 470,
+      "y": 0,
+      "is_interactive": true
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "1 · Today",
+      "w": 390,
+      "x": 0,
+      "y": 0,
+      "is_interactive": true
+    },
+    "Watch.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "4 · Watch",
+      "w": 390,
+      "x": 1410,
+      "y": 0,
+      "is_interactive": true
+    },
+    "HeartRate.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Heart rate",
+      "w": 390,
+      "x": 2480,
+      "y": 0,
+      "is_interactive": true
+    },
+    "Oxygen.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Blood oxygen",
+      "w": 390,
+      "x": 2950,
+      "y": 0,
+      "is_interactive": true
+    },
+    "SleepNight.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "One night's sleep",
+      "w": 390,
+      "x": 3420,
+      "y": 0,
+      "is_interactive": true
+    },
+    "Workouts.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Workouts",
+      "w": 390,
+      "x": 3890,
+      "y": 0,
+      "is_interactive": true
+    },
+    "LiveWorkout.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Workout in progress",
+      "w": 390,
+      "x": 4360,
+      "y": 0,
+      "is_interactive": true
+    },
+    "Alarm.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Alarms",
+      "w": 390,
+      "x": 2480,
+      "y": 1124,
+      "is_interactive": true
+    },
+    "MoveReminder.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Move reminder",
+      "w": 390,
+      "x": 2950,
+      "y": 1124,
+      "is_interactive": true
+    },
+    "Weather.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Weather",
+      "w": 390,
+      "x": 3420,
+      "y": 1124,
+      "is_interactive": true
+    },
+    "PhotoFace.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Photo watch face",
+      "w": 390,
+      "x": 3890,
+      "y": 1124,
+      "is_interactive": true
+    },
+    "Calls.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Calls through the watch",
+      "w": 390,
+      "x": 4360,
+      "y": 1124,
+      "is_interactive": true
+    },
+    "Export.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Export",
+      "w": 390,
+      "x": 4830,
+      "y": 1124,
+      "is_interactive": true
+    },
+    "Setup.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "First-time setup",
+      "w": 390,
+      "x": 2480,
+      "y": 2248,
+      "is_interactive": true
+    },
+    "Connection.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Watch not connected",
+      "w": 390,
+      "x": 2950,
+      "y": 2248,
+      "is_interactive": true
+    },
+    "FindPhone.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Find my phone alert",
+      "w": 390,
+      "x": 3420,
+      "y": 2248,
+      "is_interactive": true
+    },
+    "QuietHours.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Quiet hours",
+      "w": 390,
+      "x": 2480,
+      "y": 3372,
+      "is_interactive": true
+    },
+    "QuickReplies.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Quick replies",
+      "w": 390,
+      "x": 2950,
+      "y": 3372,
+      "is_interactive": true
+    },
+    "Contacts.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Contacts on watch",
+      "w": 390,
+      "x": 3420,
+      "y": 3372,
+      "is_interactive": true
+    },
+    "Profile.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Your profile",
+      "w": 390,
+      "x": 2480,
+      "y": 4496,
+      "is_interactive": true
+    },
+    "StepGoal.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Step goal",
+      "w": 390,
+      "x": 2950,
+      "y": 4496,
+      "is_interactive": true
+    },
+    "WomensHealth.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Women's health",
+      "w": 390,
+      "x": 3420,
+      "y": 4496,
+      "is_interactive": true
+    },
+    "TodayCards.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Today cards",
+      "w": 390,
+      "x": 3890,
+      "y": 4496,
+      "is_interactive": true
+    },
+    "WatchLanguage.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Watch language",
+      "w": 390,
+      "x": 4360,
+      "y": 4496,
+      "is_interactive": true
+    },
+    "ScreenTime.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Screen stays on",
+      "w": 390,
+      "x": 4830,
+      "y": 4496,
+      "is_interactive": true
+    },
+    "TimeUnits.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Time and units",
+      "w": 390,
+      "x": 5300,
+      "y": 4496,
+      "is_interactive": true
+    },
+    "ClearData.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Clear watch data",
+      "w": 390,
+      "x": 5770,
+      "y": 4496,
+      "is_interactive": true
+    },
+    "FindWatch.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Finding your watch",
+      "w": 390,
+      "x": 3890,
+      "y": 2248,
+      "is_interactive": true
+    },
+    "PhotoPicker.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Choose a photo",
+      "w": 390,
+      "x": 5300,
+      "y": 1124,
+      "is_interactive": true
+    },
+    "EditReply.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Edit a reply",
+      "w": 390,
+      "x": 3890,
+      "y": 3372,
+      "is_interactive": true
+    },
+    "ContactPicker.dc.html": {
+      "h": 844,
+      "radius": 28,
+      "title": "Add contacts",
+      "w": 390,
+      "x": 4360,
+      "y": 3372,
+      "is_interactive": true
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-25T20:58:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "ask": {
+      "fill": "orange",
+      "size": 40,
+      "text": "WHAT YOUR WATCH SAYS IT CAN DO\n(its own feature list, read live; meanings taken from the GloryFit screens that check each one)\n\nYES: blood oxygen • heart rate all day + high-rate alarm • REM sleep • about 24 workout types (phone GPS for outdoor ones) • phone calls through the watch • contacts on the watch • quick replies to texts • music control + song name • weather • call, text and app alerts • quiet hours • raise wrist to wake • move reminder • alarms • step goal • watch language • women's health tracking\n\nNO: blood pressure • ECG • temperature • HRV / stress / mood • drink-water and wash-hands reminders • event reminders • world clock • SOS call • camera shutter • wrist detection\n\nFull list: docs/APP_FEATURES.md in the project",
+      "w": 1038,
+      "x": 1202,
+      "y": 1449
+    },
+    "drop": {
+      "fill": "red",
+      "size": 40,
+      "text": "DROP (bloat or sends data away)\n\n• Account, login, cloud sync\n• AI agent, ChatGPT, translate, diet plans\n• WeChat, Alipay, Tmall, Strava, QR codes\n• Online watch-face store and purchases\n• Friends, push messages, health 'reports'\n• Online firmware updates\n• GloryFit's weather servers in China (we use weather.gov)",
+      "w": 1038,
+      "x": 1202,
+      "y": 962
+    },
+    "keep": {
+      "fill": "green",
+      "size": 40,
+      "text": "KEEP from GloryFit (all on-phone, no account)\n\n• Today summary: steps, heart rate, sleep, battery\n• Heart rate detail, all-day monitoring, high-rate alarm\n• Blood oxygen\n• Sleep detail (deep / light / REM)\n• Step goal + weekly history\n• Workouts, with phone GPS for outdoor ones\n• Call, text and per-app alerts\n• Quick replies to texts, contacts on the watch\n• Quiet hours, raise wrist to wake\n• Phone calls through the watch\n• Move reminder\n• Alarms\n• Find watch / find phone\n• Music + volume + song name on the wrist\n• Screen timeout, 12h, units, watch language\n• Your profile, step goal, women's health\n• Choose your Today cards, clear watch data\n• Weather on the watch (weather.gov, phone GPS)\n• Photo watch face\n• Export to a file / Health Connect",
+      "w": 1072,
+      "x": 37,
+      "y": 962
+    },
+    "t1": {
+      "kind": "title1",
+      "maxW": 1800,
+      "text": "Main tabs",
+      "w": 240,
+      "x": 0,
+      "y": -260
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "Health details",
+      "x": 2480,
+      "y": -260
+    },
+    "t3": {
+      "kind": "title1",
+      "maxW": 2740,
+      "text": "Settings",
+      "x": 2480,
+      "y": 864
+    },
+    "t4": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Setup and special screens",
+      "x": 2480,
+      "y": 1988
+    },
+    "t5": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Alerts, calls and contacts",
+      "x": 2480,
+      "y": 3112
+    },
+    "t6": {
+      "kind": "title1",
+      "maxW": 3680,
+      "text": "You and your watch",
+      "x": 2480,
+      "y": 4236
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Health.dc.html",
+    "Alerts.dc.html",
+    "Watch.dc.html",
+    "HeartRate.dc.html",
+    "Oxygen.dc.html",
+    "SleepNight.dc.html",
+    "Workouts.dc.html",
+    "LiveWorkout.dc.html",
+    "Alarm.dc.html",
+    "MoveReminder.dc.html",
+    "Weather.dc.html",
+    "PhotoFace.dc.html",
+    "Calls.dc.html",
+    "Export.dc.html",
+    "Setup.dc.html",
+    "Connection.dc.html",
+    "FindPhone.dc.html",
+    "QuietHours.dc.html",
+    "QuickReplies.dc.html",
+    "Contacts.dc.html",
+    "Profile.dc.html",
+    "StepGoal.dc.html",
+    "WomensHealth.dc.html",
+    "TodayCards.dc.html",
+    "WatchLanguage.dc.html",
+    "ScreenTime.dc.html",
+    "TimeUnits.dc.html",
+    "ClearData.dc.html",
+    "FindWatch.dc.html",
+    "PhotoPicker.dc.html",
+    "EditReply.dc.html",
+    "ContactPicker.dc.html"
+  ],
+  "pages": [],
+  "title": "T60 Phone App"
+}

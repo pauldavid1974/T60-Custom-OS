@@ -7,6 +7,29 @@
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
+## ACTIVE ASSIGNMENT — Build the new T60 phone app from the approved design (Paul approved 2026-10-25)
+
+**Paul's words:** "Approved. Build the app now." The design is final for this build.
+
+**Read first:** `design/` (33 approved screens as `.dc.html` + `canvas.json` layout; open any file in a browser to read its markup, though the tap behaviour only runs in the canvas), the live clickable canvas https://claude.ai/artifact/VB2BpuLfvPW5Mj6LMXW9Vz, `docs/APP_FEATURES.md` (what the watch supports, keep/drop), `docs/PROTOCOL.md`, existing `android/` app.
+
+**Build rules**
+- Keep the zero-Gradle build: `python android/build_apk.py`, install with `adb install -r -g android/build/T60.apk` (phone `RFCNC10FA3K`). Java, no new dependencies unless unavoidable.
+- Match the design's look: near-black `#0A0C0F`, cards `#14181E` / border `#232A33`, accent `#5AB0FF`, heart/alert `#FF8A5B`, text `#F2F4F7` / `#9AA4B2`; 4 bottom tabs (Today, Health, Alerts, Watch); detail screens have a back arrow and no tab bar.
+- Store health history locally (SQLite) so Health week/month views and Export work. Nothing leaves the phone except: weather.gov (rounded GPS, US only, see Weather decision below) and, later, Google Maps tiles for the workout map (needs Paul to create a Google Cloud key himself; build the map screen last).
+- **Safety (AGENTS.md):** commands the current app already sends are fine. Any **new** watch command type (weather packet, alarms beyond what's sent, contacts, quick replies, women's-health, language, screen time, clear data, photo watch face upload) must be decoded offline from `scratch/offline/classes6_dexdump_utf8.txt` first and needs Paul's OK before its first live send. Clear watch data and photo-face upload are the riskiest; do them last.
+
+**Suggested order (one small PR each)**
+1. Fix the open startup issue: send each 33F1 command only after the previous reply (watch currently answers only `A3`/`A9`). Verify battery `A2` and version `A1` replies on the phone.
+2. App shell: 4 tabs + navigation + Today screen (steps, HR, sleep, quick actions: Find watch screen, Sync now, Export).
+3. Alerts tab: call/text switches, per-app list (already built), quiet hours, move reminder, quick replies (needs SEND_SMS permission).
+4. Health tab + local SQLite history: steps/HR/sleep/blood oxygen week views, heart-rate and sleep detail screens.
+5. Watch tab sections: profile, step goal, screen + raise to wake, time and units, language, alarms, weather (weather.gov), calls + contacts, music, Today cards, setup, find-phone alert, clear data.
+6. Workouts (≈24 types; decode names from GloryFit resources) and live workout with phone GPS; map last.
+7. Women's health, photo watch face, export/Health Connect.
+
+**Done when:** every screen in `design/` exists in the app, each control does what the prototype shows, the app builds and installs, and each new watch command has been approved and tested live. Update this file after each step.
+
 ## COMPLETED — App fixes, feature decode and new app design (Claude Code, 2026-10-25)
 
 - **App fixes (Observed on the phone, commit `ef0b040`):** per-app alert switches on the Alerts tab; the service no longer opens a second Bluetooth connection (every wrist press was handled twice); notification setup is now done one step at a time, so watch replies arrive. **Still open:** the watch answers only the first two startup commands (`A3`, `A9`); `A2` battery, `A1` version and `26 01` get no reply. Likely needs each command to wait for its reply before the next is sent. Not yet tested.

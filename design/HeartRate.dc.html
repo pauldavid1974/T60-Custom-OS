@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Heart rate</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Health.dc.html" aria-label="Back to Health" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Heart rate</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 48px; font-weight: 600; color: #FF8A5B">{{bpm}}</span>
+<span style="font-size: 15px; color: #9AA4B2">bpm · {{bpmWhen}}</span>
+</div>
+<div style="height: 110px; display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 3px; align-items: end">
+<div style="height: 30%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 28%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 26%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 27%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 25%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 28%; background: #6B3A2A; border-radius: 3px"></div>
+<div style="height: 40%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 55%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 62%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 48%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 45%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 58%; background: #6B3A2A; border-radius: 3px"></div>
+<div style="height: 70%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 52%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 47%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 50%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 96%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 60%; background: #6B3A2A; border-radius: 3px"></div>
+<div style="height: 54%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 50%; background: #6B3A2A; border-radius: 3px"></div><div style="height: 48%; background: #FF8A5B; border-radius: 3px"></div><div style="height: 0%"></div><div style="height: 0%"></div><div style="height: 0%"></div>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 12px; color: #8792A2"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; text-align: center">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #9AA4B2">Resting</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600">61</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #9AA4B2">Average</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600">78</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #9AA4B2">Highest</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600">132</span></div>
+</div>
+</section>
+
+<button style="min-height: 52px; border: 0; border-radius: 16px; background: #FF8A5B; color: #1A0F0A; font: 800 16px Manrope, sans-serif; cursor: pointer" onClick="{{measure}}">{{measureLabel}}</button>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 4px 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid #232A33">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Measure all day</span><span style="font-size: 13px; color: #9AA4B2">The watch checks on its own</span></div>
+<button aria-pressed="{{sw.s0.on}}" aria-label="Measure all day" onClick="{{sw.s0.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s0.bg}}; padding: 3px; display: flex; justify-content: {{sw.s0.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s0.knob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid #232A33">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">High heart-rate alert</span><span style="font-size: 13px; color: #9AA4B2">Buzz if it stays above the limit</span></div>
+<button aria-pressed="{{sw.s1.on}}" aria-label="High heart-rate alert" onClick="{{sw.s1.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s1.bg}}; padding: 3px; display: flex; justify-content: {{sw.s1.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s1.knob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px">
+<span style="font-size: 15px; font-weight: 600">Alert limit</span>
+<div style="display: flex; align-items: center; gap: 8px">
+<button aria-label="Lower the limit" onClick="{{limDown}}" style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid #2B3440; background: #1A2028; color: #F2F4F7; font: 700 20px Manrope, sans-serif">−</button>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 600; min-width: 64px; text-align: center">{{lim}} bpm</span>
+<button aria-label="Raise the limit" onClick="{{limUp}}" style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid #2B3440; background: #1A2028; color: #F2F4F7; font: 700 20px Manrope, sans-serif">+</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {"s0": true, "s1": true}, "g": {}}; }
+extra(st) { const lim = st.lim || 120; return { measure: () => this.setState({ m: true }),
+measureLabel: st.m ? 'Measured just now' : 'Measure now', bpm: st.m ? '74' : '72', bpmWhen: st.m ? 'just now' : '4 min ago',
+lim: lim, limDown: () => this.setState({ lim: Math.max(90, lim - 5) }), limUp: () => this.setState({ lim: Math.min(180, lim + 5) }) }; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

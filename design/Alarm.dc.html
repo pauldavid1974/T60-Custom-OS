@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Alarms</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Watch.dc.html" aria-label="Back to Watch" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Alarms</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 4px 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 72px; border-bottom: 1px solid #232A33">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 28px; font-weight: 600">7:00 AM</span><span style="font-size: 13px; color: #9AA4B2">Every day</span></div>
+<button aria-pressed="{{sw.s0.on}}" aria-label="7:00 AM alarm" onClick="{{sw.s0.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s0.bg}}; padding: 3px; display: flex; justify-content: {{sw.s0.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s0.knob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 72px">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 28px; font-weight: 600; color: #8792A2">6:15 AM</span><span style="font-size: 13px; color: #9AA4B2">Weekdays</span></div>
+<button aria-pressed="{{sw.s1.on}}" aria-label="6:15 AM alarm" onClick="{{sw.s1.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s1.bg}}; padding: 3px; display: flex; justify-content: {{sw.s1.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s1.knob}}"></span></button>
+</div>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-size: 14px; font-weight: 700; color: #9AA4B2">New alarm</h2>
+<div style="display: flex; align-items: center; justify-content: center; gap: 10px">
+<label style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: #9AA4B2">Hour<input value="6" inputmode="numeric" style="width: 72px; height: 64px; box-sizing: border-box; border-radius: 14px; border: 1px solid #2B3440; background: #1A2028; color: #F2F4F7; font: 600 32px 'IBM Plex Mono', monospace; text-align: center"></label>
+<span style="font: 600 32px 'IBM Plex Mono', monospace; padding-top: 18px">:</span>
+<label style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: #9AA4B2">Minute<input value="30" inputmode="numeric" style="width: 72px; height: 64px; box-sizing: border-box; border-radius: 14px; border: 1px solid #2B3440; background: #1A2028; color: #F2F4F7; font: 600 32px 'IBM Plex Mono', monospace; text-align: center"></label>
+<div role="group" aria-label="AM or PM" style="display: flex; flex-direction: column; gap: 6px; padding-top: 18px">
+<button aria-pressed="{{g.g0.o0.on}}" onClick="{{g.g0.o0.pick}}" style="width: 52px; height: 30px; border-radius: 10px; border: {{g.g0.o0.v0}}; background: {{g.g0.o0.v1}}; color: {{g.g0.o0.v2}}; font: {{g.g0.o0.v3}}; cursor: pointer">AM</button>
+<button aria-pressed="{{g.g0.o1.on}}" onClick="{{g.g0.o1.pick}}" style="width: 52px; height: 30px; border-radius: 10px; border: {{g.g0.o1.v0}}; background: {{g.g0.o1.v1}}; color: {{g.g0.o1.v2}}; font: {{g.g0.o1.v3}}; cursor: pointer">PM</button>
+</div>
+</div>
+<div role="group" aria-label="Repeat on" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<button aria-pressed="{{g.g1.o0.on}}" onClick="{{g.g1.o0.pick}}" aria-label="Sunday" style="height: 44px; border-radius: 12px; border: {{g.g1.o0.v0}}; background: {{g.g1.o0.v1}}; color: {{g.g1.o0.v2}}; font: {{g.g1.o0.v3}}; cursor: pointer">S</button>
+<button aria-pressed="{{g.g1.o1.on}}" onClick="{{g.g1.o1.pick}}" aria-label="Monday" style="height: 44px; border-radius: 12px; border: {{g.g1.o1.v0}}; background: {{g.g1.o1.v1}}; color: {{g.g1.o1.v2}}; font: {{g.g1.o1.v3}}; cursor: pointer">M</button>
+<button aria-pressed="{{g.g1.o2.on}}" onClick="{{g.g1.o2.pick}}" aria-label="Tuesday" style="height: 44px; border-radius: 12px; border: {{g.g1.o2.v0}}; background: {{g.g1.o2.v1}}; color: {{g.g1.o2.v2}}; font: {{g.g1.o2.v3}}; cursor: pointer">T</button>
+<button aria-pressed="{{g.g1.o3.on}}" onClick="{{g.g1.o3.pick}}" aria-label="Wednesday" style="height: 44px; border-radius: 12px; border: {{g.g1.o3.v0}}; background: {{g.g1.o3.v1}}; color: {{g.g1.o3.v2}}; font: {{g.g1.o3.v3}}; cursor: pointer">W</button>
+<button aria-pressed="{{g.g1.o4.on}}" onClick="{{g.g1.o4.pick}}" aria-label="Thursday" style="height: 44px; border-radius: 12px; border: {{g.g1.o4.v0}}; background: {{g.g1.o4.v1}}; color: {{g.g1.o4.v2}}; font: {{g.g1.o4.v3}}; cursor: pointer">T</button>
+<button aria-pressed="{{g.g1.o5.on}}" onClick="{{g.g1.o5.pick}}" aria-label="Friday" style="height: 44px; border-radius: 12px; border: {{g.g1.o5.v0}}; background: {{g.g1.o5.v1}}; color: {{g.g1.o5.v2}}; font: {{g.g1.o5.v3}}; cursor: pointer">F</button>
+<button aria-pressed="{{g.g1.o6.on}}" onClick="{{g.g1.o6.pick}}" aria-label="Saturday" style="height: 44px; border-radius: 12px; border: {{g.g1.o6.v0}}; background: {{g.g1.o6.v1}}; color: {{g.g1.o6.v2}}; font: {{g.g1.o6.v3}}; cursor: pointer">S</button>
+</div>
+<a href="Watch.dc.html" style="min-height: 52px; border-radius: 16px; background: #5AB0FF; color: #06121F; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">Save to watch</a>
+</section>
+<p style="margin: 0; font-size: 13px; color: #9AA4B2; text-align: center">The watch holds up to 3 alarms.</p>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {"s0": true, "s1": false}, "g": {"g0": {"multi": false, "init": [0], "keys": ["border", "background", "color", "font"], "n": 2, "sel": ["0", "#253244", "#F2F4F7", "700 13px Manrope, sans-serif"], "uns": ["1px solid #2B3440", "transparent", "#9AA4B2", "600 13px Manrope, sans-serif"]}, "g1": {"multi": true, "init": [1, 2, 3, 4, 5], "keys": ["border", "background", "color", "font"], "n": 7, "sel": ["0", "#5AB0FF", "#06121F", "800 14px Manrope, sans-serif"], "uns": ["1px solid #2B3440", "transparent", "#9AA4B2", "700 14px Manrope, sans-serif"]}}}; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Watch language</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Watch.dc.html" aria-label="Back to Watch" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Watch language</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+<p style="margin: 0 4px; font-size: 14px; color: #C9D1DB; line-height: 1.5">The language of the watch's own menus. The list shows the languages your watch reports it has.</p>
+
+<section role="radiogroup" aria-label="Watch language" data-manual="1" style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 4px 16px">
+<sc-for list="{{langs}}" as="l" hint-placeholder-count="5">
+<button role="radio" aria-checked="{{l.on}}" onClick="{{l.pick}}" style="width: 100%; min-height: 56px; border: 0; border-bottom: {{l.line}}; background: transparent; color: {{l.color}}; font: {{l.font}}; display: flex; align-items: center; justify-content: space-between; padding: 0; cursor: pointer">{{l.name}}<sc-if value="{{l.on}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5AB0FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></sc-if></button>
+</sc-for>
+</section>
+
+<a href="Watch.dc.html" style="margin-top: auto; min-height: 52px; border-radius: 16px; background: #5AB0FF; color: #06121F; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">Save to watch</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {}, "g": {}}; }
+extra(st) { const names = ['English', 'Español', 'Français', 'Deutsch', 'Português']; const cur = st.lang || 0;
+return { langs: names.map((n, i) => ({ name: n, on: i === cur, pick: () => this.setState({ lang: i }),
+line: i === names.length - 1 ? '0' : '1px solid #232A33', color: i === cur ? '#F2F4F7' : '#C9D1DB',
+font: i === cur ? '700 15px Manrope, sans-serif' : '600 15px Manrope, sans-serif' })) }; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

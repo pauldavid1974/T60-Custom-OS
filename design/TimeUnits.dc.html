@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Time and units</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Watch.dc.html" aria-label="Back to Watch" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Time and units</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 14px; font-weight: 700; color: #9AA4B2">Clock</h2>
+<div role="group" aria-label="Clock" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<button aria-pressed="{{g.g0.o0.on}}" onClick="{{g.g0.o0.pick}}" style="height: 48px; border-radius: 14px; border: {{g.g0.o0.v0}}; background: {{g.g0.o0.v1}}; color: {{g.g0.o0.v2}}; font: {{g.g0.o0.v3}}; cursor: pointer">12-hour (3:45 PM)</button>
+<button aria-pressed="{{g.g0.o1.on}}" onClick="{{g.g0.o1.pick}}" style="height: 48px; border-radius: 14px; border: {{g.g0.o1.v0}}; background: {{g.g0.o1.v1}}; color: {{g.g0.o1.v2}}; font: {{g.g0.o1.v3}}; cursor: pointer">24-hour (15:45)</button>
+</div>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 14px; font-weight: 700; color: #9AA4B2">Distance and weight</h2>
+<div role="group" aria-label="Distance and weight" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<button aria-pressed="{{g.g1.o0.on}}" onClick="{{g.g1.o0.pick}}" style="height: 48px; border-radius: 14px; border: {{g.g1.o0.v0}}; background: {{g.g1.o0.v1}}; color: {{g.g1.o0.v2}}; font: {{g.g1.o0.v3}}; cursor: pointer">Miles, pounds</button>
+<button aria-pressed="{{g.g1.o1.on}}" onClick="{{g.g1.o1.pick}}" style="height: 48px; border-radius: 14px; border: {{g.g1.o1.v0}}; background: {{g.g1.o1.v1}}; color: {{g.g1.o1.v2}}; font: {{g.g1.o1.v3}}; cursor: pointer">Km, kilograms</button>
+</div>
+</section>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 14px; font-weight: 700; color: #9AA4B2">Temperature</h2>
+<div role="group" aria-label="Temperature" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<button aria-pressed="{{g.g2.o0.on}}" onClick="{{g.g2.o0.pick}}" style="height: 48px; border-radius: 14px; border: {{g.g2.o0.v0}}; background: {{g.g2.o0.v1}}; color: {{g.g2.o0.v2}}; font: {{g.g2.o0.v3}}; cursor: pointer">°F</button>
+<button aria-pressed="{{g.g2.o1.on}}" onClick="{{g.g2.o1.pick}}" style="height: 48px; border-radius: 14px; border: {{g.g2.o1.v0}}; background: {{g.g2.o1.v1}}; color: {{g.g2.o1.v2}}; font: {{g.g2.o1.v3}}; cursor: pointer">°C</button>
+</div>
+</section>
+
+<p style="margin: 0 4px; font-size: 13px; color: #9AA4B2; line-height: 1.5">The watch's clock is set from your phone every time they connect.</p>
+
+<a href="Watch.dc.html" style="margin-top: auto; min-height: 52px; border-radius: 16px; background: #5AB0FF; color: #06121F; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">Save to watch</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {}, "g": {"g0": {"multi": false, "init": [0], "keys": ["border", "background", "color", "font"], "n": 2, "sel": ["0", "#5AB0FF", "#06121F", "800 15px Manrope, sans-serif"], "uns": ["1px solid #2B3440", "transparent", "#C9D1DB", "700 15px Manrope, sans-serif"]}, "g1": {"multi": false, "init": [0], "keys": ["border", "background", "color", "font"], "n": 2, "sel": ["0", "#5AB0FF", "#06121F", "800 15px Manrope, sans-serif"], "uns": ["1px solid #2B3440", "transparent", "#C9D1DB", "700 15px Manrope, sans-serif"]}, "g2": {"multi": false, "init": [0], "keys": ["border", "background", "color", "font"], "n": 2, "sel": ["0", "#5AB0FF", "#06121F", "800 15px Manrope, sans-serif"], "uns": ["1px solid #2B3440", "transparent", "#C9D1DB", "700 15px Manrope, sans-serif"]}}}; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

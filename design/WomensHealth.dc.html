@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Women's health</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Watch.dc.html" aria-label="Back to Watch" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Women's health</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 18px 16px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 40px; font-weight: 600">Day 12</span>
+<span style="font-size: 14px; color: #9AA4B2">of a 28-day cycle</span>
+</div>
+<div role="img" aria-label="Cycle timeline: period days 1 to 5, fertile window days 10 to 15, today is day 12" style="display: grid; grid-template-columns: repeat(28, minmax(0, 1fr)); gap: 2px; height: 16px">
+<span style="background: #FF8A5B; border-radius: 3px"></span><span style="background: #FF8A5B; border-radius: 3px"></span><span style="background: #FF8A5B; border-radius: 3px"></span><span style="background: #FF8A5B; border-radius: 3px"></span><span style="background: #FF8A5B; border-radius: 3px"></span>
+<span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span>
+<span style="background: #5AB0FF; border-radius: 3px"></span><span style="background: #5AB0FF; border-radius: 3px"></span><span style="background: #5AB0FF; border-radius: 3px; outline: 2px solid #F2F4F7; outline-offset: 1px"></span><span style="background: #5AB0FF; border-radius: 3px"></span><span style="background: #5AB0FF; border-radius: 3px"></span><span style="background: #5AB0FF; border-radius: 3px"></span>
+<span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span><span style="background: #232A33; border-radius: 3px"></span>
+</div>
+<div style="display: flex; gap: 16px; font-size: 13px; color: #C9D1DB">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #FF8A5B"></span>Period</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #5AB0FF"></span>Fertile window</span>
+</div>
+<p style="margin: 0; font-size: 15px; font-weight: 600">Next period expected in 17 days</p>
+</section>
+
+<button style="min-height: 52px; border: 0; border-radius: 16px; background: #FF8A5B; color: #1A0F0A; font: 800 16px Manrope, sans-serif; cursor: pointer" onClick="{{log}}">{{logLabel}}</button>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 4px 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid #232A33">
+<span style="font-size: 15px; font-weight: 600">Cycle length</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px">28 days</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid #232A33">
+<span style="font-size: 15px; font-weight: 600">Period length</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px">5 days</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Reminder on watch</span><span style="font-size: 13px; color: #9AA4B2">2 days before</span></div>
+<button aria-pressed="{{sw.s0.on}}" aria-label="Reminder on watch" onClick="{{sw.s0.toggle}}" style="width: 50px; height: 30px; border: 0; border-radius: 999px; background: {{sw.s0.bg}}; padding: 3px; display: flex; justify-content: {{sw.s0.jc}}; cursor: pointer"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{sw.s0.knob}}"></span></button>
+</div>
+</section>
+<p style="margin: 0 4px; font-size: 13px; color: #9AA4B2">Stays on this phone and the watch. Turn this off and it disappears from the watch.</p>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {"s0": true}, "g": {}}; }
+extra(st) { return { log: () => this.setState({ logged: true }), logLabel: st.logged ? 'Period start logged for today' : 'Log period start' }; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

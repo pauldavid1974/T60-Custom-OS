@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Photo watch face</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="Watch.dc.html" aria-label="Back to Watch" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Photo watch face</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+
+<div style="display: flex; justify-content: center; padding: 8px 0">
+<div role="img" aria-label="Preview of the watch face" style="width: 200px; height: 212px; border-radius: 30px; border: 6px solid #2B3440; background: #24303C; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: {{pvJustify}}; padding: 26px 0; box-sizing: content-box">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 40px; font-weight: 600; color: {{pvColor}}">8:54</span>
+<span style="font-size: 12px; font-weight: 700; color: {{pvColor}}; letter-spacing: 1px">SAT · OCT 25</span>
+<span style="position: absolute; top: 48%; font-size: 12px; color: #9AA4B2">Your photo</span>
+</div>
+</div>
+
+<a href="PhotoPicker.dc.html" style="min-height: 52px; border-radius: 16px; border: 1px solid #2B3440; background: #1A2028; color: #F2F4F7; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5AB0FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="M21 17l-5-5-8 7"></path></svg>Choose a photo</a>
+
+<section style="background: #14181E; border: 1px solid #232A33; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 14px; font-weight: 700; color: #9AA4B2">Where the time sits</h2>
+<div role="group" aria-label="Where the time sits" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<button aria-pressed="{{g.g0.o0.on}}" onClick="{{g.g0.o0.pick}}" style="height: 48px; border-radius: 14px; border: {{g.g0.o0.v0}}; background: {{g.g0.o0.v1}}; color: {{g.g0.o0.v2}}; font: {{g.g0.o0.v3}}; cursor: pointer">Top</button>
+<button aria-pressed="{{g.g0.o1.on}}" onClick="{{g.g0.o1.pick}}" style="height: 48px; border-radius: 14px; border: {{g.g0.o1.v0}}; background: {{g.g0.o1.v1}}; color: {{g.g0.o1.v2}}; font: {{g.g0.o1.v3}}; cursor: pointer">Bottom</button>
+</div>
+<h2 style="margin: 4px 0 0; font-size: 14px; font-weight: 700; color: #9AA4B2">Text color</h2>
+<div role="group" aria-label="Text color" style="display: flex; gap: 12px">
+<button aria-pressed="{{g.g1.o0.on}}" onClick="{{g.g1.o0.pick}}" aria-label="White" style="width: 44px; height: 44px; border-radius: 50%; border: {{g.g1.o0.v0}}; background: {{g.g1.o0.v1}}; cursor: pointer"></button>
+<button aria-pressed="{{g.g1.o1.on}}" onClick="{{g.g1.o1.pick}}" aria-label="Black" style="width: 44px; height: 44px; border-radius: 50%; border: {{g.g1.o1.v0}}; background: {{g.g1.o1.v1}}; cursor: pointer"></button>
+<button aria-pressed="{{g.g1.o2.on}}" onClick="{{g.g1.o2.pick}}" aria-label="Blue" style="width: 44px; height: 44px; border-radius: 50%; border: {{g.g1.o2.v0}}; background: {{g.g1.o2.v1}}; cursor: pointer"></button>
+<button aria-pressed="{{g.g1.o3.on}}" onClick="{{g.g1.o3.pick}}" aria-label="Orange" style="width: 44px; height: 44px; border-radius: 50%; border: {{g.g1.o3.v0}}; background: {{g.g1.o3.v1}}; cursor: pointer"></button>
+</div>
+</section>
+
+<a href="Watch.dc.html" style="min-height: 52px; border-radius: 16px; background: #5AB0FF; color: #06121F; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">Send to watch</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {}, "g": {"g0": {"multi": false, "init": [0], "keys": ["border", "background", "color", "font"], "n": 2, "sel": ["0", "#5AB0FF", "#06121F", "800 15px Manrope, sans-serif"], "uns": ["1px solid #2B3440", "transparent", "#C9D1DB", "700 15px Manrope, sans-serif"]}, "g1": {"multi": false, "init": [0], "keys": ["border", "background"], "n": 4, "sel": ["3px solid #5AB0FF", "#FFFFFF"], "uns": ["1px solid #3A4452", "#000000"]}}}; }
+extra(st, g) { const cols = ['#FFFFFF', '#000000', '#5AB0FF', '#FF8A5B'];
+let col = cols[0]; [0, 1, 2, 3].forEach((k) => { if (g.g1['o' + k].on) col = cols[k]; });
+return { pvJustify: g.g0.o1.on ? 'flex-end' : 'flex-start', pvColor: col }; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

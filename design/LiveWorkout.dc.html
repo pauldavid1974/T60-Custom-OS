@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workout in progress</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 8px">
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Walk</h1>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #7BE8A8"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3DDC84"></span>GPS good</span>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+<figure role="img" aria-label="Map of your route so far" style="margin: 0; height: 250px; border-radius: 20px; border: 1px solid #232A33; background: #11161C; position: relative; overflow: hidden">
+<svg aria-hidden="true" width="358" height="250" viewBox="0 0 358 250" fill="none">
+<path d="M0 60H358M0 140H358M0 210H358M70 0V250M180 0V250M290 0V250" stroke="#1C232C" stroke-width="10"></path>
+<path d="M40 200 C 80 190, 90 150, 130 140 S 190 150, 210 110 S 260 60, 300 70" stroke="#5AB0FF" stroke-width="5" stroke-linecap="round"></path>
+<circle cx="300" cy="70" r="9" fill="#5AB0FF" stroke="#0A0C0F" stroke-width="3"></circle>
+</svg>
+<figcaption style="position: absolute; left: 12px; bottom: 10px; font-size: 11px; color: #8792A2">Map</figcaption>
+</figure>
+
+<section style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 56px; font-weight: 600; letter-spacing: -1px">24:18</span>
+<span style="font-size: 13px; color: #9AA4B2">Time</span>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<div style="background: #14181E; border: 1px solid #232A33; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 600">1.42</span><span style="font-size: 12px; color: #9AA4B2">miles</span></div>
+<div style="background: #14181E; border: 1px solid #232A33; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 600">17:07</span><span style="font-size: 12px; color: #9AA4B2">min / mile</span></div>
+<div style="background: #14181E; border: 1px solid #232A33; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 600; color: #FF8A5B">118</span><span style="font-size: 12px; color: #9AA4B2">bpm</span></div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: auto">
+<button style="min-height: 56px; border: 1px solid #2B3440; border-radius: 16px; background: #1A2028; color: #F2F4F7; font: 800 16px Manrope, sans-serif; cursor: pointer" onClick="{{pause}}">{{pauseLabel}}</button>
+<a href="Workouts.dc.html" style="min-height: 56px; border-radius: 16px; background: #FF8A5B; color: #1A0F0A; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none">End and save</a>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+cfg() { return {"sw": {}, "g": {}}; }
+extra(st) { return { pause: () => this.setState({ p: !st.p }), pauseLabel: st.p ? 'Resume' : 'Pause' }; }
+
+renderVals() {
+const C = this.cfg(), st = this.state || {};
+const sw = {};
+Object.keys(C.sw).forEach((id) => {
+const on = st['sw_' + id] === undefined ? C.sw[id] : st['sw_' + id];
+sw[id] = { on: on, bg: on ? '#5AB0FF' : '#3A4452', jc: on ? 'flex-end' : 'flex-start', knob: on ? '#FFFFFF' : '#C9D1DB',
+toggle: () => this.setState({ ['sw_' + id]: !on }) };
+});
+const g = {};
+Object.keys(C.g).forEach((gid) => {
+const G = C.g[gid];
+const cur = st['g_' + gid] || G.init;
+g[gid] = {};
+for (let k = 0; k < G.n; k++) {
+const on = cur.indexOf(k) >= 0;
+const src = on ? G.sel : G.uns;
+const o = { on: on, pick: () => {
+const next = G.multi ? (on ? cur.filter((x) => x !== k) : cur.concat([k])) : [k];
+this.setState({ ['g_' + gid]: next });
+} };
+G.keys.forEach((key, i) => { o['v' + i] = src[i]; });
+g[gid]['o' + k] = o;
+}
+});
+return Object.assign({ sw: sw, g: g }, this.extra ? this.extra(st, g) : {});
+}
+}
+</script>
+</body>
+</html>

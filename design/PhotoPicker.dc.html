@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Choose a photo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#5AB0FF}a:hover{color:#8CC8FF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0A0C0F; color: #F2F4F7; font-family: Manrope, system-ui, sans-serif; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 8px">
+<a href="PhotoFace.dc.html" aria-label="Back to Photo watch face" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5AB0FF; text-decoration: none"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; font-size: 22px; font-weight: 800">Choose a photo</h1>
+</header>
+
+<main style="flex: 1; overflow: hidden; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0 4px; font-size: 14px; color: #C9D1DB; line-height: 1.5">Your phone's photo picker opens here. The app only sees the photo you choose.</p>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+<a href="PhotoFace.dc.html" aria-label="Photo 1" style="aspect-ratio: 1; border-radius: 10px; background: #24303C; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 2" style="aspect-ratio: 1; border-radius: 10px; background: #2E3A2A; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 3" style="aspect-ratio: 1; border-radius: 10px; background: #3A2E2A; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 4" style="aspect-ratio: 1; border-radius: 10px; background: #2A2E3A; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 5" style="aspect-ratio: 1; border-radius: 10px; background: #343024; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 6" style="aspect-ratio: 1; border-radius: 10px; background: #24343A; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 7" style="aspect-ratio: 1; border-radius: 10px; background: #30243A; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 8" style="aspect-ratio: 1; border-radius: 10px; background: #2A3430; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 9" style="aspect-ratio: 1; border-radius: 10px; background: #3A3424; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 10" style="aspect-ratio: 1; border-radius: 10px; background: #263A34; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 11" style="aspect-ratio: 1; border-radius: 10px; background: #3A2630; display: block"></a>
+<a href="PhotoFace.dc.html" aria-label="Photo 12" style="aspect-ratio: 1; border-radius: 10px; background: #2C2C34; display: block"></a>
+</div>
+<p style="margin: 0 4px; font-size: 13px; color: #9AA4B2">Next you can crop it to the watch's 320 × 380 screen.</p>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
