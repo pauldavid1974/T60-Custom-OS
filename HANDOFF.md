@@ -45,6 +45,23 @@
 
 **Next assignment:** unchanged — the "Next assignment (with Paul wearing the watch)" list in the section below.
 
+## COMPLETED — OpenStreetMap street map on the live workout screen (Claude Code, 2026-10-26)
+
+- **Paul's choice (2026-10-26):** OpenStreetMap over Google Maps (no account, card or key; no new library).
+- **Change:** new `MapTiles.java` fetches OSM tiles (`tile.openstreetmap.org`, identifying User-Agent, 2 connections,
+  30-day disk cache, 60 s retry back-off) per OSM's tile policy; `HealthScreens.trackView` draws them (Web Mercator,
+  closest zoom up to 17 that fits the route, tiles at 128 dp, dimmed) under the route, with a "you are here" dot and
+  the required "© OpenStreetMap contributors" credit. Privacy: only tile requests for the route's area leave the phone.
+- **GPS bug fixed:** `gpsGood()` used the last *route point*, which only advances after moving 5 m, so standing still
+  showed "Finding GPS…" after 10 s with a perfect signal. New `lastReading` (any fix) drives the status; the 5 m rule
+  still guards distance. The map now draws from the first reading instead of waiting for two route points.
+- **Verified (Observed, 2026-10-26, Galaxy S24, indoors in Scott City):** phone-started walk → map showed the right
+  streets (Hickory St, 1st St East, post office) with the dot; "GPS good" held for over 1 min standing still; distance
+  stayed 0.00; walk ended and saved (1 min); no crashes.
+- **Not done / known gaps:** saved workouts store the route (`workout.track`) but no screen shows it yet. A workout
+  lives only in the service's memory: reinstalling (or Android killing the app) mid-workout loses it — this happened
+  once during testing. Route recording on a real outdoor walk not yet tested.
+
 ## COMPLETED — App v2 built to the approved design and tested on the live watch (Claude Code, 2026-10-26)
 
 **Authority:** Paul, 2026-10-26: "you have full authority to send anything you need to, to the watch … work until the

@@ -1143,7 +1143,8 @@ public class T60BleService extends Service {
     int workoutCode, liveWorkoutHr;
     long workoutStartMs, pausedMs, pauseStartedMs;
     float workoutMeters;
-    Location lastFix;
+    Location lastFix;     // last point added to the route (only after moving 5 m)
+    Location lastReading; // latest reading of any kind, so standing still still counts as "GPS good"
     final List<double[]> track = new ArrayList<>();
     private final List<Integer> workoutHrs = new ArrayList<>();
     private boolean gpsOn;
@@ -1157,6 +1158,7 @@ public class T60BleService extends Service {
         pausedMs = 0;
         workoutMeters = 0;
         lastFix = null;
+        lastReading = null;
         track.clear();
         workoutHrs.clear();
         liveWorkoutHr = 0;
@@ -1222,6 +1224,7 @@ public class T60BleService extends Service {
     private final LocationListener gpsListener = new LocationListener() {
         @Override public void onLocationChanged(Location l) {
             int point = 0;
+            lastReading = l;
             if (workoutRunning && !workoutPaused && l.getAccuracy() < 40 && (lastFix == null || lastFix.distanceTo(l) >= 5)) {
                 if (lastFix != null) {
                     point = Math.round(lastFix.distanceTo(l));
@@ -1264,7 +1267,7 @@ public class T60BleService extends Service {
         gpsOn = false;
     }
 
-    boolean gpsGood() { return lastFix != null && System.currentTimeMillis() - lastFix.getTime() < 10_000 && lastFix.getAccuracy() < 25; }
+    boolean gpsGood() { return lastReading != null && System.currentTimeMillis() - lastReading.getTime() < 10_000 && lastReading.getAccuracy() < 25; }
 
     // ---------------------------------------------------------------- every 15 minutes
 
