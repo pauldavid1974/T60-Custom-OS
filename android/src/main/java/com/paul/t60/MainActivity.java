@@ -83,8 +83,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
         nav.setPadding(ui.dp(8), ui.dp(6), ui.dp(8), ui.dp(10));
         root.addView(nav, Ui.fill());
         setContentView(root);
-        requestPermissionsIfNeeded();
-        startService(new Intent(this, T60BleService.class));
+        startService(new Intent(this, T60BleService.class)); // waits quietly until Bluetooth is allowed
         stack.add(store.b("setup_done", false) ? "Today" : "Setup");
         handleIntent(getIntent());
         render();
@@ -131,11 +130,15 @@ public class MainActivity extends Activity implements T60Store.Listener {
         else super.onBackPressed();
     }
 
-    void requestPermissionsIfNeeded() {
-        String[] want = {Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS,
-                Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_CONTACTS};
+    // Ask only for what the feature in hand needs, never everything up front.
+    static final String[] BLUETOOTH = {Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.POST_NOTIFICATIONS};
+    static final String[] LOCATION = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+    static final String[] CALLS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.READ_CONTACTS};
+    static final String[] TEXTS = {Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_CONTACTS};
+
+    void ask(String... want) {
         List<String> ask = new ArrayList<>();
         for (String p : want) if (!has(p)) ask.add(p);
         if (!ask.isEmpty()) requestPermissions(ask.toArray(new String[0]), 101);
@@ -552,7 +555,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
         boolean bt = has(Manifest.permission.BLUETOOTH_CONNECT);
         boolean notif = hasNotificationAccess();
         boolean loc = has(Manifest.permission.ACCESS_FINE_LOCATION);
-        ui.add(b, setupStep(1, "Allow Bluetooth", null, bt, v -> requestPermissionsIfNeeded()), 24);
+        ui.add(b, setupStep(1, "Allow Bluetooth", null, bt, v -> ask(BLUETOOTH)), 24);
         LinearLayout pick = setupStep(2, "Pick your watch", "Keep it close to the phone", store.isConnected(), null);
         ui.add(b, pick, 10);
         LinearLayout found = ui.group(ui.navRow(store.getWatchName(), store.isConnected() ? "Connected" : store.getWatchMac(),
@@ -560,7 +563,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
         ui.add(b, found, 8);
         ui.add(b, setupStep(3, "Allow notification access", "So alerts reach your wrist", notif,
                 v -> startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))), 10);
-        ui.add(b, setupStep(4, "Allow location", "For weather and workout maps", loc, v -> requestPermissionsIfNeeded()), 10);
+        ui.add(b, setupStep(4, "Allow location", "For weather and workout maps", loc, v -> ask(LOCATION)), 10);
         ui.add(b, ui.button("Connect", true, v -> {
             T60BleService s = svc();
             if (s != null && !s.isReady()) s.connectWatch();

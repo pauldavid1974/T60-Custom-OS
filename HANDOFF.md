@@ -7,6 +7,22 @@
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
+## COMPLETED — Permissions asked per feature, not all at launch (Claude Code, 2026-10-26)
+
+- **Paul's request:** "Don't ask anything at launch. Ask Bluetooth at setup step 1, location at step 4, and
+  phone/text/contacts only when I use those features."
+- **Change:** `MainActivity.requestPermissionsIfNeeded()` (asked for 9 permissions at once on every launch) replaced by
+  `ask(String...)` with groups: `BLUETOOTH` (+ notifications, so the status notice and find-my-phone alarm show) at
+  setup step 1, `LOCATION` at step 4 and on phone-started workouts, `CALLS` / `TEXTS` when the call/text alert
+  switches are turned on, `SEND_SMS` on the quick-reply screen, `READ_CONTACTS` when adding watch contacts.
+  `T60BleService.onStartCommand` now re-registers call/SMS hooks and refreshes the foreground type every start, so a
+  permission granted after the service is running takes effect without an app restart.
+- **Verified (Observed, 2026-10-26, Galaxy S24 `RFCXA0S5N4J`, uninstall + plain `adb install`):** launch → no prompts,
+  setup screen; step 1 → nearby devices, then notifications, nothing else; step 4 → location only; watch connected
+  and synced; foreground types became connectedDevice|location after location was granted mid-session; no crashes;
+  phone/SMS/contacts never requested.
+- **Not verified:** the Alerts and Contacts screens' own prompts (call alerts, text alerts, quick replies, add contact).
+
 ## COMPLETED — Startup crash on Android 14+ fixed (Claude Code, 2026-10-26)
 
 - **Result (Observed):** on Paul's Galaxy S24 (`RFCXA0S5N4J`, model SM-S921U, Android 14+ rules) the app crashed ~30 ms after

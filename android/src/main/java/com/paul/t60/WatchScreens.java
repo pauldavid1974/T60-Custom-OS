@@ -531,7 +531,7 @@ final class WatchScreens {
         TextView add = ui.text("+ Add from phone contacts", 15, Ui.ACCENT, true);
         add.setPadding(ui.dp(4), ui.dp(14), 0, ui.dp(14));
         add.setOnClickListener(v -> {
-            if (!a.has(Manifest.permission.READ_CONTACTS)) { a.requestPermissionsIfNeeded(); return; }
+            if (!a.has(Manifest.permission.READ_CONTACTS)) { a.ask(Manifest.permission.READ_CONTACTS); return; }
             a.go("ContactPicker");
         });
         b.addView(add);
