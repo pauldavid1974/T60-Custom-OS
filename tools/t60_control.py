@@ -103,6 +103,11 @@ def build_bt3_audio_switch(enable: bool = True) -> bytes:
     return bytes([0x38, 0x02, 0x01 if enable else 0x00])
 
 
+def build_query_dial_config() -> bytes:
+    """Build 2-byte readDeviceOnlineDialConfiguration (0x26 0x01) payload for 33F1."""
+    return bytes([0x26, 0x01])
+
+
 def build_query_custom_bg_params() -> bytes:
     """Build 2-byte getImageWatchFaceParamsRk (0x26 0x0A) payload for 33F1."""
     return bytes([0x26, 0x0A])
@@ -138,6 +143,9 @@ def decode_notification(char_uuid: str, data: bytes) -> str:
     if op == 0xA1 and len(data) > 1:
         ascii_ver = data[1:].decode("ascii", errors="replace").strip("\x00")
         return f"[{char_uuid}] Firmware Version (0xA1): {ascii_ver!r} ({hex_str})"
+    if op == 0xA2 and len(data) == 2:
+        pct = data[1]
+        return f"[{char_uuid}] Battery (0xA2): {pct}% ({hex_str})"
     if op == 0xA2 and len(data) >= 3:
         status, pct = data[1], data[2]
         return f"[{char_uuid}] Battery (0xA2): {pct}% (status={status}) ({hex_str})"
@@ -145,6 +153,19 @@ def decode_notification(char_uuid: str, data: bytes) -> str:
         return f"[{char_uuid}] Heart Rate (0xE5): {data[2]} BPM (state=0x{data[1]:02X}) ({hex_str})"
     if op == 0xD1 and len(data) >= 2 and data[1] == 0x0A:
         return f"[{char_uuid}] Find-Phone Triggered by Watch (0xD1 0x0A)! ({hex_str})"
+    if op == 0x26 and len(data) >= 17 and data[1] == 0x01:
+        dial_num = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | data[5]
+        width = (data[6] << 8) | data[7]
+        height = (data[8] << 8) | data[9]
+        screen_type = data[10]
+        max_size = (data[11] << 24) | (data[12] << 16) | (data[13] << 8) | data[14]
+        compat = data[15]
+        slots = data[16]
+        return (
+            f"[{char_uuid}] Dial Config (0x26 0x01): {width}x{height}px, "
+            f"screenType={screen_type}, maxDataSize={max_size}B, "
+            f"compat={compat}, slots={slots}, dialNumber={dial_num} ({hex_str})"
+        )
     if op == 0x26 and len(data) >= 2 and data[1] == 0x0A:
         return f"[{char_uuid}] Custom WatchFace BG Params (0x26 0x0A): {hex_str}"
     return f"[{char_uuid}] Packet (0x{op:02X}): {hex_str}"
@@ -152,6 +173,27 @@ def decode_notification(char_uuid: str, data: bytes) -> str:
 
 def format_hex(data: bytes) -> str:
     return data.hex(" ").upper()
+
+
+async def run_scan(timeout: float = 5.0) -> int:
+    try:
+        from bleak import BleakScanner  # type: ignore
+    except ImportError:
+        print("Error: 'bleak' is not installed. Run: pip install bleak", file=sys.stderr)
+        return 2
+
+    print(f"Scanning for nearby BLE devices for {timeout:.1f}s ...")
+    devices = await BleakScanner.discover(timeout=timeout, return_adv=True)
+    found_t60 = False
+    for addr, (dev, adv) in sorted(devices.items()):
+        name = dev.name or adv.local_name or "<unnamed>"
+        marker = "  <-- YOUR T60 WATCH!" if ("T60" in name.upper() or addr.upper() == DEFAULT_T60_MAC) else ""
+        if marker:
+            found_t60 = True
+        print(f"  {addr}  RSSI={adv.rssi:4d} dBm  Name={name!r}{marker}")
+    if not found_t60:
+        print("\nNote: T60 was not seen broadcasting yet. Make sure Bluetooth is turned OFF on the phone so the watch lets go of the phone and starts advertising!")
+    return 0
 
 
 async def run_live(address: str, char_uuid: str, payloads: Sequence[bytes], listen_sec: float) -> int:
@@ -194,6 +236,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--listen", type=float, default=3.0, help="Seconds to listen for responses in --live mode")
 
     sub = parser.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("scan", help="Scan for nearby BLE devices (including T60) from this laptop")
     sub.add_parser("sync-time", help="Sync current local date and time to watch (0xA3)")
     sub.add_parser("battery", help="Query watch battery level (0xA2)")
     sub.add_parser("version", help="Query watch firmware version (0xA1)")
@@ -203,6 +246,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     sub.add_parser("hr-stop", help="Stop live heart-rate sensor reading (0xE5 0x00)")
     sub.add_parser("sync-steps", help="Request step history sync (0xB2 0xFA)")
     sub.add_parser("sync-sleep", help="Request sleep history sync (0x31 0x01)")
+    sub.add_parser("dial-config", help="Query watch display resolution and dial parameters (0x26 0x01)")
     sub.add_parser("query-bg-params", help="Query custom watchface background parameters (0x26 0x0A)")
     sub.add_parser("bt3-audio-on", help="Enable watch Classic BT speaker/microphone (0x38 0x02 0x01)")
     sub.add_parser("bt3-audio-off", help="Disable watch Classic BT speaker/microphone (0x38 0x02 0x00)")
@@ -211,6 +255,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     p_notify.add_argument("text", help="Notification message text to display on watch")
 
     args = parser.parse_args(argv)
+
+    if args.cmd == "scan":
+        return asyncio.run(run_scan(max(args.listen, 5.0)))
 
     target_char = UUID_CHAR_WRITE
     if args.cmd == "sync-time":
@@ -231,6 +278,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         payloads = [build_sync_steps()]
     elif args.cmd == "sync-sleep":
         payloads = [build_sync_sleep()]
+    elif args.cmd == "dial-config":
+        payloads = [build_query_dial_config()]
     elif args.cmd == "query-bg-params":
         payloads = [build_query_custom_bg_params()]
     elif args.cmd == "bt3-audio-on":

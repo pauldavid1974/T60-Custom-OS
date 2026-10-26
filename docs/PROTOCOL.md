@@ -60,10 +60,10 @@ Commands below are written to `0x33F1` unless noted as `writeCharaBle5` (`0x34F1
 | Command | Method | Payload (Hex) | Notes |
 | :--- | :--- | :--- | :--- |
 | Sync Date/Time | `syncBLETime` (`0x3b5bb8`) | `A3 <YY_HI> <YY_LO> <MM> <DD> <HH> <Min> <SS>` | Big-endian year (e.g. `2026` = `07 EA`) |
-| Read FW Version | `sendToReadBLEVersion` (`0x3b3b38`) | `A1` | Returns `A1` + ASCII `T60V007108` on `33F2` |
-| Read DSP Version | `queryDeviceDspVersion` (`0x3af168`) | `A1 01` | Queries audio DSP version |
+| Read FW Version | `sendToReadBLEVersion` (`0x3b3b38`) | `A1` | **Observed live (2026-10-25):** Returns `A1 52 48 32 38 31 4C 57 4A 56 30 30 37 31 30 38` -> ASCII **`RH281LWJV007108`** on `33F2` |
+| Read DSP Version | `queryDeviceDspVersion` (`0x3af168`) | `A1 01` | **Observed live:** Returns `A1` + `RH281LWJV007108` on `33F2` |
 | Read UI Version | `sendToReadUIResoureVersion` (`0x3b3b6c`) | `CD 01` | Queries UI pack version |
-| Read Battery | `sendToReadBLEBattery` (`0x3b3afc`) | `A2` | Returns `A2 <state> <pct>` on `33F2` |
+| Read Battery | `sendToReadBLEBattery` (`0x3b3afc`) | `A2` | **Observed live:** Returns 2-byte `A2 <pct>` (e.g. `A2 38` = `56%`) on `33F2` |
 | Find Watch | `findBand` (`0x3ad768`) | `AB 00 00 00 AB <01=start\|00=stop> 07 AB` | Vibrates/rings watch |
 | Find Phone Toggle | `openFindPhone` (`0x3aed88`) | `D1 0A <01=on\|00=off>` | Watch sends `D1 0A ...` when triggered |
 | Call Alert | `sendIncallCommand` (`0x3b03b4`) | `AB 00 00 00 01 <01=ring\|02=ans\|03=rej> 02 01` | Follow with text chunks (`C5`) |
@@ -74,7 +74,7 @@ Commands below are written to `0x33F1` unless noted as `writeCharaBle5` (`0x34F1
 | Sync All Sleep | `syncAllSleepData` (`0x3b58a8`) | `31 01` | Band sleep algorithm stream |
 | Live HR Test | `sendRateTestCommand` (`0x3b0dd8`) | `E5 11` (start) / `E5 00` (stop) | Streams live BPM via `E5 ...` |
 | Sync All HR | `syncAllRateData` (`0x3b56dc`) | `E6 FA ...` | Historical HR stream |
-| Read Dial Config | `readDeviceOnlineDialConfiguration` (`0x3af4f0`) | `26 01` | Reads watchface resolution & slot info |
+| Read Dial Config | `readDeviceOnlineDialConfiguration` (`0x3af4f0`) | `26 01` | **Observed live (2026-10-25):** Returns 20-byte `26 01 00 F4 37 89 01 40 01 7C 01 00 10 00 00 02 01 00 00 00` -> **`320×380` px**, `screenType=1`, `maxDataSize=1048576` (1 MB), `compat=2`, `slots=1`, `dialNumber=16004999` |
 | Prepare Dial Send | `prepareSendOnlineDialData` (`0x3aef28`) | `26 02` | Prepares custom watchface transfer |
 | Read Custom BG | `getImageWatchFaceParamsRk` (`0x3ad7cc`) | `26 0A` | Reads custom photo background parameters (`ImageWatchFaceRk`) |
 | Set Custom BG | `setImageWatchFaceConfigRk` (`0x3b440c`) | `26 0B <18-byte config>` | Configures custom background image transfer |
@@ -95,6 +95,10 @@ GloryFit's `com.yc.server.yc_sdk.Agent` and `com.yc.pedometer.update.Updates` ch
   - `https://www.ute-tech.com.cn/ci-yc/index.php/api/client/getPatchlicationUpdate`
   - `https://www.ute-tech.com.cn/ci-yc/index.php/api/client/getBtUIVersionUpdate`
 - **POST Body:**
-  `content={"appkey":"dcd05f241b65ec7b6af0bbe6f05145c2","btname":"T60","versionname":"V007108","mac":"00:00:00:00:00:00","language":"en"}`
-- **Observed Probe Result (2026-10-25, using dummy MAC `00:00:00:00:00:00`):**
-  - `getBtVersionUpdate` and `getBtUIVersionUpdate` returned HTTP 200 `{"flag":-1,"msg":"post ok , no new version."}` across `V000001`..`V007108`, indicating Ute-Tech does not currently host an newer OTA binary for `btname="T60"` on their public update server.
+  `content={"appkey":"dcd05f241b65ec7b6af0bbe6f05145c2","btname":"RH281LWJ","versionname":"V007108","mac":"00:00:00:00:00:00","language":"en"}`
+- **Observed Probe Result (2026-10-25, using both `btname="T60"` and true internal `btname="RH281LWJ"` with dummy MAC `00:00:00:00:00:00`):**
+  - `getBtVersionUpdate` and `getBtUIVersionUpdate` returned HTTP 200 `{"flag":-1,"msg":"post ok , no new version."}` across `V000001`..`V007108`, indicating Ute-Tech does not currently host a newer OTA binary for `RH281LWJ` or `T60` on their public update server.
+- **Extracted Realtek DFU Secret Keys (`FirmwareActivity.<init>`, `classes6.dex` at `0x20ff4c`..`0x20ff9c`):**
+  - `mSecretkey` (32 bytes): `4e46f8c5095554455f524b0cd1f610fb1f6763df807a7e70960d4cd3118e601a` (embeds ASCII `UTE_RK`)
+  - `mSecretkeyRH276N` (32 bytes): `4e46f8c5092b29e29a971a0cd1f610fb1f6763df807a7e70960d4cd3118e601a`
+  - `mSecretkey8762C` (32 bytes): `1a608e11d34c0d96707e7a80df63671ffb10f6d10c1a979ae2292b09c5f8464e` (byte-reversed `mSecretkeyRH276N`)

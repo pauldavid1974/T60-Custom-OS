@@ -217,9 +217,9 @@
     {
       "id": "question-peripherals",
       "kind": "question",
-      "certainty": "unknown",
-      "title": "Actual display and peripheral hardware",
-      "summary": "Identify display, input, power, RTC, sensor controllers and wire protocols before driver development.",
+      "certainty": "observed",
+      "title": "Display geometry identified (320x380px, 1 MB dial partition); peripheral pinout pending flash 0x2797 dump",
+      "summary": "Live BLE query 0x26 01 (2026-10-25) returned 26 01 00 F4 37 89 01 40 01 7C 01 00 10 00 00 02 01 00 00 00: 320x380 pixel rectangular screen (screenType=1) with 1,048,576-byte (1 MB) max watchface partition; 0xA1 returned internal project ID RH281LWJV007108. Exact GPIO pin-mux and controller IC drivers remain inside the 40 KB 0x2797 MCU Config partition on the Puya PY25Q128HA flash chip.",
       "tags": [
         "display",
         "sensors",
@@ -229,6 +229,7 @@
       ],
       "refs": [
         "docs/HARDWARE.md",
+        "docs/PROTOCOL.md",
         "docs/ARCHITECTURE.md"
       ]
     },

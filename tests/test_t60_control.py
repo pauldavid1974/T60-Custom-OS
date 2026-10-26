@@ -32,10 +32,16 @@ class TestT60Control(unittest.TestCase):
         self.assertEqual(pkts[2], bytes([0xC5, 0xFD]))
 
     def test_decode_notification(self) -> None:
-        ver_str = t60_control.decode_notification("33f2", b"\xa1T60V007108")
-        self.assertIn("T60V007108", ver_str)
+        ver_str = t60_control.decode_notification("33f2", b"\xa1RH281LWJV007108")
+        self.assertIn("RH281LWJV007108", ver_str)
+        bat_str2 = t60_control.decode_notification("33f2", bytes([0xA2, 0x38]))
+        self.assertIn("56%", bat_str2)
         bat_str = t60_control.decode_notification("33f2", bytes([0xA2, 0x00, 85]))
         self.assertIn("85%", bat_str)
+        dial_pkt = bytes.fromhex("260100F437890140017C01001000000201000000")
+        dial_str = t60_control.decode_notification("33f2", dial_pkt)
+        self.assertIn("320x380px", dial_str)
+        self.assertIn("maxDataSize=1048576B", dial_str)
 
 
 if __name__ == "__main__":
