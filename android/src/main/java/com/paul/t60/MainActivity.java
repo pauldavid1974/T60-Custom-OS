@@ -115,10 +115,6 @@ public class MainActivity extends Activity implements T60Store.Listener {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         startBleService();
-        T60BleService svc = T60BleService.getInstance();
-        if (svc != null) {
-            svc.connectWatch();
-        }
     }
 
     private void startBleService() {
@@ -390,6 +386,23 @@ public class MainActivity extends Activity implements T60Store.Listener {
         alertBox.addView(makeSwitchRow("Forward Other App Notifications", store.isForwardApps(), store::setForwardApps));
 
         page.addView(wrapCard("Wrist Notification Forwarding", alertBox));
+
+        // Per-App Filter Card: every app that has posted a notification, with its own on/off switch
+        LinearLayout appBox = new LinearLayout(this);
+        appBox.setOrientation(LinearLayout.VERTICAL);
+        java.util.Set<String> seen = store.getSeenApps();
+        if (seen.isEmpty()) {
+            appBox.addView(makeSubLabel("No apps yet. Apps appear here after they post their first notification."));
+        }
+        PackageManager pm = getPackageManager();
+        for (String pkg : seen) {
+            String label = pkg;
+            try {
+                label = pm.getApplicationLabel(pm.getApplicationInfo(pkg, 0)).toString();
+            } catch (PackageManager.NameNotFoundException ignored) {}
+            appBox.addView(makeSwitchRow(label, !store.isAppMuted(pkg), on -> store.setAppMuted(pkg, !on)));
+        }
+        page.addView(wrapCard("Per-App Wrist Alerts", appBox));
 
         // Test Popup Sender Card
         LinearLayout testBox = new LinearLayout(this);

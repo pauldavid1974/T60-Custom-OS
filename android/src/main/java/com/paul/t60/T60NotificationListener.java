@@ -23,6 +23,8 @@ public class T60NotificationListener extends NotificationListenerService {
         }
 
         T60Store store = T60Store.get(this);
+        store.markAppSeen(pkg);
+        if (store.isAppMuted(pkg)) return;
         T60BleService svc = T60BleService.getInstance();
         if (svc == null) return;
 

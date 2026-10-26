@@ -92,7 +92,9 @@ public class T60BleService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!isConnected) {
+        // autoConnect=true keeps an existing GATT client retrying; opening a second one
+        // duplicates every notification (each wrist press was handled twice).
+        if (gatt == null) {
             connectWatch();
         }
         return START_STICKY;
@@ -195,8 +197,9 @@ public class T60BleService extends Service {
                 store.setConnectionState("Connected • Discovering...");
                 store.logEvent("BLE connected! Requesting MTU & services...");
                 updateForegroundStatus("T60 Connected • Syncing...");
-                g.requestMtu(247);
-                mainHandler.postDelayed(g::discoverServices, 300);
+                // Android runs one GATT op at a time and silently drops overlaps, so chain:
+                // MTU -> discover -> 33F2 CCCD -> 34F2 CCCD -> startup sync.
+                if (!g.requestMtu(247)) g.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 isConnected = false;
                 char33F1 = null;
@@ -212,6 +215,7 @@ public class T60BleService extends Service {
         @Override
         public void onMtuChanged(BluetoothGatt g, int mtu, int status) {
             T60Store.get(T60BleService.this).logEvent("MTU negotiated: " + mtu + " bytes");
+            g.discoverServices();
         }
 
         @Override
@@ -222,29 +226,26 @@ public class T60BleService extends Service {
                 return;
             }
             BluetoothGattService svc55 = g.getService(T60Protocol.UUID_SERVICE_MAIN);
-            if (svc55 != null) {
-                char33F1 = svc55.getCharacteristic(T60Protocol.UUID_CHAR_WRITE);
-                BluetoothGattCharacteristic c33F2 = svc55.getCharacteristic(T60Protocol.UUID_CHAR_NOTIFY);
-                if (c33F2 != null) {
-                    enableNotification(g, c33F2);
-                }
-            }
             BluetoothGattService svc56 = g.getService(T60Protocol.UUID_SERVICE_EXT);
-            if (svc56 != null) {
-                char34F1 = svc56.getCharacteristic(T60Protocol.UUID_CHAR_EXT_WRITE);
-                BluetoothGattCharacteristic c34F2 = svc56.getCharacteristic(T60Protocol.UUID_CHAR_EXT_NOTIFY);
-                if (c34F2 != null) {
-                    mainHandler.postDelayed(() -> enableNotification(g, c34F2), 250);
-                }
-            }
+            if (svc55 != null) char33F1 = svc55.getCharacteristic(T60Protocol.UUID_CHAR_WRITE);
+            if (svc56 != null) char34F1 = svc56.getCharacteristic(T60Protocol.UUID_CHAR_EXT_WRITE);
             store.setConnectionState("Connected • Active");
-            store.logEvent("55FF/33F1 & 56FF/34F1 ready! Running startup sync...");
-            mainHandler.postDelayed(() -> performStartupSync(), 650);
+            store.logEvent("55FF/33F1 & 56FF/34F1 ready! Enabling replies...");
+            if (!enableNotification(g, svc55, T60Protocol.UUID_CHAR_NOTIFY)
+                    && !enableNotification(g, svc56, T60Protocol.UUID_CHAR_EXT_NOTIFY)) {
+                performStartupSync();
+            }
         }
 
         @Override
         public void onDescriptorWrite(BluetoothGatt g, BluetoothGattDescriptor d, int status) {
-            processNextWrite();
+            T60Store.get(T60BleService.this).logEvent("Replies enabled on "
+                    + d.getCharacteristic().getUuid().toString().substring(4, 8).toUpperCase() + " (status=" + status + ")");
+            if (d.getCharacteristic().getUuid().equals(T60Protocol.UUID_CHAR_NOTIFY)
+                    && enableNotification(g, g.getService(T60Protocol.UUID_SERVICE_EXT), T60Protocol.UUID_CHAR_EXT_NOTIFY)) {
+                return; // 34F2 next; sync runs after its callback
+            }
+            performStartupSync();
         }
 
         @Override
@@ -265,14 +266,15 @@ public class T60BleService extends Service {
         }
     };
 
-    private void enableNotification(BluetoothGatt g, BluetoothGattCharacteristic ch) {
-        if (g == null || ch == null) return;
+    /** Returns true if a CCCD write was started (onDescriptorWrite will follow). */
+    private boolean enableNotification(BluetoothGatt g, BluetoothGattService svc, UUID charUuid) {
+        BluetoothGattCharacteristic ch = svc != null ? svc.getCharacteristic(charUuid) : null;
+        if (g == null || ch == null) return false;
         g.setCharacteristicNotification(ch, true);
         BluetoothGattDescriptor cccd = ch.getDescriptor(T60Protocol.UUID_CCCD);
-        if (cccd != null) {
-            cccd.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            g.writeDescriptor(cccd);
-        }
+        if (cccd == null) return false;
+        cccd.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+        return g.writeDescriptor(cccd);
     }
 
     public void performStartupSync() {

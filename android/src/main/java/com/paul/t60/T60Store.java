@@ -10,7 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Locale;
 
 /**
@@ -145,6 +148,28 @@ public final class T60Store {
 
     public void setForwardApps(boolean v) {
         prefs.edit().putBoolean("fwd_apps", v).apply();
+    }
+
+    /** Apps that have posted a notification since install (for the per-app filter list). */
+    public Set<String> getSeenApps() {
+        return new TreeSet<>(prefs.getStringSet("seen_apps", new HashSet<>()));
+    }
+
+    public void markAppSeen(String pkg) {
+        Set<String> seen = getSeenApps();
+        if (seen.add(pkg)) {
+            prefs.edit().putStringSet("seen_apps", seen).apply();
+        }
+    }
+
+    public boolean isAppMuted(String pkg) {
+        return prefs.getStringSet("muted_apps", new HashSet<>()).contains(pkg);
+    }
+
+    public void setAppMuted(String pkg, boolean muted) {
+        Set<String> m = new HashSet<>(prefs.getStringSet("muted_apps", new HashSet<>()));
+        if (muted) m.add(pkg); else m.remove(pkg);
+        prefs.edit().putStringSet("muted_apps", m).apply();
     }
 
     public String getWebhookUrl() {
