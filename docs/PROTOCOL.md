@@ -65,7 +65,11 @@ Commands below are written to `0x33F1` unless noted as `writeCharaBle5` (`0x34F1
 | Read UI Version | `sendToReadUIResoureVersion` (`0x3b3b6c`) | `CD 01` | Queries UI pack version |
 | Read Battery | `sendToReadBLEBattery` (`0x3b3afc`) | `A2` | **Observed live:** Returns 2-byte `A2 <pct>` (e.g. `A2 38` = `56%`) on `33F2` |
 | Find Watch | `findBand` (`0x3ad768`) | `AB 00 00 00 AB <01=start\|00=stop> 07 AB` | Vibrates/rings watch |
-| Find Phone Toggle | `openFindPhone` (`0x3aed88`) | `D1 0A <01=on\|00=off>` | Watch sends `D1 0A ...` when triggered |
+| Find Phone Toggle | `openFindPhone` (`0x3aed88`) | `D1 0A <01=on\|00=off>` | Watch sends `D1 0A` when triggered |
+| Wrist Media RX (`33F2`) | `BluetoothLeService` (`0x380d60`) | `D1 07` (Play/Pause), `D1 08` (Next), `D1 09` (Prev), `D1 0C` (Music Open), `D1 0D` (Vol+), `D1 0E` (Vol-), `D1 12` (Mute) | Watch -> Phone media & volume control triggers |
+| Wrist Media TX (`33F1`) | `controlBandMusic` / `Volume` (`0x3ad36c`) | `D1 0C <01=Play\|02=Pause>`, `D1 0D <volPct>`, `D1 0E <volPct>` | Phone -> Watch playback & volume % sync |
+| Unit & Clock Format | `sendUnitToBLE` (`0x3b4040`) | `A0 <01=Metric\|02=Imperial> <01=24h\|02=12h>` | Sets Imperial/Metric and 12h/24h clock |
+| Raise Wrist to Wake | `start/stopTurnWristCalibration` | `FC 01` (enable) / `FC 00` (disable) | Turn wrist to light screen |
 | Call Alert | `sendIncallCommand` (`0x3b03b4`) | `AB 00 00 00 01 <01=ring\|02=ans\|03=rej> 02 01` | Follow with text chunks (`C5`) |
 | SMS / App Alert | `sendSmsCommand` (`0x3b2508`) | `AB 00 00 00 01 <type> 00 00` | Follow with text chunks (`C5`) |
 | Push Text Chunks | `sendTextSectionKey` (`0x3b3668`) | `C5 <idx> <up to 18 UTF-8 bytes>` then `C5 FD` | Displays popup text on watch |

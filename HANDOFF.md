@@ -7,7 +7,13 @@
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
-## COMPLETED — Full BLE Protocol Decode, Platform Flag Resolution & Local Control Tool (Antigravity, 2026-10-25)
+## COMPLETED — Full BLE Protocol Decode, Platform Flag Resolution & Local `T60` Android Companion App (Antigravity, 2026-10-25)
+
+- **Native Cloud-Free `T60` Android Companion App Built & Installed (`android/`, Observed 2026-10-25):**
+  - Per Paul's owner decision (`/grill-me` spec interview), prioritized replacing the bloated 186 MB `GloryFit` app with a clean, 33 KB zero-cloud Android companion app named **`T60`** (`com.paul.t60` in `android/src/main/java/com/paul/t60/`) rather than risking screen damage from prying open his daily-driver watch.
+  - Built reproducibly in <3 seconds via `python android/build_apk.py` (using local Android SDK 34 `aapt2`, `javac`, `d8`, `zipalign`, `apksigner`) and installed onto Paul's connected Samsung `SM_G781U` (`RFCNC10FA3K`).
+  - **Verified Live Against `T60(ID-AE67)` (`60:1A:B7:00:AE:67`):** Connected on first launch (`Connected • Active • 56%`), synced local time (`0xA3`), set 12-hour AM/PM + Imperial (`0xA0 0x02 0x02`) and Fahrenheit/English (`0xA9`), enabled Find-My-Phone (`0xD1 0x0A 0x01`), and implemented full **Wrist Media & Volume Control** (`0xD1 0x07` Play/Pause, `0xD1 0x08` Next, `0xD1 0x09` Prev, `0xD1 0x0D` Volume Up, `0xD1 0x0E` Volume Down, `0xD1 0x12` Mute, plus `0xD1 0x0C`/`0x0D`/`0x0E` state/volume feedback).
+  - **Next Assignment for Any Agent Continuing the App:** Expand `android/` with custom `320 × 380` binary watchface/background image upload (`ImageWatchFaceRk` / `OnlineDialUtil` `0x26 0A` / `0x26 0B` / `0x26 02`), multi-day SQLite charts in the Health tab, per-app notification filter checkboxes, and optional Tailscale sync to Paul's home server.
 
 - **EXACT SoC & FLASH IDENTIFIED FROM FCC INTERNAL PHOTO (`fcc/chip-pic.png`, Observed 2026-10-25):**
   - **Main Processor / SoC:** **`REALTEK RTL8763EWE`** (`N8AT8H1` / `GN33 TAIWAN`, with `40.0` MHz crystal).

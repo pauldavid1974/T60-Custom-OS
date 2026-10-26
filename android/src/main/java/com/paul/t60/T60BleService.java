@@ -18,6 +18,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -26,8 +27,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.view.KeyEvent;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -373,17 +376,93 @@ public class T60BleService extends Service {
             store.logEvent("RX Steps Packet: " + total + " steps");
         } else if (op == 0xD1 && data.length >= 2) {
             int sub = data[1] & 0xFF;
-            if (sub == 0x0A) {
-                store.logEvent("RX WRIST TRIGGER: Find My Phone (0xD1 0x0A)!");
-                triggerFindMyPhoneAlert();
-                fireWebhookIfConfigured("find_phone");
-            } else {
-                store.logEvent("RX Wrist Button (0xD1): " + hex);
-                fireWebhookIfConfigured("wrist_button_" + sub);
-            }
+            handleWristD1Command(sub, data, hex);
         } else {
             store.logEvent("RX [" + uuid.toString().substring(4, 8).toUpperCase() + "]: " + hex);
         }
+    }
+
+    private void handleWristD1Command(int sub, byte[] data, String hex) {
+        T60Store store = T60Store.get(this);
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        if (sub == 0x07) {
+            // Play / Pause toggle (0xD1 0x07)
+            dispatchMediaKey(am, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
+            boolean active = am != null && am.isMusicActive();
+            enqueueWrite33F1(T60Protocol.buildMusicPlayState(!active));
+            syncCurrentVolumeToWatch(am, false);
+            store.logEvent("RX Wrist Media: Play/Pause (0xD1 0x07)");
+            fireWebhookIfConfigured("media_play_pause");
+        } else if (sub == 0x08) {
+            // Next Track (0xD1 0x08)
+            dispatchMediaKey(am, KeyEvent.KEYCODE_MEDIA_NEXT);
+            enqueueWrite33F1(T60Protocol.buildMusicPlayState(true));
+            store.logEvent("RX Wrist Media: Next Track (0xD1 0x08)");
+            fireWebhookIfConfigured("media_next");
+        } else if (sub == 0x09) {
+            // Previous Track (0xD1 0x09)
+            dispatchMediaKey(am, KeyEvent.KEYCODE_MEDIA_PREVIOUS);
+            enqueueWrite33F1(T60Protocol.buildMusicPlayState(true));
+            store.logEvent("RX Wrist Media: Previous Track (0xD1 0x09)");
+            fireWebhookIfConfigured("media_prev");
+        } else if (sub == 0x0C) {
+            // Watch opened Music screen -> sync play state & volume %
+            boolean active = am != null && am.isMusicActive();
+            enqueueWrite33F1(T60Protocol.buildMusicPlayState(active));
+            syncCurrentVolumeToWatch(am, false);
+            store.logEvent("RX Watch Music Screen Opened (0xD1 0x0C)");
+        } else if (sub == 0x0D) {
+            // Volume UP (0xD1 0x0D)
+            if (am != null) {
+                am.adjustStreamVolume(
+                        AudioManager.STREAM_MUSIC,
+                        AudioManager.ADJUST_RAISE,
+                        AudioManager.FLAG_SHOW_UI);
+                syncCurrentVolumeToWatch(am, false);
+            }
+            store.logEvent("RX Wrist Media: Volume UP (0xD1 0x0D)");
+            fireWebhookIfConfigured("volume_up");
+        } else if (sub == 0x0E) {
+            // Volume DOWN (0xD1 0x0E)
+            if (am != null) {
+                am.adjustStreamVolume(
+                        AudioManager.STREAM_MUSIC,
+                        AudioManager.ADJUST_LOWER,
+                        AudioManager.FLAG_SHOW_UI);
+                syncCurrentVolumeToWatch(am, true);
+            }
+            store.logEvent("RX Wrist Media: Volume DOWN (0xD1 0x0E)");
+            fireWebhookIfConfigured("volume_down");
+        } else if (sub == 0x12) {
+            // Mute toggle (0xD1 0x12)
+            dispatchMediaKey(am, KeyEvent.KEYCODE_VOLUME_MUTE);
+            syncCurrentVolumeToWatch(am, false);
+            store.logEvent("RX Wrist Media: Mute Toggle (0xD1 0x12)");
+        } else if (sub == 0x0A) {
+            store.logEvent("RX WRIST TRIGGER: Find My Phone (0xD1 0x0A)!");
+            triggerFindMyPhoneAlert();
+            fireWebhookIfConfigured("find_phone");
+        } else {
+            store.logEvent("RX Wrist Button (0xD1): " + hex);
+            fireWebhookIfConfigured("wrist_button_" + sub);
+        }
+    }
+
+    private void dispatchMediaKey(AudioManager am, int keyCode) {
+        if (am == null) return;
+        long now = SystemClock.uptimeMillis();
+        KeyEvent down = new KeyEvent(now, now, KeyEvent.ACTION_DOWN, keyCode, 0);
+        KeyEvent up = new KeyEvent(now, now, KeyEvent.ACTION_UP, keyCode, 0);
+        am.dispatchMediaKeyEvent(down);
+        am.dispatchMediaKeyEvent(up);
+    }
+
+    private void syncCurrentVolumeToWatch(AudioManager am, boolean isVolDownAck) {
+        if (am == null) return;
+        int cur = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int max = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int pct = max > 0 ? Math.round((cur * 100f) / max) : 50;
+        enqueueWrite33F1(T60Protocol.buildMusicVolumeState(isVolDownAck, pct));
     }
 
     private void triggerFindMyPhoneAlert() {

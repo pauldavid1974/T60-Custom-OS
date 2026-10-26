@@ -157,6 +157,21 @@ public final class T60Protocol {
         return new byte[] { (byte) 0xD1, 0x0A, (byte) (enable ? 0x01 : 0x00) };
     }
 
+    /** 0xD1 0x0C: Report phone music playback state to watch (1 = Playing, 2 = Paused). */
+    public static byte[] buildMusicPlayState(boolean playing) {
+        return new byte[] { (byte) 0xD1, 0x0C, (byte) (playing ? 0x01 : 0x02) };
+    }
+
+    /** 0xD1 0x0D / 0x0E: Report current phone media volume (0..100%) to watch. */
+    public static byte[] buildMusicVolumeState(boolean isVolumeDownAck, int volumePercent) {
+        int clamped = Math.max(0, Math.min(100, volumePercent));
+        return new byte[] {
+            (byte) 0xD1,
+            (byte) (isVolumeDownAck ? 0x0E : 0x0D),
+            (byte) (clamped & 0xFF)
+        };
+    }
+
     /** 0xFC: Enable/disable Raise-to-Wake (Turn Wrist to Light Screen). */
     public static byte[] buildRaiseToWake(boolean enable) {
         return new byte[] { (byte) 0xFC, (byte) (enable ? 0x01 : 0x00) };
