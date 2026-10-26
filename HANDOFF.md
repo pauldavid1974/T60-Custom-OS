@@ -3,7 +3,7 @@
 **Updated:** 2026-10-26
 **Phase:** Read-only feasibility investigation
 **Next agent:** Qwen through Engine Room + a local harness (or ChatGPT)
-**Owner:** Paul; public one-owner repo `pauldavid1974/T60-Custom-OS` (public by Paul's explicit 2026-10-25 approval)
+**Owner:** Paul; public one-owner repo `pauldavid1974/gloryfit-replacement-android` (renamed from `T60-Custom-OS` on 2026-10-26; public by Paul's explicit 2026-10-25 approval)
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 

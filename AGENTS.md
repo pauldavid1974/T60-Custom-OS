@@ -45,7 +45,7 @@ Never assume a GATT UUID or chipset family proves binary compatibility. If unsur
 
 ## One-owner Git workflow
 
-- Repo: `pauldavid1974/T60-Custom-OS` (public since Paul's explicit 2026-10-25 approval; personal account; no outside collaborators/reviews requested).
+- Repo: `pauldavid1974/gloryfit-replacement-android` (public since Paul's explicit 2026-10-25 approval; personal account; no outside collaborators/reviews requested).
 - While protected `main` requires the `check` CI job, use a short-lived branch and pull request for routine docs and non-device changes so checks pass before integration. Do not require outside reviews.
 - Commit clear, small changes. Do not merge unless Paul explicitly authorizes the merge, and do not add collaborators, request outside reviewers, or configure branch protections that demand outside reviews.
 - Avoid duplicate notes and stale handoffs. Put the live assignment and its findings in **HANDOFF.md**. Keep permanent technical knowledge in appropriate docs and the graph; place implementation in source files.

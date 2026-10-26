@@ -2,7 +2,7 @@
 
 **Status:** Accepted by the repository owner, Paul (`pauldavid1974`), on 2026-10-25.
 
-This document defines how decisions, changes, reviews, releases, and device-related approvals are managed in `pauldavid1974/T60-Custom-OS`. It applies to Paul and every authorized AI or human assistant. `AGENTS.md` supplies binding agent working rules; Paul's explicit instructions and the strictest applicable device-safety rule always take precedence.
+This document defines how decisions, changes, reviews, releases, and device-related approvals are managed in `pauldavid1974/gloryfit-replacement-android`. It applies to Paul and every authorized AI or human assistant. `AGENTS.md` supplies binding agent working rules; Paul's explicit instructions and the strictest applicable device-safety rule always take precedence.
 
 ## 1. Ownership and authority
 
