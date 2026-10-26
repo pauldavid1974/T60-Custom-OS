@@ -1,6 +1,7 @@
 package com.paul.t60;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -151,10 +152,19 @@ final class Ui {
 
     interface OnBool { void set(boolean on); }
 
-    LinearLayout switchRow(String title, String sub, boolean on, OnBool cb) {
-        LinearLayout r = navRow(title, sub, null, null);
+    /** Switch in the design colours (blue track + white knob when on); the stock one follows the phone theme and fades out. */
+    Switch toggle(boolean on) {
         Switch s = new Switch(c);
         s.setChecked(on);
+        int[][] states = {{android.R.attr.state_checked}, {}};
+        s.setThumbTintList(new ColorStateList(states, new int[]{Color.WHITE, BODY}));
+        s.setTrackTintList(new ColorStateList(states, new int[]{ACCENT, OFF}));
+        return s;
+    }
+
+    LinearLayout switchRow(String title, String sub, boolean on, OnBool cb) {
+        LinearLayout r = navRow(title, sub, null, null);
+        Switch s = toggle(on);
         s.setOnCheckedChangeListener((b, v) -> cb.set(v));
         r.addView(s);
         r.setOnClickListener(v -> s.toggle());
