@@ -988,7 +988,7 @@
       "kind": "fact",
       "certainty": "inferred",
       "title": "T60 feature support decoded from FunctionList bits (blood oxygen yes; BP/ECG/temperature no)",
-      "summary": "tools/t60_feature_flags.py maps every GetFunctionList.isSupportFunction*(bit) call in GloryFit classes6.dex to its calling class/method and tests the bit against the observed 33F1/34F1 FunctionList values. Set on this T60 (meaning inferred from caller names): heart rate + 24h/high-rate alarm (L1 0x080000, L1 0x80), blood oxygen (L5 0x40, UploadOxygenData), REM sleep (L7 0x08), weather (L1 0x2000, L6 0x800), multi-sport + phone GPS (L5 0x02, L6 0x2000), BT calling (L5 0x2000, BtCallActivity), music control (L5 0x01) and song metadata (L5 0x1000), call/SMS/app alerts (L1 0x400000, L4 0x010000, L3/L5 0x800), sedentary reminder (L2 0x10), alarms (L6 0x01), step goal (L5 0x200000). Clear: blood pressure (L1 0x100000, L5 0x100000), ECG (L3 0x2000, L8 0x1000), temperature (L5 0x08), HRV (L11 0x20), mood/stress/fatigue (L8 0x400000), contacts/SOS (L2 0x400000, L6 0x080000), TurnWristActivity raise-to-wake (L2 0x040000), DND (L11 0x080000).",
+      "summary": "tools/t60_feature_flags.py maps every GetFunctionList.isSupportFunction*(bit) call in GloryFit classes6.dex to its calling class/method and tests the bit against the observed 33F1/34F1 FunctionList values. Set on this T60 (meaning inferred from caller names): heart rate + 24h/high-rate alarm (L1 0x080000, L1 0x80), blood oxygen (L5 0x40, UploadOxygenData), REM sleep (L7 0x08), weather (L1 0x2000, L6 0x800), multi-sport + phone GPS (L5 0x02, L6 0x2000), BT calling (L5 0x2000, BtCallActivity), music control (L5 0x01) and song metadata (L5 0x1000), call/SMS/app alerts (L1 0x400000, L4 0x010000, L3/L5 0x800), sedentary reminder (L2 0x10), alarms (L6 0x01), step goal (L5 0x200000). Clear: blood pressure (L1 0x100000, L5 0x100000), ECG (L3 0x2000, L8 0x1000), temperature (L5 0x08), HRV (L11 0x20), mood/stress/fatigue (L8 0x400000), SOS (L7 0x02). Correction from the GloryFit menu audit (docs/APP_FEATURES.md): raise-to-wake (L1 0x40), Do Not Disturb (L1 0x08), contacts (L5 0x2000 + L6 0x40000), quick text replies (L6 0x200), watch language (L2 0x08) and women's health (L3 0x8000) ARE set.",
       "tags": [
         "function-list",
         "features",
@@ -998,8 +998,10 @@
         "android-app"
       ],
       "refs": [
+        "docs/APP_FEATURES.md",
         "docs/PROTOCOL.md",
-        "tools/t60_feature_flags.py"
+        "tools/t60_feature_flags.py",
+        "tools/t60_menu_audit.py"
       ]
     }
   ],

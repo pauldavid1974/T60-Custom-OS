@@ -124,5 +124,8 @@ GloryFit's `com.yc.server.yc_sdk.Agent` and `com.yc.pedometer.update.Updates` ch
 | Yes | Move (sedentary) reminder (L2 `0x10`), alarms (L6 `0x01`), step goal (L5 `0x200000`) |
 | No | Blood pressure (L1 `0x100000`, L5 `0x100000`), ECG (L3 `0x2000`, L8 `0x1000`), temperature (L5 `0x08`) |
 | No | HRV (L11 `0x20`), mood/stress/fatigue (L8 `0x400000`) |
-| No | Contacts / SOS on watch (L2 `0x400000`, L6 `0x080000`) |
-| No | GloryFit raise-to-wake screen (L2 `0x040000`), Do Not Disturb (L11 `0x080000`) |
+| Yes | Contacts on watch (Smart Play `rl_contacts`: L5 `0x2000` + L6 `0x40000`); quick text replies (L6 `0x200`) |
+| No | SOS call (L7 `0x02`) |
+| Yes | Raise wrist to wake (Smart Play L1 `0x40`), quiet hours / Do Not Disturb (Smart Play L1 `0x08`). The L2 `0x040000` and L11 `0x080000` checks are secondary variants. |
+
+Full menu-by-menu audit: [`docs/APP_FEATURES.md`](APP_FEATURES.md) (`tools/t60_menu_audit.py`).
