@@ -413,7 +413,10 @@ final class HealthScreens {
         top.addView(ui.text(name, 18, Ui.TEXT, true), Ui.weight(1));
         top.addView(ui.text(s.gpsGood() ? "● GPS good" : "● Finding GPS…", 13, s.gpsGood() ? Ui.GREEN : 0xFFFFB38A, true));
         b.addView(top);
-        View map = trackView(new ArrayList<>(s.track));
+        List<double[]> pts = new ArrayList<>(s.track);
+        android.location.Location here = s.lastReading;
+        if (here != null && here.getAccuracy() < 40) pts.add(new double[]{here.getLatitude(), here.getLongitude()});
+        View map = trackView(pts);
         ui.add(b, sized(map, 180), 10);
         int secs = s.workoutSeconds();
         TextView time = ui.mono(String.format(Locale.US, "%d:%02d:%02d", secs / 3600, (secs % 3600) / 60, secs % 60), 52);
@@ -447,32 +450,74 @@ final class HealthScreens {
         return null;
     }
 
-    /** GPS track drawn as a line (no map tiles: those need a Google key Paul hasn't made yet). */
+    /** GPS track drawn over OpenStreetMap squares, zoomed as close as the whole route allows. */
     View trackView(List<double[]> pts) {
         return new View(a) {
             final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+            final Paint tilePaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+            { tilePaint.setColorFilter(new android.graphics.LightingColorFilter(0x9A9A9A, 0)); } // dim to suit the dark app
+            final Path clip = new Path();
             @Override protected void onDraw(Canvas c) {
-                p.setColor(Ui.CARD);
-                c.drawRoundRect(new RectF(0, 0, getWidth(), getHeight()), ui.dp(20), ui.dp(20), p);
+                float W = getWidth(), H = getHeight(), pad = ui.dp(20);
+                clip.reset();
+                clip.addRoundRect(new RectF(0, 0, W, H), ui.dp(20), ui.dp(20), Path.Direction.CW);
+                c.save();
+                c.clipPath(clip);
+                c.drawColor(Ui.CARD);
+                p.setStyle(Paint.Style.FILL);
                 p.setColor(Ui.DIM);
                 p.setTextSize(ui.dp(12));
-                if (pts.size() < 2) { c.drawText("Map: waiting for GPS…", ui.dp(16), ui.dp(26), p); return; }
+                if (pts.isEmpty()) { c.drawText("Map: waiting for GPS…", ui.dp(16), ui.dp(26), p); c.restore(); return; }
                 double minLa = 90, maxLa = -90, minLo = 180, maxLo = -180;
                 for (double[] q : pts) { minLa = Math.min(minLa, q[0]); maxLa = Math.max(maxLa, q[0]); minLo = Math.min(minLo, q[1]); maxLo = Math.max(maxLo, q[1]); }
-                double cos = Math.cos(Math.toRadians((minLa + maxLa) / 2));
-                double spanX = Math.max(1e-5, (maxLo - minLo) * cos), spanY = Math.max(1e-5, maxLa - minLa);
-                float pad = ui.dp(20), w = getWidth() - 2 * pad, h = getHeight() - 2 * pad;
-                double scale = Math.min(w / spanX, h / spanY);
+                // Squares drawn at 128dp: 256px tiles stay sharp and their labels stay readable on a phone screen.
+                float T = ui.dp(128);
+                int z = MapTiles.MAX_ZOOM;
+                while (z > 2 && ((MapTiles.x(maxLo, z) - MapTiles.x(minLo, z)) * T > W - 2 * pad
+                        || (MapTiles.y(minLa, z) - MapTiles.y(maxLa, z)) * T > H - 2 * pad)) z--;
+                double ox = (MapTiles.x(minLo, z) + MapTiles.x(maxLo, z)) / 2 * T - W / 2;
+                double oy = (MapTiles.y(maxLa, z) + MapTiles.y(minLa, z)) / 2 * T - H / 2;
+                int n = 1 << z;
+                for (int tx = (int) Math.floor(ox / T); tx * T < ox + W; tx++) {
+                    for (int ty = (int) Math.floor(oy / T); ty * T < oy + H; ty++) {
+                        if (ty < 0 || ty >= n) continue;
+                        android.graphics.Bitmap t = MapTiles.get(a, z, Math.floorMod(tx, n), ty, this::invalidate);
+                        float l = (float) (tx * T - ox), top = (float) (ty * T - oy);
+                        if (t != null) c.drawBitmap(t, null, new RectF(l, top, l + T, top + T), tilePaint);
+                    }
+                }
                 Path path = new Path();
                 for (int k = 0; k < pts.size(); k++) {
-                    float x = (float) (pad + ((pts.get(k)[1] - minLo) * cos) * scale), y = (float) (pad + h - (pts.get(k)[0] - minLa) * scale);
+                    float x = (float) (MapTiles.x(pts.get(k)[1], z) * T - ox), y = (float) (MapTiles.y(pts.get(k)[0], z) * T - oy);
                     if (k == 0) path.moveTo(x, y); else path.lineTo(x, y);
                 }
                 p.setStyle(Paint.Style.STROKE);
+                p.setStrokeCap(Paint.Cap.ROUND);
+                p.setStrokeJoin(Paint.Join.ROUND);
+                p.setStrokeWidth(ui.dp(7));
+                p.setColor(Ui.BG);
+                c.drawPath(path, p);
                 p.setStrokeWidth(ui.dp(4));
                 p.setColor(Ui.ACCENT);
                 c.drawPath(path, p);
+                // Dot where you are now (the newest point).
+                double[] now = pts.get(pts.size() - 1);
+                float nx = (float) (MapTiles.x(now[1], z) * T - ox), ny = (float) (MapTiles.y(now[0], z) * T - oy);
                 p.setStyle(Paint.Style.FILL);
+                p.setColor(Ui.TEXT);
+                c.drawCircle(nx, ny, ui.dp(8), p);
+                p.setColor(Ui.ACCENT);
+                c.drawCircle(nx, ny, ui.dp(5.5f), p);
+                // OSM's licence requires this credit on the map.
+                p.setStyle(Paint.Style.FILL);
+                p.setTextSize(ui.dp(10));
+                String credit = "© OpenStreetMap contributors";
+                float cw = p.measureText(credit);
+                p.setColor(0xB0000000);
+                c.drawRect(W - cw - ui.dp(12), H - ui.dp(18), W, H, p);
+                p.setColor(Ui.TEXT);
+                c.drawText(credit, W - cw - ui.dp(6), H - ui.dp(5), p);
+                c.restore();
             }
         };
     }
