@@ -108,7 +108,7 @@
       "kind": "fact",
       "certainty": "inferred",
       "title": "FFF1 byte 0 may be the Realtek IC ID",
-      "summary": "FFF1 byte 0 is observed as 0x0B and the GloryFit SDK maps IC_BB2 to 0x0B. Corrected 2026-10-25: the earlier 'no parser' gap is closed \u2014 DeviceInfo.parseX0000 (see fact-fff1-parser) explicitly reads byte 0 as the IC type, and the T60's live GATT layout exactly matches the SDK default profile, so this interpretation is now strong; the exact end-to-end invocation path for this characteristic (GATT FFF1 read vs X0000 command response) is not yet traced, so the label stays inferred.",
+      "summary": "FFF1 byte 0 is observed as 0x0B and the GloryFit SDK maps IC_BB2 to 0x0B. Corrected 2026-10-25: the earlier 'no parser' gap is closed — DeviceInfo.parseX0000 (see fact-fff1-parser) explicitly reads byte 0 as the IC type, and the T60's live GATT layout exactly matches the SDK default profile, so this interpretation is now strong; the exact end-to-end invocation path for this characteristic (GATT FFF1 read vs X0000 command response) is not yet traced, so the label stays inferred.",
       "tags": [
         "fff1",
         "icid",
@@ -933,7 +933,7 @@
       "kind": "fact",
       "certainty": "documented",
       "title": "App uses the SDK default (r) DFU profile for this device",
-      "summary": "Documented in GloryFit v4.0.12 classes5.dex: the sub-adapter factory com.realsil.sdk.dfu.utils.a.c(I) selects the DFU profile by 16-bit protocolType (0x10=s, 0x12=n, 0x13=o, 0x14=p, 0x15=q, default=r, with a local-name BeeTgt02 flag), and DeviceInfo.setProtocolType is never invoked in any of the 8 dex files (string and reference scan), so protocolType stays 0 and the default r profile runs \u2014 its UUID set (6287-3c17 service 6387/6487/6587; D0FF-family FFD1-5/FFD8/FFF1/FFF2 16-bit) is exactly the observed T60 layout. The image loader FirmwareLoaderX.loadImageBinInfo dispatches per-chip parsers (n/c, p/c, q/c, v/c, s/e|s/f, x/h|i|j) by the same keys with default k/f; no firmware blobs ship in the APK (runtime image loading keyed by protocolType/specVersion/icType/imageId).",
+      "summary": "Documented in GloryFit v4.0.12 classes5.dex: the sub-adapter factory com.realsil.sdk.dfu.utils.a.c(I) selects the DFU profile by 16-bit protocolType (0x10=s, 0x12=n, 0x13=o, 0x14=p, 0x15=q, default=r, with a local-name BeeTgt02 flag), and DeviceInfo.setProtocolType is never invoked in any of the 8 dex files (string and reference scan), so protocolType stays 0 and the default r profile runs — its UUID set (6287-3c17 service 6387/6487/6587; D0FF-family FFD1-5/FFD8/FFF1/FFF2 16-bit) is exactly the observed T60 layout. The image loader FirmwareLoaderX.loadImageBinInfo dispatches per-chip parsers (n/c, p/c, q/c, v/c, s/e|s/f, x/h|i|j) by the same keys with default k/f; no firmware blobs ship in the APK (runtime image loading keyed by protocolType/specVersion/icType/imageId).",
       "tags": [
         "dfu",
         "profile",
@@ -981,6 +981,25 @@
       "refs": [
         "docs/HARDWARE.md",
         "HANDOFF.md"
+      ]
+    },
+    {
+      "id": "fact-t60-feature-support",
+      "kind": "fact",
+      "certainty": "inferred",
+      "title": "T60 feature support decoded from FunctionList bits (blood oxygen yes; BP/ECG/temperature no)",
+      "summary": "tools/t60_feature_flags.py maps every GetFunctionList.isSupportFunction*(bit) call in GloryFit classes6.dex to its calling class/method and tests the bit against the observed 33F1/34F1 FunctionList values. Set on this T60 (meaning inferred from caller names): heart rate + 24h/high-rate alarm (L1 0x080000, L1 0x80), blood oxygen (L5 0x40, UploadOxygenData), REM sleep (L7 0x08), weather (L1 0x2000, L6 0x800), multi-sport + phone GPS (L5 0x02, L6 0x2000), BT calling (L5 0x2000, BtCallActivity), music control (L5 0x01) and song metadata (L5 0x1000), call/SMS/app alerts (L1 0x400000, L4 0x010000, L3/L5 0x800), sedentary reminder (L2 0x10), alarms (L6 0x01), step goal (L5 0x200000). Clear: blood pressure (L1 0x100000, L5 0x100000), ECG (L3 0x2000, L8 0x1000), temperature (L5 0x08), HRV (L11 0x20), mood/stress/fatigue (L8 0x400000), contacts/SOS (L2 0x400000, L6 0x080000), TurnWristActivity raise-to-wake (L2 0x040000), DND (L11 0x080000).",
+      "tags": [
+        "function-list",
+        "features",
+        "gloryfit",
+        "33f1",
+        "34f1",
+        "android-app"
+      ],
+      "refs": [
+        "docs/PROTOCOL.md",
+        "tools/t60_feature_flags.py"
       ]
     }
   ],
@@ -1424,6 +1443,16 @@
       "from": "question-os-base",
       "to": "source-rtl87x3e-sdk",
       "relation": "comparison-lead-only"
+    },
+    {
+      "from": "fact-t60-feature-support",
+      "to": "fact-final-reads",
+      "relation": "derived-from"
+    },
+    {
+      "from": "fact-t60-feature-support",
+      "to": "source-gloryfit-apk",
+      "relation": "documented-by"
     }
   ]
 }

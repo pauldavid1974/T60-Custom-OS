@@ -106,3 +106,23 @@ GloryFit's `com.yc.server.yc_sdk.Agent` and `com.yc.pedometer.update.Updates` ch
   - `mSecretkey` (32 bytes): `4e46f8c5095554455f524b0cd1f610fb1f6763df807a7e70960d4cd3118e601a` (embeds ASCII `UTE_RK`)
   - `mSecretkeyRH276N` (32 bytes): `4e46f8c5092b29e29a971a0cd1f610fb1f6763df807a7e70960d4cd3118e601a`
   - `mSecretkey8762C` (32 bytes): `1a608e11d34c0d96707e7a80df63671ffb10f6d10c1a979ae2292b09c5f8464e` (byte-reversed `mSecretkeyRH276N`)
+
+## Feature support decoded from the FunctionList bits (Inferred, 2026-10-25)
+
+`tools/t60_feature_flags.py <classes6 dexdump>` lists every `GetFunctionList.isSupportFunction*(bit)` check in GloryFit with the class/method that asks, and marks whether the bit is set in the observed `33F1`/`34F1` values. Feature meanings come from the caller names, so they are **Inferred**, not documented.
+
+| Watch reports it | Feature (list, bit) |
+|---|---|
+| Yes | Heart rate + all-day/high-rate alarm (L1 `0x080000`, L1 `0x80`, L4 `0x800`) |
+| Yes | Blood oxygen (L5 `0x40`) |
+| Yes | REM sleep (L7 `0x08`) |
+| Yes | Weather (L1 `0x2000`, L6 `0x800`) |
+| Yes | Workouts with phone GPS (L5 `0x02`, L6 `0x2000`) |
+| Yes | Calls through the watch (L5 `0x2000`) |
+| Yes | Music control (L5 `0x01`) and song name (L5 `0x1000`) |
+| Yes | Call / SMS / app alerts (L1 `0x400000`, L4 `0x010000`, L3 and L5 `0x800`) |
+| Yes | Move (sedentary) reminder (L2 `0x10`), alarms (L6 `0x01`), step goal (L5 `0x200000`) |
+| No | Blood pressure (L1 `0x100000`, L5 `0x100000`), ECG (L3 `0x2000`, L8 `0x1000`), temperature (L5 `0x08`) |
+| No | HRV (L11 `0x20`), mood/stress/fatigue (L8 `0x400000`) |
+| No | Contacts / SOS on watch (L2 `0x400000`, L6 `0x080000`) |
+| No | GloryFit raise-to-wake screen (L2 `0x040000`), Do Not Disturb (L11 `0x080000`) |
