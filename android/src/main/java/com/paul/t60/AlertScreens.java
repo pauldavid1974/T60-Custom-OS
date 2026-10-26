@@ -42,9 +42,10 @@ final class AlertScreens {
         boolean callPerm = a.has(Manifest.permission.READ_PHONE_STATE) && a.has(Manifest.permission.READ_CALL_LOG);
         boolean smsPerm = a.has(Manifest.permission.RECEIVE_SMS);
         ui.add(b, ui.group(
-                ui.switchRow("Phone calls", callPerm ? null : "Needs phone permission", store.isForwardCalls(), on -> store.set("fwd_calls", on)),
-                ui.switchRow("Text messages", smsPerm ? null : "Needs SMS permission", store.isForwardSms(), on -> store.set("fwd_sms", on))), 12);
-        if (!callPerm || !smsPerm) ui.add(b, ui.button("Allow phone and SMS permissions", false, v -> a.requestPermissionsIfNeeded()), 8);
+                ui.switchRow("Phone calls", callPerm ? null : "Needs phone permission", store.isForwardCalls(), on -> { store.set("fwd_calls", on); if (on && !callPerm) a.ask(MainActivity.CALLS); }),
+                ui.switchRow("Text messages", smsPerm ? null : "Needs SMS permission", store.isForwardSms(), on -> { store.set("fwd_sms", on); if (on && !smsPerm) a.ask(MainActivity.TEXTS); })), 12);
+        if (!callPerm || !smsPerm) ui.add(b, ui.button("Allow phone and SMS permissions", false, v -> a.ask(Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)), 8);
 
         Set<String> seen = store.getSeenApps();
         int onCount = 0;
@@ -136,7 +137,7 @@ final class AlertScreens {
         }
         ui.add(b, ui.note(a.has(Manifest.permission.SEND_SMS) ? "The reply goes from your phone number as a normal text."
                 : "Needs permission to send texts. The reply goes from your phone number as a normal text."), 8);
-        if (!a.has(Manifest.permission.SEND_SMS)) ui.add(b, ui.button("Allow sending texts", false, v -> a.requestPermissionsIfNeeded()), 8);
+        if (!a.has(Manifest.permission.SEND_SMS)) ui.add(b, ui.button("Allow sending texts", false, v -> a.ask(Manifest.permission.SEND_SMS)), 8);
         return null;
     }
 
