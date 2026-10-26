@@ -105,14 +105,14 @@ public class T60BleService extends Service {
         return Build.VERSION.SDK_INT < 31 || granted(android.Manifest.permission.BLUETOOTH_CONNECT);
     }
 
-    // Also re-run on reconnect, so a location permission granted later adds workout GPS.
+    // Re-run on every start, so a location permission granted later adds workout GPS.
     private void goForeground() {
         if (Build.VERSION.SDK_INT >= 29) {
             int type = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
             if (granted(android.Manifest.permission.ACCESS_FINE_LOCATION)) type |= android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
-            startForeground(NOTIF_ID, statusNotification("Connecting…"), type);
+            startForeground(NOTIF_ID, statusNotification(statusText), type);
         } else {
-            startForeground(NOTIF_ID, statusNotification("Connecting…"));
+            startForeground(NOTIF_ID, statusNotification(statusText));
         }
     }
 
@@ -136,7 +136,9 @@ public class T60BleService extends Service {
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
         if (!bluetoothAllowed()) { stopSelf(); return START_NOT_STICKY; }
-        if (gatt == null) { goForeground(); connectWatch(); }
+        goForeground();
+        registerPhoneHooks(); // permissions are asked per feature, so they may arrive after the service started
+        if (gatt == null) connectWatch();
         return START_STICKY;
     }
 
@@ -170,7 +172,10 @@ public class T60BleService extends Service {
                 .setSmallIcon(android.R.drawable.stat_sys_data_bluetooth).setContentIntent(pi).setOngoing(true).build();
     }
 
+    private String statusText = "Connecting…";
+
     private void status(String text) {
+        statusText = text;
         getSystemService(NotificationManager.class).notify(NOTIF_ID, statusNotification(text));
     }
 
@@ -997,12 +1002,16 @@ public class T60BleService extends Service {
         }
     };
 
+    private boolean callHookOn, smsHookOn;
+
     private void registerPhoneHooks() {
-        try {
+        if (!callHookOn) try {
             ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
+            callHookOn = true;
         } catch (Exception e) { store.logEvent("Call alerts need phone permission"); }
-        try {
+        if (!smsHookOn) try {
             registerReceiver(smsReceiver, new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION));
+            smsHookOn = true;
         } catch (Exception e) { store.logEvent("Text alerts need SMS permission"); }
     }
 

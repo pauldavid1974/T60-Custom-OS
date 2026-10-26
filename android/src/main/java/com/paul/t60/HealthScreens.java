@@ -366,7 +366,7 @@ final class HealthScreens {
         for (int k = 0; k < 3; k++) {
             int code = PHONE_SPORTS[k][0];
             LinearLayout t = (LinearLayout) a.action(icons[k], PHONE_SPORT_NAMES[k], v -> a.withWatch(sv -> {
-                if (!a.has(android.Manifest.permission.ACCESS_FINE_LOCATION)) { a.requestPermissionsIfNeeded(); return; }
+                if (!a.has(android.Manifest.permission.ACCESS_FINE_LOCATION)) { a.ask(MainActivity.LOCATION); return; }
                 sv.startWorkout(code);
                 a.go("LiveWorkout");
             }));
