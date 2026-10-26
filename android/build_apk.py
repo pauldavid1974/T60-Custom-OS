@@ -61,13 +61,16 @@ def main() -> int:
         *class_files,
     ])
 
-    # 3. Package AndroidManifest.xml with aapt2 link
+    # 3. Compile resources (launcher icon) and package them with AndroidManifest.xml
+    res_zip = os.path.join(BUILD_DIR, "res.zip")
+    run([AAPT2, "compile", "--dir", os.path.join(ROOT, "src", "main", "res"), "-o", res_zip])
     unsigned_apk = os.path.join(BUILD_DIR, "T60-unaligned.apk")
     run([
         AAPT2, "link",
         "-I", ANDROID_JAR,
         "--manifest", manifest,
         "-o", unsigned_apk,
+        res_zip,
     ])
 
     # 4. Add classes.dex into the APK zip

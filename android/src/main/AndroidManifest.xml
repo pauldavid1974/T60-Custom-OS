@@ -39,6 +39,8 @@
 
     <application
         android:label="T60"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
         android:allowBackup="false">
 
