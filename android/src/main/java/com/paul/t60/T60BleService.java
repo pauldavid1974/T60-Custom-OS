@@ -1238,8 +1238,10 @@ public class T60BleService extends Service {
             int point = 0;
             lastReading = l;
             if (workoutRunning && !workoutPaused && l.getAccuracy() < 40
-                    // Count a move only when it is bigger than the reading's own error, so standing still adds no distance.
-                    && (lastFix == null || lastFix.distanceTo(l) >= Math.max(5, l.getAccuracy() + lastFix.getAccuracy()))) {
+                    // Standing still, GPS wobbles by metres. Count a move only when the GPS is sure we are moving
+                    // (over 0.7 m/s, a slow walk, and well above its own speed error) or the jump beats both readings' error.
+                    && (lastFix == null || lastFix.distanceTo(l) >= 5 && (surelyMoving(l)
+                        || lastFix.distanceTo(l) >= l.getAccuracy() + lastFix.getAccuracy()))) {
                 if (lastFix != null) {
                     point = Math.round(lastFix.distanceTo(l));
                     if (point < 200) workoutMeters += point;
@@ -1260,6 +1262,11 @@ public class T60BleService extends Service {
         @Override public void onProviderEnabled(String p) {}
         @Override public void onProviderDisabled(String p) {}
     };
+    private static boolean surelyMoving(Location l) {
+        if (!l.hasSpeed() || l.getSpeed() <= 0.7f) return false;
+        return !l.hasSpeedAccuracy() || l.getSpeed() > 2 * l.getSpeedAccuracyMetersPerSecond();
+    }
+
     private boolean gpsAnnounced;
     private long lastGpsSend;
 
