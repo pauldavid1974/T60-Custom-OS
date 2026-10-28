@@ -8,6 +8,9 @@
 
 | Path | Purpose |
 |---|---|
+| [android/](android/) | The working phone app that replaces GloryFit (build: `python android/build_apk.py`) |
+| [docs/APP_FEATURES.md](docs/APP_FEATURES.md) | Every GloryFit watch feature and whether the new app has it |
+| [docs/PROTOCOL.md](docs/PROTOCOL.md) | The decoded Bluetooth messages between phone and watch |
 | [firmware/](firmware/) | Actual portable C firmware-core source and host-only unit tests; board-specific hardware support will follow once the target is proven |
 | [docs/PRODUCT.md](docs/PRODUCT.md) | Product direction, design goals and acceptance gates |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Planned firmware layers and boundaries between core logic and hardware |

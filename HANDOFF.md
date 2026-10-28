@@ -1,6 +1,6 @@
 # HANDOFF — T60 custom firmware investigation
 
-**Updated:** 2026-10-26
+**Updated:** 2026-10-28
 **Phase:** Read-only feasibility investigation
 **Next agent:** Qwen through Engine Room + a local harness (or ChatGPT)
 **Owner:** Paul; public one-owner repo `pauldavid1974/gloryfit-replacement-android` (renamed from `T60-Custom-OS` on 2026-10-26; public by Paul's explicit 2026-10-25 approval)
@@ -25,7 +25,9 @@
   the list back to the top — scroll position is remembered; (7) with the phone's Bluetooth off the app only said
   "Not connected" and waited up to 15 min after Bluetooth came back — it now says "Bluetooth off", offers a Turn on
   button, and reconnects the moment Bluetooth is on; (8) GPS jitter while standing still counted as distance
-  (0.02 mi in 2 min indoors) — a move now has to beat the GPS error (verified 0.00 after 60 s); (9) women's-health
+  (0.02 mi in 2 min indoors) — a move now counts only if it beats the GPS error, or the GPS reports a confident
+  walking-or-faster speed so small loops (track laps) still add up (verified 0.00 after 90 s still; loops not yet
+  walked outdoors); (9) women's-health
   reminder subtitle didn't update; (10) the alarm editor could reopen on an old alarm.
 - **New:** phone-GPS workouts run without the watch (watch gets start/stop only when connected); tapping a saved
   phone workout shows its route on the map.
