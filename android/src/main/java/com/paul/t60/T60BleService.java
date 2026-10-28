@@ -129,6 +129,7 @@ public class T60BleService extends Service {
         createChannels();
         goForeground();
         registerPhoneHooks();
+        registerReceiver(btState, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         connectWatch();
         watchMedia();
         h.postDelayed(tick, 60_000);
@@ -148,6 +149,7 @@ public class T60BleService extends Service {
         activeInstance = null;
         h.removeCallbacksAndMessages(null);
         try { unregisterReceiver(smsReceiver); } catch (Exception ignored) {}
+        try { unregisterReceiver(btState); } catch (Exception ignored) {}
         stopGps();
         disconnectGatt();
         super.onDestroy();
@@ -181,11 +183,21 @@ public class T60BleService extends Service {
 
     // ---------------------------------------------------------------- connection
 
+    /** Reconnects the moment the phone's Bluetooth comes back on, instead of waiting for the 15-minute tick. */
+    private final BroadcastReceiver btState = new BroadcastReceiver() {
+        @Override public void onReceive(Context c, Intent i) {
+            int s = i.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
+            if (s == BluetoothAdapter.STATE_ON) connectWatch();
+            else if (s == BluetoothAdapter.STATE_OFF) { disconnectGatt(); store.setConnection(false, "Bluetooth is off"); status("Phone's Bluetooth is off"); }
+        }
+    };
+
     void connectWatch() {
         BluetoothManager bm = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         BluetoothAdapter adapter = bm != null ? bm.getAdapter() : null;
         if (adapter == null || !adapter.isEnabled()) {
             store.setConnection(false, "Bluetooth is off");
+            status("Phone's Bluetooth is off");
             return;
         }
         try {
@@ -1162,7 +1174,7 @@ public class T60BleService extends Service {
         track.clear();
         workoutHrs.clear();
         liveWorkoutHr = 0;
-        op(T60Protocol.workoutStart(code), 0xFD, 2000, "start workout");
+        if (ready) op(T60Protocol.workoutStart(code), 0xFD, 2000, "start workout"); // the phone records it either way
         startGps();
         h.post(workoutTick);
         store.notifyChanged();
@@ -1187,7 +1199,7 @@ public class T60BleService extends Service {
 
     void pauseWorkout(boolean pause) {
         pauseLocal(pause);
-        op(T60Protocol.workoutState(pause ? 0x22 : 0x33, workoutCode, workoutSeconds(), workoutKcal(), workoutMeters / 1000f, paceSecPerKm()), 0xFD, 1500, pause ? "pause" : "resume");
+        if (ready) op(T60Protocol.workoutState(pause ? 0x22 : 0x33, workoutCode, workoutSeconds(), workoutKcal(), workoutMeters / 1000f, paceSecPerKm()), 0xFD, 1500, pause ? "pause" : "resume");
     }
 
     void endWorkout(boolean fromWatch) {
@@ -1195,7 +1207,7 @@ public class T60BleService extends Service {
         endingWorkout = true;
         if (workoutPaused) pauseLocal(false);
         int secs = workoutSeconds();
-        if (!fromWatch) {
+        if (!fromWatch && ready) {
             op(T60Protocol.workoutState(0x44, workoutCode, secs, workoutKcal(), workoutMeters / 1000f, paceSecPerKm()), 0xFD, 1500, "end workout");
             op(T60Protocol.workoutStop(workoutCode), 0xFD, 1500, "stop workout");
         }
@@ -1225,7 +1237,11 @@ public class T60BleService extends Service {
         @Override public void onLocationChanged(Location l) {
             int point = 0;
             lastReading = l;
-            if (workoutRunning && !workoutPaused && l.getAccuracy() < 40 && (lastFix == null || lastFix.distanceTo(l) >= 5)) {
+            if (workoutRunning && !workoutPaused && l.getAccuracy() < 40
+                    // Standing still, GPS wobbles by metres. Count a move only when the GPS is sure we are moving
+                    // (over 0.7 m/s, a slow walk, and well above its own speed error) or the jump beats both readings' error.
+                    && (lastFix == null || lastFix.distanceTo(l) >= 5 && (surelyMoving(l)
+                        || lastFix.distanceTo(l) >= l.getAccuracy() + lastFix.getAccuracy()))) {
                 if (lastFix != null) {
                     point = Math.round(lastFix.distanceTo(l));
                     if (point < 200) workoutMeters += point;
@@ -1246,6 +1262,11 @@ public class T60BleService extends Service {
         @Override public void onProviderEnabled(String p) {}
         @Override public void onProviderDisabled(String p) {}
     };
+    private static boolean surelyMoving(Location l) {
+        if (!l.hasSpeed() || l.getSpeed() <= 0.7f) return false;
+        return !l.hasSpeedAccuracy() || l.getSpeed() > 2 * l.getSpeedAccuracyMetersPerSecond();
+    }
+
     private boolean gpsAnnounced;
     private long lastGpsSend;
 
