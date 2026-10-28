@@ -53,6 +53,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
     private final Handler h = new Handler(Looper.getMainLooper());
     private ScrollView currentScroll;
     private boolean refreshPending;
+    private long lastScrollMs;
     final Bundle args = new Bundle();
 
     private HealthScreens health;
@@ -122,10 +123,14 @@ public class MainActivity extends Activity implements T60Store.Listener {
     @Override public void onStateChanged() {
         if (refreshPending) return;
         refreshPending = true;
-        h.postDelayed(() -> {
-            refreshPending = false;
-            if (LIVE.contains(top())) render();
-        }, 400);
+        h.postDelayed(this::liveRefresh, 400);
+    }
+
+    // Live updates wait while the list is moving, so a redraw never fights a scroll.
+    private void liveRefresh() {
+        if (android.os.SystemClock.uptimeMillis() - lastScrollMs < 600) { h.postDelayed(this::liveRefresh, 300); return; }
+        refreshPending = false;
+        if (LIVE.contains(top())) render();
     }
 
     @Override public void onBackPressed() {
@@ -237,7 +242,6 @@ public class MainActivity extends Activity implements T60Store.Listener {
         if (currentScroll != null) scroll.put((String) currentScroll.getTag(), currentScroll.getScrollY());
         Integer saved = scroll.get(name);
         int scrollY = saved == null ? 0 : saved;
-        content.removeAllViews();
         LinearLayout page = ui.col();
         boolean isTab = Arrays.asList(TABS).contains(name);
         View body;
@@ -248,13 +252,21 @@ public class MainActivity extends Activity implements T60Store.Listener {
             body = ui.note("Something went wrong drawing this screen: " + e.getMessage());
         }
         if (body != null) page.addView(body, Ui.fill());
-        ScrollView sv = new ScrollView(this);
-        sv.setFillViewport(true);
-        sv.setTag(name);
-        sv.addView(page);
-        content.addView(sv);
-        currentScroll = sv;
-        if (scrollY > 0) sv.post(() -> sv.scrollTo(0, scrollY));
+        if (currentScroll != null && name.equals(currentScroll.getTag())) {
+            // Same screen redrawn: swap the contents in place so it keeps its spot without a flash to the top.
+            currentScroll.removeAllViews();
+            currentScroll.addView(page);
+        } else {
+            ScrollView sv = new ScrollView(this);
+            sv.setFillViewport(true);
+            sv.setTag(name);
+            sv.addView(page);
+            sv.setOnScrollChangeListener((v, x, y, ox, oy) -> lastScrollMs = android.os.SystemClock.uptimeMillis());
+            content.removeAllViews();
+            content.addView(sv);
+            currentScroll = sv;
+            if (scrollY > 0) sv.post(() -> sv.scrollTo(0, scrollY));
+        }
         nav.setVisibility(isTab ? View.VISIBLE : View.GONE);
         drawNav(name);
     }
