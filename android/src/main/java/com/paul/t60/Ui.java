@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -158,7 +159,14 @@ final class Ui {
         s.setChecked(on);
         int[][] states = {{android.R.attr.state_checked}, {}};
         s.setThumbTintList(new ColorStateList(states, new int[]{Color.WHITE, BODY}));
-        s.setTrackTintList(new ColorStateList(states, new int[]{ACCENT, OFF}));
+        // Own track drawable: the stock one is drawn at 30% opacity, so a tint alone still looks dark navy.
+        StateListDrawable track = new StateListDrawable();
+        for (int k = 0; k < 2; k++) {
+            GradientDrawable g = round(k == 0 ? ACCENT : OFF, 0, dp(10), 0);
+            g.setSize(dp(40), dp(20));
+            track.addState(states[k], g);
+        }
+        s.setTrackDrawable(track);
         return s;
     }
 
@@ -277,6 +285,7 @@ final class Ui {
                 float h = getHeight(), w = getWidth();
                 p.setColor(BORDER);
                 cv.drawRoundRect(new RectF(0, 0, w, h), h / 2, h / 2, p);
+                if (fraction <= 0) return; // nothing done yet: empty track, not a dot
                 p.setColor(color);
                 cv.drawRoundRect(new RectF(0, 0, Math.max(h, w * Math.min(1f, fraction)), h), h / 2, h / 2, p);
             }

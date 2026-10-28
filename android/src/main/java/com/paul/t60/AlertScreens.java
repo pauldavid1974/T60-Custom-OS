@@ -41,11 +41,10 @@ final class AlertScreens {
         }
         boolean callPerm = a.has(Manifest.permission.READ_PHONE_STATE) && a.has(Manifest.permission.READ_CALL_LOG);
         boolean smsPerm = a.has(Manifest.permission.RECEIVE_SMS);
+        // A switch only shows on when it can actually work; turning it on asks for what it needs.
         ui.add(b, ui.group(
-                ui.switchRow("Phone calls", callPerm ? null : "Needs phone permission", store.isForwardCalls(), on -> { store.set("fwd_calls", on); if (on && !callPerm) a.ask(MainActivity.CALLS); }),
-                ui.switchRow("Text messages", smsPerm ? null : "Needs SMS permission", store.isForwardSms(), on -> { store.set("fwd_sms", on); if (on && !smsPerm) a.ask(MainActivity.TEXTS); })), 12);
-        if (!callPerm || !smsPerm) ui.add(b, ui.button("Allow phone and SMS permissions", false, v -> a.ask(Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG,
-                Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)), 8);
+                ui.switchRow("Phone calls", callPerm ? null : "Turn on to allow phone access", store.isForwardCalls() && callPerm, on -> { store.set("fwd_calls", on); if (on && !callPerm) a.ask(MainActivity.CALLS); }),
+                ui.switchRow("Text messages", smsPerm ? null : "Turn on to allow text access", store.isForwardSms() && smsPerm, on -> { store.set("fwd_sms", on); if (on && !smsPerm) a.ask(MainActivity.TEXTS); })), 12);
 
         Set<String> seen = store.getSeenApps();
         int onCount = 0;

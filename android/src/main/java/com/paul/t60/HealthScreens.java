@@ -37,7 +37,21 @@ final class HealthScreens {
             case "SleepNight": return sleepNight(page);
             case "Workouts": return workouts(page);
             case "LiveWorkout": return liveWorkout(page);
+            case "Route": return route(page);
         }
+        return null;
+    }
+
+    /** A saved phone workout's route on the map. */
+    private View route(LinearLayout page) {
+        LinearLayout b = a.detail(page, "Route");
+        b.addView(ui.text(a.args.getString("routeTitle", ""), 14, Ui.SUB, false));
+        List<double[]> pts = new ArrayList<>();
+        try {
+            org.json.JSONArray t = new org.json.JSONArray(a.args.getString("route", "[]"));
+            for (int k = 0; k < t.length(); k++) pts.add(new double[]{t.getJSONArray(k).getDouble(0), t.getJSONArray(k).getDouble(1)});
+        } catch (Exception ignored) {}
+        ui.add(b, sized(trackView(pts), 420), 12);
         return null;
     }
 
@@ -365,11 +379,12 @@ final class HealthScreens {
         String[] icons = {"🚶", "🏃", "🚲"};
         for (int k = 0; k < 3; k++) {
             int code = PHONE_SPORTS[k][0];
-            LinearLayout t = (LinearLayout) a.action(icons[k], PHONE_SPORT_NAMES[k], v -> a.withWatch(sv -> {
+            LinearLayout t = (LinearLayout) a.action(icons[k], PHONE_SPORT_NAMES[k], v -> {
+                if (s == null) { a.ask(MainActivity.BLUETOOTH); return; } // the service starts once Bluetooth is allowed
                 if (!a.has(android.Manifest.permission.ACCESS_FINE_LOCATION)) { a.ask(MainActivity.LOCATION); return; }
-                sv.startWorkout(code);
+                s.startWorkout(code);
                 a.go("LiveWorkout");
-            }));
+            });
             TextView gps = ui.text("with GPS", 11, Ui.SUB, false);
             gps.setGravity(Gravity.CENTER);
             t.addView(gps, Ui.fill());
@@ -378,7 +393,7 @@ final class HealthScreens {
             r.addView(t, lp);
         }
         ui.add(b, r, 6);
-        ui.add(b, ui.note("Indoor workouts started on the watch show up here too."), 10);
+        ui.add(b, ui.note("Works without the watch too; heart rate needs the watch. Indoor workouts started on the watch show up here as well."), 10);
         ui.add(b, ui.sectionLabel("Recent"), 16);
         List<Object[]> list = db.workouts(30);
         if (list.isEmpty()) {
@@ -393,8 +408,13 @@ final class HealthScreens {
             String when = f.format(new Date((Long) w[0])) + ("watch".equals(w[8]) ? " · from watch" : "");
             String main = meters > 0 ? store.distance(meters) : steps > 0 ? a.fmt(steps) + " steps" : (secs / 60) + " min";
             String sub = (secs / 60) + " min" + (avg > 0 ? " · avg " + avg + " bpm" : "");
-            LinearLayout row = ui.navRow(name, when + "\n" + sub, main, null);
-            rows.add(row);
+            String track = (String) w[9];
+            boolean hasRoute = track != null && track.length() > 2;
+            rows.add(ui.navRow(name, when + "\n" + sub, main, !hasRoute ? null : v -> {
+                a.args.putString("route", track);
+                a.args.putString("routeTitle", name + " · " + when);
+                a.go("Route");
+            }));
         }
         ui.add(b, ui.group(rows.toArray(new View[0])), 6);
         return null;

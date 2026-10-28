@@ -63,6 +63,9 @@ public class MainActivity extends Activity implements T60Store.Listener {
     private static final Set<String> LIVE = new HashSet<>(Arrays.asList("Today", "Health", "HeartRate", "Oxygen",
             "SleepNight", "Watch", "Connection", "Workouts", "LiveWorkout", "FindPhone", "Calls", "Weather", "Setup",
             "Alerts", "WatchLanguage"));
+    private static final Set<String> HALF = new HashSet<>(Arrays.asList("Heart rate", "Sleep"));
+    /** Scroll position per screen, so coming back from a detail screen lands where you were. */
+    private final java.util.Map<String, Integer> scroll = new java.util.HashMap<>();
 
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
@@ -127,6 +130,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
 
     @Override public void onBackPressed() {
         if (stack.size() > 1) back();
+        else if (!top().equals("Today") && !top().equals("Setup")) tab("Today"); // other tabs step back to Today first
         else super.onBackPressed();
     }
 
@@ -187,6 +191,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
     String top() { return stack.get(stack.size() - 1); }
 
     void go(String screen) {
+        scroll.remove(screen);
         stack.add(screen);
         render();
     }
@@ -209,6 +214,11 @@ public class MainActivity extends Activity implements T60Store.Listener {
 
     T60BleService svc() { return T60BleService.getInstance(); }
 
+    static boolean btOff() {
+        android.bluetooth.BluetoothAdapter ad = android.bluetooth.BluetoothAdapter.getDefaultAdapter();
+        return ad == null || !ad.isEnabled();
+    }
+
     /** Runs r with the service if the watch is connected, otherwise says so. */
     boolean withWatch(java.util.function.Consumer<T60BleService> r) {
         T60BleService s = svc();
@@ -224,7 +234,9 @@ public class MainActivity extends Activity implements T60Store.Listener {
 
     void render() {
         String name = top();
-        int scrollY = currentScroll != null && name.equals(currentScroll.getTag()) ? currentScroll.getScrollY() : 0;
+        if (currentScroll != null) scroll.put((String) currentScroll.getTag(), currentScroll.getScrollY());
+        Integer saved = scroll.get(name);
+        int scrollY = saved == null ? 0 : saved;
         content.removeAllViews();
         LinearLayout page = ui.col();
         boolean isTab = Arrays.asList(TABS).contains(name);
@@ -277,7 +289,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
             case "Export": return export(page);
             case "StepGoal": return stepGoal(page);
             case "TodayCards": return todayCards(page);
-            case "Health": case "HeartRate": case "Oxygen": case "SleepNight": case "Workouts": case "LiveWorkout":
+            case "Health": case "HeartRate": case "Oxygen": case "SleepNight": case "Workouts": case "LiveWorkout": case "Route":
                 return health.build(name, page);
             case "Alerts": case "MoveReminder": case "QuietHours": case "QuickReplies": case "EditReply":
                 return alerts.build(name, page);
@@ -317,8 +329,8 @@ public class MainActivity extends Activity implements T60Store.Listener {
         p.setBackground(Ui.round(on ? 0xFF0F2A1A : 0xFF2A1E14, on ? 0xFF1F5A36 : 0xFF5A3A22, ui.dp(999), ui.dp(1)));
         TextView dot = ui.text("●", 10, on ? Ui.GREEN : Ui.HEART, false);
         p.addView(dot);
-        String label = on ? "Connected" + (bat >= 0 ? " · " + bat + "%" : "") : store.isSyncing() ? "Syncing" : "Not connected";
-        if (on && store.isSyncing()) label = "Syncing…";
+        String label = on ? (store.isSyncing() ? "Syncing…" : "Connected" + (bat >= 0 ? " · " + bat + "%" : ""))
+                : btOff() ? "Bluetooth off" : "Not connected";
         TextView t = ui.text("  " + label, 13, on ? 0xFF7BE8A8 : 0xFFFFB38A, true);
         p.addView(t);
         p.setOnClickListener(v -> go("Connection"));
@@ -396,13 +408,24 @@ public class MainActivity extends Activity implements T60Store.Listener {
         String date = new SimpleDateFormat("EEEE, MMM d", Locale.US).format(new Date());
         LinearLayout b = tabHeader(page, date, "Today");
         Set<String> hidden = store.hiddenCards();
-        boolean first = true;
-        for (String card : store.todayCards()) {
-            if (hidden.contains(card)) continue;
-            View v = todayCard(card);
+        List<String> shown = new ArrayList<>();
+        for (String card : store.todayCards()) if (!hidden.contains(card)) shown.add(card);
+        for (int k = 0; k < shown.size(); k++) {
+            View v = todayCard(shown.get(k));
             if (v == null) continue;
-            ui.add(b, v, first ? 0 : 12);
-            first = false;
+            // Heart rate and sleep sit side by side when they are next to each other.
+            String next = k + 1 < shown.size() ? shown.get(k + 1) : "";
+            if (HALF.contains(shown.get(k)) && HALF.contains(next)) {
+                LinearLayout grid = ui.row();
+                grid.setGravity(Gravity.TOP);
+                LinearLayout.LayoutParams l1 = Ui.weight(1), l2 = Ui.weight(1);
+                l1.rightMargin = l2.leftMargin = ui.dp(6);
+                grid.addView(v, l1);
+                grid.addView(todayCard(next), l2);
+                v = grid;
+                k++;
+            }
+            ui.add(b, v, b.getChildCount() == 0 ? 0 : 12);
         }
         LinearLayout foot = ui.row();
         foot.addView(ui.text((store.lastSync() > 0 ? "Last synced " + store.time(store.lastSync()) : "Not synced yet")
@@ -434,11 +457,8 @@ public class MainActivity extends Activity implements T60Store.Listener {
                 c.setOnClickListener(v -> tab("Health"));
                 return c;
             }
-            case "Heart rate": case "Sleep": {
-                if (card.equals("Sleep")) return null; // drawn together with heart rate
-                LinearLayout grid = ui.row();
-                grid.setGravity(Gravity.TOP);
-                LinearLayout hr = ui.card(), sl = ui.card();
+            case "Heart rate": {
+                LinearLayout hr = ui.card();
                 hr.addView(ui.text("♥  Heart rate", 14, Ui.HEART, true));
                 int bpm = store.getLiveHeartRate();
                 int[] last = db.latest("hr", "bpm");
@@ -451,6 +471,10 @@ public class MainActivity extends Activity implements T60Store.Listener {
                 int rest = db.restingHr(T60Db.today());
                 ui.add(hr, ui.text((rest > 0 ? "Resting " + rest + " · " : "") + ago(lastHrMs(last)), 12, Ui.SUB, false), 4);
                 hr.setOnClickListener(v -> go("HeartRate"));
+                return hr;
+            }
+            case "Sleep": {
+                LinearLayout sl = ui.card();
                 sl.addView(ui.text("☾  Sleep", 14, Ui.PURPLE, true));
                 String night = lastNight();
                 List<int[]> segs = night == null ? new ArrayList<>() : db.night(night);
@@ -459,13 +483,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
                 ui.add(sl, ui.text(segs.isEmpty() ? "No sleep synced yet" : store.clock(segs.get(0)[0]) + " – "
                         + store.clock(segs.get(segs.size() - 1)[0] + segs.get(segs.size() - 1)[1]), 12, Ui.SUB, false), 4);
                 sl.setOnClickListener(v -> { args.putString("night", night); go("SleepNight"); });
-                LinearLayout.LayoutParams l1 = Ui.weight(1);
-                l1.rightMargin = ui.dp(6);
-                LinearLayout.LayoutParams l2 = Ui.weight(1);
-                l2.leftMargin = ui.dp(6);
-                grid.addView(hr, l1);
-                grid.addView(sl, l2);
-                return grid;
+                return sl;
             }
             case "Blood oxygen": {
                 LinearLayout c = ui.card();
@@ -515,7 +533,7 @@ public class MainActivity extends Activity implements T60Store.Listener {
         LinearLayout b = detail(page, "Connection");
         boolean on = store.isConnected();
         LinearLayout c = ui.card();
-        c.addView(ui.text(on ? "Watch connected" : "Watch not connected", 22, on ? Ui.GREEN : Ui.TEXT, true));
+        c.addView(ui.text(on ? "Watch connected" : btOff() ? "Phone's Bluetooth is off" : "Watch not connected", 22, on ? Ui.GREEN : Ui.TEXT, true));
         int bat = store.getBatteryPercent();
         ui.add(c, ui.text(on ? store.getWatchName() + (bat >= 0 ? " · battery " + bat + "%" : "")
                 : "Last seen " + (store.lastSeen() > 0 ? store.time(store.lastSeen()) : "never") + (bat >= 0 ? " · battery was " + bat + "%" : ""), 14, Ui.SUB, false), 6);
@@ -527,6 +545,10 @@ public class MainActivity extends Activity implements T60Store.Listener {
                 ui.add(tips, ui.text("•  " + t, 15, Ui.TEXT, false), 10);
             }
             ui.add(b, tips, 12);
+            if (btOff()) ui.add(b, ui.button("Turn on Bluetooth", true, v -> {
+                if (has(Manifest.permission.BLUETOOTH_CONNECT)) startActivity(new Intent(android.bluetooth.BluetoothAdapter.ACTION_REQUEST_ENABLE));
+                else ask(BLUETOOTH);
+            }), 12);
             ui.add(b, ui.note("The app keeps trying on its own. Your data is safe on the watch until it reconnects."), 12);
         }
         ui.add(b, ui.button("Try again now", true, v -> {

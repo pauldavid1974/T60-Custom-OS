@@ -136,7 +136,7 @@ final class WatchScreens {
                 ui.navRow("Screen and raise to wake", null, store.i("screen_sec", 5) + " sec", v -> a.go("ScreenTime")),
                 ui.navRow("Time and units", null, units, v -> a.go("TimeUnits")),
                 ui.navRow("Watch language", null, T60Protocol.languageName(store.i("language", 2)), v -> a.go("WatchLanguage")),
-                ui.navRow("Alarms", null, alarmSummary(), v -> a.go("Alarm")),
+                ui.navRow("Alarms", null, alarmSummary(), v -> { a.args.remove("alarm"); a.go("Alarm"); }),
                 ui.navRow("Weather on watch", null, store.b("weather_on", true) ? "weather.gov" : "Off", v -> a.go("Weather")),
                 ui.navRow("Calls and contacts", null, store.b("bt3_on", false) ? "On" : "Off", v -> a.go("Calls")),
                 ui.switchRow("Music controls + song name", null, store.b("music_on", true), on -> store.set("music_on", on)),
@@ -656,15 +656,7 @@ final class WatchScreens {
         ui.add(b, ui.group(cycleRow, perRow), 12);
         int rd = store.i("cycle_remind_days", 2);
         ui.add(b, ui.group(ui.switchRow("Reminder on watch", rd + " days before", store.b("cycle_remind", true), v -> store.set("cycle_remind", v))), 12);
-        int[] sel = {rd == 1 ? 0 : rd == 3 ? 2 : 1};
-        LinearLayout holder = ui.col();
-        Runnable[] draw = new Runnable[1];
-        draw[0] = () -> {
-            holder.removeAllViews();
-            holder.addView(ui.chips(new String[]{"1 day", "2 days", "3 days"}, sel[0], k -> { sel[0] = k; store.set("cycle_remind_days", k + 1); draw[0].run(); }));
-        };
-        draw[0].run();
-        ui.add(b, holder, 8);
+        ui.add(b, ui.chips(new String[]{"1 day", "2 days", "3 days"}, Math.max(0, Math.min(2, rd - 1)), k -> { store.set("cycle_remind_days", k + 1); a.render(); }), 8);
         ui.add(b, ui.note("Stays on this phone and the watch. Turn this off and it disappears from the watch."), 12);
         return null;
     }

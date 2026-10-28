@@ -7,6 +7,31 @@
 **Owner authorization (2026-10-24):** Paul explicitly authorized reverse engineering of the physical T60 and GloryFit companion app. This covers read-only BLE discovery, connecting for service/characteristic enumeration, reading characteristics advertised as readable, and pulling the installed GloryFit APK from the dedicated phone for offline analysis.
 **Hard stop:** No BLE characteristic/descriptor writes or notification subscriptions, app/watch setting changes, firmware update or flashing, reset, unpairing, unlock, debug-port access, physical disassembly, or other action that changes device state. If a proposed step might change state or falls outside the read-only scope, stop and ask Paul first. Eventual replacement of both products is the goal; this authorization does not approve installing or replacing either one.
 
+## COMPLETED — Full tap-through smoke test and fixes (Claude Code, 2026-10-28)
+
+- **Paul's request:** tap through the whole app, fix every bug, make it leaner, add better functionality.
+- **Tested (Observed, 2026-10-28, Galaxy S20 FE `RFCNC10FA3K`, Android 11, phone Bluetooth OFF so the watch was
+  never contacted and Paul's watch settings were not overwritten):** setup, all four tabs and every detail screen
+  except Clear watch data (not opened) and the system photo picker (simulated taps don't register in Android's file
+  picker). Export (JSON saved to Downloads), step goal, Today cards, quick reply add/delete, quiet-hours time picker,
+  weather.gov update (Scott City forecast), call-permission deny path, phone-only walk and run with map. Crash buffer
+  empty throughout.
+- **Bugs fixed:** (1) hiding the Today "Heart rate" card also hid Sleep, and hiding Sleep did nothing — each card now
+  hides on its own and they pair side by side only when next to each other; (2) Phone calls / Text messages switches
+  showed on without the phone permission, so they silently did nothing — they now show on only when they can work and
+  ask when turned on (separate permissions button removed); (3) "on" switches were dark navy, not bright blue — the
+  stock track is drawn at 30% opacity, so the app now draws its own track; (4) empty step bar showed a blue dot;
+  (5) Back on Health/Alerts/Watch closed the app — now goes to Today first; (6) returning from a detail screen jumped
+  the list back to the top — scroll position is remembered; (7) with the phone's Bluetooth off the app only said
+  "Not connected" and waited up to 15 min after Bluetooth came back — it now says "Bluetooth off", offers a Turn on
+  button, and reconnects the moment Bluetooth is on; (8) GPS jitter while standing still counted as distance
+  (0.02 mi in 2 min indoors) — a move now has to beat the GPS error (verified 0.00 after 60 s); (9) women's-health
+  reminder subtitle didn't update; (10) the alarm editor could reopen on an old alarm.
+- **New:** phone-GPS workouts run without the watch (watch gets start/stop only when connected); tapping a saved
+  phone workout shows its route on the map.
+- **Not done:** halving the code. ~5,300 lines carry 33 screens plus a hand-built Bluetooth protocol; nothing large is
+  duplicated, so cutting half would cut features. Net change here was small. Not verified with the watch connected.
+
 ## COMPLETED — Switches easy to see when on (Claude Code, 2026-10-26)
 
 - **Paul's report:** switches are hard to see in the on position.
